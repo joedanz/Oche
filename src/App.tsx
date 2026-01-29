@@ -42,6 +42,7 @@ import { TournamentScoringPage } from "./TournamentScoringPage";
 import { PublicLeaguePage } from "./PublicLeaguePage";
 import { LeagueVisibilityToggle } from "./LeagueVisibilityToggle";
 import { NotificationsPage } from "./NotificationsPage";
+import { AuditLogPage } from "./AuditLogPage";
 import { useAuth } from "./useAuth";
 
 function AuthenticatedRedirect() {
@@ -135,6 +136,7 @@ function AppRoutes() {
         <Route path="tournaments" element={<TournamentsRoute />} />
         <Route path="tournaments/:tournamentId/score" element={<TournamentScoringRoute />} />
         <Route path="notifications" element={<NotificationsRoute />} />
+        <Route path="audit-log" element={<AuditLogRoute />} />
         <Route path="visibility" element={<VisibilityRoute />} />
       </Route>
     </Routes>
@@ -333,6 +335,12 @@ function NotificationsRoute() {
   const { leagueId } = useParams<{ leagueId: string }>();
   if (!leagueId) return null;
   return <NotificationsPage leagueId={leagueId as any} />;
+}
+
+function AuditLogRoute() {
+  const { leagueId } = useParams<{ leagueId: string }>();
+  if (!leagueId) return null;
+  return <AuditLogPage leagueId={leagueId as any} />;
 }
 
 function VisibilityRoute() {
