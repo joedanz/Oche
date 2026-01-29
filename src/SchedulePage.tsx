@@ -150,6 +150,12 @@ export function SchedulePage({ leagueId }: SchedulePageProps) {
               </span>
               <div className="flex items-center gap-3">
                 <Link
+                  to={`/leagues/${leagueId}/matches/${m._id}`}
+                  className="text-blue-400 hover:text-blue-300 text-sm"
+                >
+                  Details
+                </Link>
+                <Link
                   to={`/leagues/${leagueId}/matches/${m._id}/pairings`}
                   className="text-blue-400 hover:text-blue-300 text-sm"
                 >

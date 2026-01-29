@@ -20,6 +20,7 @@ import { RosterPage } from "./RosterPage";
 import { SchedulePage } from "./SchedulePage";
 import { ScheduleGeneratorPage } from "./ScheduleGeneratorPage";
 import { PairingsPage } from "./PairingsPage";
+import { MatchDetailPage } from "./MatchDetailPage";
 import { useAuth } from "./useAuth";
 
 function AuthenticatedRedirect() {
@@ -91,6 +92,7 @@ function AppRoutes() {
         <Route path="teams/:teamId/roster" element={<RosterRoute />} />
         <Route path="schedule" element={<ScheduleRoute />} />
         <Route path="schedule/generate" element={<ScheduleGeneratorRoute />} />
+        <Route path="matches/:matchId" element={<MatchDetailRoute />} />
         <Route path="matches/:matchId/pairings" element={<PairingsRoute />} />
       </Route>
     </Routes>
@@ -157,6 +159,12 @@ function ScheduleGeneratorRoute() {
   const { leagueId } = useParams<{ leagueId: string }>();
   if (!leagueId) return null;
   return <ScheduleGeneratorPage leagueId={leagueId as any} />;
+}
+
+function MatchDetailRoute() {
+  const { leagueId, matchId } = useParams<{ leagueId: string; matchId: string }>();
+  if (!leagueId || !matchId) return null;
+  return <MatchDetailPage leagueId={leagueId as any} matchId={matchId as any} />;
 }
 
 function PairingsRoute() {
