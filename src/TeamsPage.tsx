@@ -1,5 +1,5 @@
 // ABOUTME: Team management page for league admins.
-// ABOUTME: Allows creating and editing teams with name, venue, and division assignment.
+// ABOUTME: Allows creating, editing teams, and assigning team captains.
 
 import { useState } from "react";
 import { useQuery, useMutation } from "convex/react";
@@ -15,6 +15,7 @@ export function TeamsPage({ leagueId }: TeamsPageProps) {
   const divisions = useQuery(api.divisions.getDivisions, { leagueId });
   const createTeam = useMutation(api.teams.createTeam);
   const editTeam = useMutation(api.teams.editTeam);
+  const assignCaptain = useMutation(api.captains.assignCaptain);
 
   const [name, setName] = useState("");
   const [venue, setVenue] = useState("");
@@ -25,6 +26,10 @@ export function TeamsPage({ leagueId }: TeamsPageProps) {
   const [editName, setEditName] = useState("");
   const [editVenue, setEditVenue] = useState("");
   const [editDivisionId, setEditDivisionId] = useState("");
+
+  const [captainPickerTeamId, setCaptainPickerTeamId] = useState<string | null>(
+    null,
+  );
 
   if (teams === undefined || divisions === undefined) {
     return <p className="text-oche-400">Loading…</p>;
@@ -66,6 +71,14 @@ export function TeamsPage({ leagueId }: TeamsPageProps) {
     setEditName(team.name);
     setEditVenue(team.venue ?? "");
     setEditDivisionId(team.divisionId ?? "");
+  }
+
+  async function handleAssignCaptain(
+    teamId: Id<"teams">,
+    playerId: Id<"players">,
+  ) {
+    await assignCaptain({ leagueId, teamId, playerId });
+    setCaptainPickerTeamId(null);
   }
 
   return (
@@ -152,23 +165,57 @@ export function TeamsPage({ leagueId }: TeamsPageProps) {
                   </div>
                 </div>
               ) : (
-                <div className="flex items-center justify-between">
-                  <div>
-                    <span className="font-medium text-oche-100">
-                      {team.name}
-                    </span>
-                    {(team as any).venue && (
-                      <span className="ml-3 text-sm text-oche-400">
-                        {(team as any).venue}
+                <div>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <span className="font-medium text-oche-100">
+                        {team.name}
                       </span>
-                    )}
+                      {(team as any).venue && (
+                        <span className="ml-3 text-sm text-oche-400">
+                          {(team as any).venue}
+                        </span>
+                      )}
+                    </div>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() =>
+                          setCaptainPickerTeamId(
+                            captainPickerTeamId === team._id
+                              ? null
+                              : team._id,
+                          )
+                        }
+                        className="rounded-md bg-oche-700 px-3 py-1 text-sm text-oche-200 transition hover:bg-oche-600"
+                      >
+                        Set Captain
+                      </button>
+                      <button
+                        onClick={() => startEdit(team)}
+                        className="rounded-md bg-oche-700 px-3 py-1 text-sm text-oche-200 transition hover:bg-oche-600"
+                      >
+                        Edit
+                      </button>
+                    </div>
                   </div>
-                  <button
-                    onClick={() => startEdit(team)}
-                    className="rounded-md bg-oche-700 px-3 py-1 text-sm text-oche-200 transition hover:bg-oche-600"
-                  >
-                    Edit
-                  </button>
+                  <p className="mt-1 text-sm text-oche-400">
+                    {(team as any).captainName
+                      ? `Captain: ${(team as any).captainName}`
+                      : "No captain"}
+                  </p>
+                  {captainPickerTeamId === team._id && (
+                    <CaptainPicker
+                      leagueId={leagueId}
+                      teamId={team._id as Id<"teams">}
+                      onSelect={(playerId) =>
+                        handleAssignCaptain(
+                          team._id as Id<"teams">,
+                          playerId,
+                        )
+                      }
+                      onCancel={() => setCaptainPickerTeamId(null)}
+                    />
+                  )}
                 </div>
               )}
             </li>
@@ -244,6 +291,63 @@ export function TeamsPage({ leagueId }: TeamsPageProps) {
           {creating ? "Creating…" : "Create Team"}
         </button>
       </form>
+    </div>
+  );
+}
+
+function CaptainPicker({
+  leagueId,
+  teamId,
+  onSelect,
+  onCancel,
+}: {
+  leagueId: Id<"leagues">;
+  teamId: Id<"teams">;
+  onSelect: (playerId: Id<"players">) => void;
+  onCancel: () => void;
+}) {
+  const players = useQuery(api.captains.getTeamPlayers, { leagueId, teamId });
+
+  if (players === undefined) {
+    return <p className="mt-2 text-sm text-oche-400">Loading players…</p>;
+  }
+
+  if (players.length === 0) {
+    return (
+      <div className="mt-2">
+        <p className="text-sm text-oche-400">
+          No players on this team. Add players first.
+        </p>
+        <button
+          onClick={onCancel}
+          className="mt-1 text-sm text-oche-300 underline"
+        >
+          Cancel
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="mt-2 space-y-1">
+      <p className="text-sm font-medium text-oche-300">Select captain:</p>
+      {players
+        .filter((p: any) => p.status === "active")
+        .map((player: any) => (
+          <button
+            key={player._id}
+            onClick={() => onSelect(player._id as Id<"players">)}
+            className="block w-full rounded-md px-3 py-1 text-left text-sm text-oche-100 transition hover:bg-oche-700"
+          >
+            {player.userName}
+          </button>
+        ))}
+      <button
+        onClick={onCancel}
+        className="text-sm text-oche-400 underline"
+      >
+        Cancel
+      </button>
     </div>
   );
 }

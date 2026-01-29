@@ -25,6 +25,10 @@ vi.mock("../convex/_generated/api", () => ({
     divisions: {
       getDivisions: "divisions:getDivisions",
     },
+    captains: {
+      getTeamPlayers: "captains:getTeamPlayers",
+      assignCaptain: "captains:assignCaptain",
+    },
   },
 }));
 
@@ -50,11 +54,13 @@ afterEach(() => {
 describe("TeamsPage", () => {
   const mockCreateMutate = vi.fn();
   const mockEditMutate = vi.fn();
+  const mockAssignCaptain = vi.fn();
 
   beforeEach(() => {
     mockUseMutation.mockImplementation((ref: string) => {
       if (ref === "teams:createTeam") return mockCreateMutate;
       if (ref === "teams:editTeam") return mockEditMutate;
+      if (ref === "captains:assignCaptain") return mockAssignCaptain;
       return vi.fn();
     });
   });
@@ -140,5 +146,60 @@ describe("TeamsPage", () => {
     renderPage();
     const divisionSelect = screen.getByLabelText(/division/i);
     expect(divisionSelect).toBeInTheDocument();
+  });
+
+  it("shows captain name when team has a captain", () => {
+    const teamsWithCaptain = [
+      {
+        _id: "t1",
+        leagueId: "league1",
+        name: "Eagles",
+        venue: "The Pub",
+        captainId: "p1",
+        captainName: "Alice",
+      },
+    ];
+    renderPage(teamsWithCaptain);
+    expect(screen.getByText(/captain: alice/i)).toBeInTheDocument();
+  });
+
+  it("shows 'No captain' when team has no captain", () => {
+    const teamsNoCaptain = [
+      { _id: "t1", leagueId: "league1", name: "Eagles", venue: "The Pub" },
+    ];
+    renderPage(teamsNoCaptain);
+    expect(screen.getByText(/no captain/i)).toBeInTheDocument();
+  });
+
+  it("shows Set Captain button for each team", () => {
+    renderPage();
+    const setCaptainButtons = screen.getAllByRole("button", { name: /set captain/i });
+    expect(setCaptainButtons.length).toBeGreaterThanOrEqual(1);
+  });
+
+  it("shows player selector when Set Captain is clicked", async () => {
+    const user = userEvent.setup();
+    // Mock players for the team
+    mockUseQuery.mockImplementation((ref: string, args?: any) => {
+      if (ref === "teams:getTeams") return mockTeams;
+      if (ref === "divisions:getDivisions") return mockDivisions;
+      if (ref === "captains:getTeamPlayers")
+        return [
+          { _id: "p1", userId: "u1", teamId: args?.teamId, status: "active", userName: "Alice" },
+          { _id: "p2", userId: "u2", teamId: args?.teamId, status: "active", userName: "Bob" },
+        ];
+      return undefined;
+    });
+    render(
+      <MemoryRouter initialEntries={["/leagues/league1/teams"]}>
+        <TeamsPage leagueId={"league1" as any} />
+      </MemoryRouter>,
+    );
+
+    const setCaptainButtons = screen.getAllByRole("button", { name: /set captain/i });
+    await user.click(setCaptainButtons[0]);
+
+    expect(screen.getByText("Alice")).toBeInTheDocument();
+    expect(screen.getByText("Bob")).toBeInTheDocument();
   });
 });
