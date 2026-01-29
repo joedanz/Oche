@@ -499,7 +499,7 @@
       ],
       "epic": "Score Entry (Manual)",
       "priority": 28,
-      "passes": false,
+      "passes": true,
       "notes": ""
     },
     {

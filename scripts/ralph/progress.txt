@@ -443,3 +443,16 @@
   - Pairing data is mapped by slot number for O(1) lookup when rendering game headers
   - Collapse state uses a `Set<string>` of game IDs — toggling creates a new Set for immutable state updates
 ---
+
+## 2026-01-29 - US-028
+- Added game winner determination: pure function + Convex mutation
+- `determineGameWinner()` sums all innings (regulation + extra) to determine winner
+- `determineWinnerHandler` reads innings from DB, computes winner, patches game record
+- Winner field: "home" | "visitor" | "tie"; null if no innings data
+- **Tests added:** 8 new tests in `convex/gameWinner.test.ts`
+- **Files changed:** convex/gameWinner.ts (new), convex/gameWinner.test.ts (new)
+- **Learnings for future iterations:**
+  - Game winner uses total runs (regulation + extras combined) — not just regulation
+  - Export pure `determineGameWinner` separately from handler for direct unit testing
+  - `db.patch()` used to update existing game record with winner field
+---
