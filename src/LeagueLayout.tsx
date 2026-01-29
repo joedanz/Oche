@@ -4,6 +4,7 @@
 import { Link, Outlet, useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "convex/react";
 import { api } from "../convex/_generated/api";
+import { LeagueNav } from "./LeagueNav";
 
 interface LeagueEntry {
   leagueId: string;
@@ -63,11 +64,12 @@ export function LeagueLayout() {
           )}
         </div>
       </header>
-      <main className="px-6 py-8">
-        <div className="mx-auto max-w-6xl">
+      <div className="mx-auto flex max-w-6xl gap-8 px-6 py-8">
+        <LeagueNav leagueId={leagueId!} />
+        <main className="min-w-0 flex-1">
           <Outlet />
-        </div>
-      </main>
+        </main>
+      </div>
     </div>
   );
 }
