@@ -25,6 +25,7 @@ import { MatchScoreEntryPage } from "./MatchScoreEntryPage";
 import { DiscrepancyReviewPage } from "./DiscrepancyReviewPage";
 import { CsvUploadPage } from "./CsvUploadPage";
 import { ExcelUploadPage } from "./ExcelUploadPage";
+import { GoogleSheetsImportPage } from "./GoogleSheetsImportPage";
 import { useAuth } from "./useAuth";
 
 function AuthenticatedRedirect() {
@@ -102,6 +103,7 @@ function AppRoutes() {
         <Route path="matches/:matchId/games/:gameId/review" element={<DiscrepancyReviewRoute />} />
         <Route path="matches/:matchId/import-csv" element={<CsvUploadRoute />} />
         <Route path="matches/:matchId/import-excel" element={<ExcelUploadRoute />} />
+        <Route path="matches/:matchId/import-gsheets" element={<GoogleSheetsRoute />} />
       </Route>
     </Routes>
   );
@@ -197,6 +199,12 @@ function ExcelUploadRoute() {
   const { leagueId, matchId } = useParams<{ leagueId: string; matchId: string }>();
   if (!leagueId || !matchId) return null;
   return <ExcelUploadPage leagueId={leagueId as any} matchId={matchId as any} />;
+}
+
+function GoogleSheetsRoute() {
+  const { leagueId, matchId } = useParams<{ leagueId: string; matchId: string }>();
+  if (!leagueId || !matchId) return null;
+  return <GoogleSheetsImportPage leagueId={leagueId as any} matchId={matchId as any} />;
 }
 
 function PairingsRoute() {
