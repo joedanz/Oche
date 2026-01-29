@@ -650,3 +650,18 @@
   - `average` is a derived stat (totalPlus / gamesPlayed) — compute it in the query rather than storing it
   - Use `vi.fn()` directly in `vi.mock("convex/react", ...)` and import+cast after for TypeScript compatibility
 ---
+
+## 2026-01-29 - US-041
+- Added team statistics page: aggregate stats (game wins, runs scored/allowed, match points, plus/minus) and roster with per-player stats
+- Backend: `convex/teamStats.ts` with `getTeamStatsHandler` aggregating from matches, games, innings, and playerStats tables
+- Frontend: `src/TeamStatsPage.tsx` with stat cards, season selector, and roster table
+- Added "Stats" link on TeamsPage for each team
+- Route: `/leagues/:leagueId/teams/:teamId/stats` as child of LeagueLayout
+- **Tests added:** 11 new tests in `convex/teamStats.test.ts` (5) and `src/TeamStatsPage.test.tsx` (6)
+- **Files changed:** convex/teamStats.ts (new), convex/teamStats.test.ts (new), src/TeamStatsPage.tsx (new), src/TeamStatsPage.test.tsx (new), src/App.tsx, src/TeamsPage.tsx, convex/_generated/api.d.ts
+- **Learnings for future iterations:**
+  - Team stats aggregate across all matches where the team is home or visitor — use `isHome` flag to determine which side's innings to count as "scored" vs "allowed"
+  - Match points = (game wins × pointsPerGameWin) + bonus points from match.totals.bonusWinner
+  - Roster stats come from `playerStats` table (pre-computed per player/season) — no need to re-aggregate from innings
+  - `getAllByText` needed when stat values appear in both team stat cards and per-player roster table
+---
