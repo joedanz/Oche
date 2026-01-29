@@ -31,6 +31,8 @@
 - `countAdmins` helper in `authorization.ts` — use for last-admin protection checks
 - Export handler functions separately from Convex wrappers (e.g., `createLeagueHandler`) for direct unit testing without auth mocking
 - `leagueMemberships` index `by_user_league` supports prefix queries — omit `leagueId` to get all leagues for a user
+- Use `LeagueLayout` with `<Outlet>` for league-scoped pages — provides header with switcher and breadcrumb
+- League-scoped routes nest under `/leagues/:leagueId` as children of `LeagueLayout` in App.tsx
 
 ## 2026-01-28 - US-001
 - Scaffolded Vite + React + TypeScript project
@@ -194,4 +196,19 @@
   - `getByText(/captain/i)` can match `<option>` elements in select dropdowns — use `getAllByText` or more specific selectors when a combobox has matching text
   - Invite codes use ambiguity-resistant characters (no 0/O/1/l/I) for readability
   - `revokeInvite` marks `used: true` rather than deleting — preserves audit trail
+---
+
+## 2026-01-28 - US-012
+- Added LeagueLayout component with league switcher dropdown in the header
+- League-scoped routes now nest under `/leagues/:leagueId` as children of LeagueLayout
+- Active league determined by URL param; switcher navigates between leagues
+- Breadcrumb link back to dashboard ("My Leagues")
+- Added LeagueHome placeholder for the league index route
+- **Tests added:** 6 new tests in `src/LeagueLayout.test.tsx`
+- **Files changed:** src/LeagueLayout.tsx (new), src/LeagueLayout.test.tsx (new), src/App.tsx
+- **Learnings for future iterations:**
+  - Use `<Outlet>` from react-router-dom inside layout components to render child routes
+  - Nested routes in App.tsx: `<Route path="/leagues/:leagueId" element={<LeagueLayout />}>` with child `<Route>` elements
+  - When testing layout components with nested routes, use `<Routes><Route element={<Layout />}><Route index ... /></Route></Routes>` in MemoryRouter
+  - `getByRole("banner")` selects the `<header>` element — useful when text appears in both header and dropdown options
 ---
