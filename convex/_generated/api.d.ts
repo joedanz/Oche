@@ -33,6 +33,7 @@ import type * as paymentConfig from "../paymentConfig.js";
 import type * as payments from "../payments.js";
 import type * as playerStats from "../playerStats.js";
 import type * as playerStatsPage from "../playerStatsPage.js";
+import type * as publicLeague from "../publicLeague.js";
 import type * as roster from "../roster.js";
 import type * as scheduleGenerator from "../scheduleGenerator.js";
 import type * as scoring from "../scoring.js";
@@ -78,6 +79,7 @@ declare const fullApi: ApiFromModules<{
   payments: typeof payments;
   playerStats: typeof playerStats;
   playerStatsPage: typeof playerStatsPage;
+  publicLeague: typeof publicLeague;
   roster: typeof roster;
   scheduleGenerator: typeof scheduleGenerator;
   scoring: typeof scoring;

@@ -39,6 +39,8 @@ import { PaymentTrackingPage } from "./PaymentTrackingPage";
 import { StripePaymentPage } from "./StripePaymentPage";
 import { TournamentPage } from "./TournamentPage";
 import { TournamentScoringPage } from "./TournamentScoringPage";
+import { PublicLeaguePage } from "./PublicLeaguePage";
+import { LeagueVisibilityToggle } from "./LeagueVisibilityToggle";
 import { useAuth } from "./useAuth";
 
 function AuthenticatedRedirect() {
@@ -64,6 +66,7 @@ function AppRoutes() {
           isAuthenticated ? <AuthenticatedRedirect /> : <LandingPage />
         }
       />
+      <Route path="/public/:leagueId" element={<PublicLeagueRoute />} />
       <Route
         path="/login"
         element={
@@ -130,6 +133,7 @@ function AppRoutes() {
         <Route path="pay" element={<StripePaymentRoute />} />
         <Route path="tournaments" element={<TournamentsRoute />} />
         <Route path="tournaments/:tournamentId/score" element={<TournamentScoringRoute />} />
+        <Route path="visibility" element={<VisibilityRoute />} />
       </Route>
     </Routes>
   );
@@ -315,6 +319,18 @@ function TournamentScoringRoute() {
   const { leagueId, tournamentId } = useParams<{ leagueId: string; tournamentId: string }>();
   if (!leagueId || !tournamentId) return null;
   return <TournamentScoringPage leagueId={leagueId as any} tournamentId={tournamentId as any} />;
+}
+
+function PublicLeagueRoute() {
+  const { leagueId } = useParams<{ leagueId: string }>();
+  if (!leagueId) return null;
+  return <PublicLeaguePage leagueId={leagueId as any} />;
+}
+
+function VisibilityRoute() {
+  const { leagueId } = useParams<{ leagueId: string }>();
+  if (!leagueId) return null;
+  return <LeagueVisibilityToggle leagueId={leagueId as any} />;
 }
 
 function App() {
