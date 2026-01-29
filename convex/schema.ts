@@ -146,6 +146,17 @@ export default defineSchema({
     ),
   }),
 
+  importTemplates: defineTable({
+    leagueId: v.id("leagues"),
+    name: v.string(),
+    mapping: v.object({
+      playerName: v.optional(v.number()),
+      innings: v.array(v.number()),
+      plus: v.optional(v.number()),
+      minus: v.optional(v.number()),
+    }),
+  }),
+
   playerStats: defineTable({
     playerId: v.id("players"),
     seasonId: v.id("seasons"),
