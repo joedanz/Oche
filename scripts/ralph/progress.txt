@@ -23,6 +23,9 @@
 - Clear Vite dep cache (`rm -rf node_modules/.vite`) when adding packages that share peer deps like React
 - OAuth providers: import from `@auth/core/providers/<name>` and add to `convexAuth({ providers: [...] })`
 - Client OAuth: call `signIn("<provider>")` (lowercase) — no FormData needed for OAuth redirects
+- Authorization helpers in `convex/authorization.ts` — use `requireRole(ctx.db, userId, leagueId, ["admin"])` pattern
+- `auth.getUserId(ctx)` returns the auth identity ID, cast to `Id<"users">` for DB lookups
+- Add `.index("by_user_league", ["userId", "leagueId"])` on leagueMemberships for efficient role lookups
 
 ## 2026-01-28 - US-001
 - Scaffolded Vite + React + TypeScript project
@@ -110,4 +113,19 @@
   - Client calls `signIn("google")` (lowercase provider name) for OAuth redirect flow
   - Google OAuth needs `AUTH_GOOGLE_ID` and `AUTH_GOOGLE_SECRET` env vars in Convex deployment
   - When adding buttons that match existing test regexes (e.g., "Sign in with Google" vs "Log In"), tighten regexes with `^` and `$` anchors
+---
+
+## 2026-01-28 - US-007
+- Added role-based authorization module (`convex/authorization.ts`) with `getMemberRole`, `requireLeagueMember`, `requireRole`
+- Added `AuthorizationError` class for clear unauthorized error messages
+- Added `by_user_league` index on `leagueMemberships` for efficient role lookups
+- Created league management mutations (`convex/leagues.ts`) enforcing admin-only access
+- Roles: Admin (full CRUD), Captain (team management), Player (read-only), Guest (non-member, public data)
+- **Tests added:** 13 new tests in `convex/authorization.test.ts` (9) and `convex/leagues.test.ts` (4)
+- **Files changed:** convex/authorization.ts (new), convex/authorization.test.ts (new), convex/leagues.ts (new), convex/leagues.test.ts (new), convex/schema.ts
+- **Learnings for future iterations:**
+  - `auth.getUserId(ctx)` returns the auth identity — needs cast to `Id<"users">` for DB operations
+  - Use `requireRole(ctx.db, userId, leagueId, ["admin"])` pattern in any mutation needing role checks
+  - `withIndex("by_user_league", (q) => q.eq("userId", x).eq("leagueId", y)).unique()` for membership lookups
+  - Guest access = no membership record; handled by absence rather than a role value
 ---
