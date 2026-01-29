@@ -19,6 +19,7 @@ import type * as gameWinner from "../gameWinner.js";
 import type * as http from "../http.js";
 import type * as importTemplates from "../importTemplates.js";
 import type * as invites from "../invites.js";
+import type * as leaderboards from "../leaderboards.js";
 import type * as leagues from "../leagues.js";
 import type * as matchConfig from "../matchConfig.js";
 import type * as matchDetail from "../matchDetail.js";
@@ -33,8 +34,10 @@ import type * as scheduleGenerator from "../scheduleGenerator.js";
 import type * as scoring from "../scoring.js";
 import type * as seasons from "../seasons.js";
 import type * as standings from "../standings.js";
+import type * as statsExport from "../statsExport.js";
 import type * as teamStats from "../teamStats.js";
 import type * as teams from "../teams.js";
+import type * as trends from "../trends.js";
 
 import type {
   ApiFromModules,
@@ -54,6 +57,7 @@ declare const fullApi: ApiFromModules<{
   http: typeof http;
   importTemplates: typeof importTemplates;
   invites: typeof invites;
+  leaderboards: typeof leaderboards;
   leagues: typeof leagues;
   matchConfig: typeof matchConfig;
   matchDetail: typeof matchDetail;
@@ -68,8 +72,10 @@ declare const fullApi: ApiFromModules<{
   scoring: typeof scoring;
   seasons: typeof seasons;
   standings: typeof standings;
+  statsExport: typeof statsExport;
   teamStats: typeof teamStats;
   teams: typeof teams;
+  trends: typeof trends;
 }>;
 
 /**

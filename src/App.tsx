@@ -32,6 +32,7 @@ import { TeamStatsPage } from "./TeamStatsPage";
 import { StandingsPage } from "./StandingsPage";
 import { LeaderboardsPage } from "./LeaderboardsPage";
 import { HistoricalTrendsPage } from "./HistoricalTrendsPage";
+import { PlayerStatsExportPage } from "./PlayerStatsExportPage";
 import { useAuth } from "./useAuth";
 
 function AuthenticatedRedirect() {
@@ -116,6 +117,7 @@ function AppRoutes() {
         <Route path="standings" element={<StandingsRoute />} />
         <Route path="leaderboards" element={<LeaderboardsRoute />} />
         <Route path="trends" element={<TrendsRoute />} />
+        <Route path="player-stats-export" element={<PlayerStatsExportRoute />} />
       </Route>
     </Routes>
   );
@@ -253,6 +255,12 @@ function TrendsRoute() {
   const { leagueId } = useParams<{ leagueId: string }>();
   if (!leagueId) return null;
   return <HistoricalTrendsPage leagueId={leagueId as any} />;
+}
+
+function PlayerStatsExportRoute() {
+  const { leagueId } = useParams<{ leagueId: string }>();
+  if (!leagueId) return null;
+  return <PlayerStatsExportPage leagueId={leagueId as any} />;
 }
 
 function PairingsRoute() {

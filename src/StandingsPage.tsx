@@ -5,6 +5,7 @@ import { useState } from "react";
 import { useQuery } from "convex/react";
 import { api } from "../convex/_generated/api";
 import type { Id } from "../convex/_generated/dataModel";
+import { standingsToCsv, standingsToPdf, downloadCsv } from "./statsExport";
 
 export function StandingsPage({ leagueId }: { leagueId: Id<"leagues"> }) {
   const [seasonId, setSeasonId] = useState<string>("");
@@ -53,6 +54,32 @@ export function StandingsPage({ leagueId }: { leagueId: Id<"leagues"> }) {
           ))}
         </select>
       </div>
+
+      {data.standings.length > 0 && (
+        <div className="flex gap-2 mb-4">
+          <button
+            className="px-3 py-1.5 text-sm bg-gray-100 hover:bg-gray-200 rounded border"
+            onClick={() => {
+              const seasonName = data.seasons.find((s) => s.id === seasonId)?.name ?? "Active Season";
+              const divName = data.divisions.find((d) => d.id === divisionId)?.name ?? "All Divisions";
+              const csv = standingsToCsv(data.standings, seasonName, divName);
+              downloadCsv(csv, "standings.csv");
+            }}
+          >
+            Export CSV
+          </button>
+          <button
+            className="px-3 py-1.5 text-sm bg-gray-100 hover:bg-gray-200 rounded border"
+            onClick={() => {
+              const seasonName = data.seasons.find((s) => s.id === seasonId)?.name ?? "Active Season";
+              const divName = data.divisions.find((d) => d.id === divisionId)?.name ?? "All Divisions";
+              standingsToPdf(data.standings, seasonName, divName);
+            }}
+          >
+            Export PDF
+          </button>
+        </div>
+      )}
 
       {data.standings.length === 0 ? (
         <p className="text-gray-500">No standings data available.</p>

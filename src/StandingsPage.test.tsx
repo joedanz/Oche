@@ -1,7 +1,7 @@
 // ABOUTME: Tests for the StandingsPage component.
 // ABOUTME: Validates rendering of standings table, division/season filters, and tiebreaker sorting display.
 
-import { render, screen, cleanup } from "@testing-library/react";
+import { render, screen, cleanup, fireEvent } from "@testing-library/react";
 import { vi, describe, it, expect, beforeEach, afterEach } from "vitest";
 import { MemoryRouter } from "react-router-dom";
 import { StandingsPage } from "./StandingsPage";
@@ -99,5 +99,36 @@ describe("StandingsPage", () => {
     });
     renderPage();
     expect(screen.getByText(/no standings/i)).toBeInTheDocument();
+  });
+
+  it("renders export CSV button when standings exist", () => {
+    (useQuery as any).mockReturnValue(fullData);
+    renderPage();
+    expect(screen.getByRole("button", { name: /export csv/i })).toBeInTheDocument();
+  });
+
+  it("renders export PDF button when standings exist", () => {
+    (useQuery as any).mockReturnValue(fullData);
+    renderPage();
+    expect(screen.getByRole("button", { name: /export pdf/i })).toBeInTheDocument();
+  });
+
+  it("does not render export buttons when no standings", () => {
+    (useQuery as any).mockReturnValue({
+      standings: [],
+      seasons: [],
+      divisions: [],
+    });
+    renderPage();
+    expect(screen.queryByRole("button", { name: /export csv/i })).not.toBeInTheDocument();
+  });
+
+  it("triggers CSV download on export CSV click", () => {
+    (useQuery as any).mockReturnValue(fullData);
+    global.URL.createObjectURL = vi.fn().mockReturnValue("blob:test");
+    global.URL.revokeObjectURL = vi.fn();
+    renderPage();
+    fireEvent.click(screen.getByRole("button", { name: /export csv/i }));
+    expect(global.URL.createObjectURL).toHaveBeenCalled();
   });
 });
