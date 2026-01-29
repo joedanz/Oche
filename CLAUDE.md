@@ -48,6 +48,13 @@ npm run dev        # Start dev server at localhost:5173
 npx convex dev     # Start Convex backend (required for full functionality)
 ```
 
+### Browser Testing
+Use these standard test credentials for browser verification:
+- **Email**: `test@oche.dev`
+- **Password**: `testpass123`
+
+If the account doesn't exist, create it via the signup form. This ensures consistent testing across sessions.
+
 ## Key Files
 - `scripts/ralph/prd.json` - Product requirements (user stories)
 - `scripts/ralph/progress.txt` - Implementation log with learnings
