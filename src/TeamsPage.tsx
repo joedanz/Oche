@@ -2,6 +2,7 @@
 // ABOUTME: Allows creating, editing teams, and assigning team captains.
 
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "../convex/_generated/api";
 import type { Id } from "../convex/_generated/dataModel";
@@ -178,6 +179,12 @@ export function TeamsPage({ leagueId }: TeamsPageProps) {
                       )}
                     </div>
                     <div className="flex gap-2">
+                      <Link
+                        to={`/leagues/${leagueId}/teams/${team._id}/roster`}
+                        className="rounded-md bg-oche-700 px-3 py-1 text-sm text-oche-200 transition hover:bg-oche-600"
+                      >
+                        Roster
+                      </Link>
                       <button
                         onClick={() =>
                           setCaptainPickerTeamId(
