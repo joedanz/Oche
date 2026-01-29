@@ -778,3 +778,19 @@
   - Fee fields are optional on leagues table (existing leagues don't have them) — defaults to 0 in frontend via `?? 0`
   - `feeSchedule` uses union type: "one-time" | "weekly" | "per-match"
 ---
+
+## 2026-01-29 - US-049
+- Added payment tracking: record payments, view player balances, payment history
+- Backend: `convex/payments.ts` with `recordPaymentHandler`, `getPaymentsHandler`, `getPlayerBalancesHandler`
+- Schema: added `payments` table with `by_league` index
+- Frontend: `src/PaymentTrackingPage.tsx` with balances table, record payment form, payment history
+- Balance computation: totalOwed from league fee config, totalPaid from payments, status derived (paid/partial/unpaid)
+- Route: `/leagues/:leagueId/payment-tracking` as child of LeagueLayout
+- **Tests added:** 14 new tests in `convex/payments.test.ts` (6) and `src/PaymentTrackingPage.test.tsx` (8)
+- **Files changed:** convex/schema.ts, convex/schema.test.ts, convex/payments.ts (new), convex/payments.test.ts (new), convex/_generated/api.d.ts, src/PaymentTrackingPage.tsx (new), src/PaymentTrackingPage.test.tsx (new), src/App.tsx
+- **Learnings for future iterations:**
+  - Player names appear in both balances table, payment history, and dropdown — use `getAllByText` in tests
+  - Balance calculation: `totalOwed` is simplified (leagueFee for one-time, leagueFee + weeklyFee for recurring) — real weekly tracking would need match/week counting
+  - `payments` table uses `by_league` index; payments query enriches with player names via player→user lookup
+  - Payment status: paid (totalPaid >= totalOwed), partial (totalPaid > 0), unpaid (totalPaid === 0)
+---
