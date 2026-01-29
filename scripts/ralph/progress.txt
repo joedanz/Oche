@@ -368,3 +368,18 @@
   - PairingsPage uses `useEffect` with `initialized` flag to load existing pairings from match data without re-triggering on state changes
   - Route with two params (`leagueId` + `matchId`) needs both extracted in the route wrapper component
 ---
+
+## 2026-01-29 - US-023
+- Added match detail page displaying teams, date, pairings with player names, game results, and totals
+- Backend: `convex/matchDetail.ts` with `getMatchDetailHandler` resolving player names and fetching games
+- Frontend: `src/MatchDetailPage.tsx` with sections for pairings, results, and totals
+- Added "Details" link on SchedulePage for each match
+- Route: `/leagues/:leagueId/matches/:matchId` as child of LeagueLayout
+- **Tests added:** 11 new tests in `convex/matchDetail.test.ts` (5) and `src/MatchDetailPage.test.tsx` (6)
+- **Files changed:** convex/matchDetail.ts (new), convex/matchDetail.test.ts (new), convex/_generated/api.d.ts, src/MatchDetailPage.tsx (new), src/MatchDetailPage.test.tsx (new), src/App.tsx, src/SchedulePage.tsx
+- **Learnings for future iterations:**
+  - Team names appear in multiple sections (heading, totals, bonus) — use `getAllByText` instead of `getByText` in tests
+  - `getMatchDetailHandler` resolves player names inline by looking up player→user chain
+  - Games table has no `by_match` index — uses `filter()` for match-scoped queries (consider adding index for performance)
+  - Match detail is read-only so only needs `requireLeagueMember` not `requireRole`
+---
