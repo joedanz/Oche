@@ -21,6 +21,7 @@ import { SchedulePage } from "./SchedulePage";
 import { ScheduleGeneratorPage } from "./ScheduleGeneratorPage";
 import { PairingsPage } from "./PairingsPage";
 import { MatchDetailPage } from "./MatchDetailPage";
+import { MatchScoreEntryPage } from "./MatchScoreEntryPage";
 import { useAuth } from "./useAuth";
 
 function AuthenticatedRedirect() {
@@ -94,6 +95,7 @@ function AppRoutes() {
         <Route path="schedule/generate" element={<ScheduleGeneratorRoute />} />
         <Route path="matches/:matchId" element={<MatchDetailRoute />} />
         <Route path="matches/:matchId/pairings" element={<PairingsRoute />} />
+        <Route path="matches/:matchId/score" element={<MatchScoreEntryRoute />} />
       </Route>
     </Routes>
   );
@@ -165,6 +167,12 @@ function MatchDetailRoute() {
   const { leagueId, matchId } = useParams<{ leagueId: string; matchId: string }>();
   if (!leagueId || !matchId) return null;
   return <MatchDetailPage leagueId={leagueId as any} matchId={matchId as any} />;
+}
+
+function MatchScoreEntryRoute() {
+  const { leagueId, matchId } = useParams<{ leagueId: string; matchId: string }>();
+  if (!leagueId || !matchId) return null;
+  return <MatchScoreEntryPage leagueId={leagueId as any} matchId={matchId as any} />;
 }
 
 function PairingsRoute() {
