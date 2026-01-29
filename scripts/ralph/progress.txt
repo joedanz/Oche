@@ -33,6 +33,7 @@
 - `leagueMemberships` index `by_user_league` supports prefix queries — omit `leagueId` to get all leagues for a user
 - Use `LeagueLayout` with `<Outlet>` for league-scoped pages — provides header with switcher and breadcrumb
 - League-scoped routes nest under `/leagues/:leagueId` as children of `LeagueLayout` in App.tsx
+- When a component calls `useMutation` multiple times, use `mockUseMutation.mockImplementation((ref) => { ... })` dispatching on API reference string instead of `mockReturnValueOnce` chains (re-renders consume mocked values)
 
 ## 2026-01-28 - US-001
 - Scaffolded Vite + React + TypeScript project
@@ -239,4 +240,18 @@
   - Flatten nested config objects in mutation args (e.g., `blindEnabled` + `blindDefaultRuns` instead of nested `blindRules`) for simpler form binding
   - Use `useEffect` to sync form state from query data — avoids stale defaults when league data loads async
   - Settings pages follow same pattern as other league-scoped pages: prop `leagueId`, route wrapper in App.tsx
+---
+
+## 2026-01-29 - US-015
+- Added season management: create, list, and activate seasons
+- Backend: `convex/seasons.ts` with exported handler functions (createSeasonHandler, activateSeasonHandler, getSeasonsHandler)
+- Frontend: `src/SeasonsPage.tsx` with create form, season list with active badge, and activate button
+- Added `by_league` index on seasons table in schema
+- Route: `/leagues/:leagueId/seasons` as child of LeagueLayout
+- **Tests added:** 12 new tests in `convex/seasons.test.ts` (4) and `src/SeasonsPage.test.tsx` (8)
+- **Files changed:** convex/seasons.ts (new), convex/seasons.test.ts (new), convex/schema.ts, src/SeasonsPage.tsx (new), src/SeasonsPage.test.tsx (new), src/App.tsx
+- **Learnings for future iterations:**
+  - When using `mockReturnValueOnce` for `useMutation` with multiple mutations in one component, prefer `mockImplementation` that dispatches on the API reference string — avoids issues with React re-renders consuming mock values
+  - `getByText(/active/i)` can match button text like "Set Active" — use `getByText(/^active$/i)` with anchors for exact badge text matching
+  - Seasons table needs `by_league` index for efficient league-scoped queries
 ---
