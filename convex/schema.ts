@@ -36,6 +36,7 @@ export default defineSchema({
 
   leagues: defineTable({
     name: v.string(),
+    description: v.optional(v.string()),
     matchConfig,
     handicapEnabled: v.boolean(),
     handicapPercent: v.optional(v.number()),

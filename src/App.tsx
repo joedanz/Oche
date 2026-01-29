@@ -11,6 +11,7 @@ import { OnboardingPage } from "./OnboardingPage";
 import { MembersPage } from "./MembersPage";
 import { InvitationsPage } from "./InvitationsPage";
 import { LeagueLayout } from "./LeagueLayout";
+import { CreateLeaguePage } from "./CreateLeaguePage";
 import { useAuth } from "./useAuth";
 
 function AuthenticatedRedirect() {
@@ -48,6 +49,12 @@ function AppRoutes() {
         path="/dashboard"
         element={
           isAuthenticated ? <Dashboard /> : <Navigate to="/login" replace />
+        }
+      />
+      <Route
+        path="/create-league"
+        element={
+          isAuthenticated ? <CreateLeaguePage /> : <Navigate to="/login" replace />
         }
       />
       <Route
