@@ -126,6 +126,26 @@ export default defineSchema({
     isExtra: v.boolean(),
   }),
 
+  scoreEntries: defineTable({
+    gameId: v.id("games"),
+    side: v.union(v.literal("home"), v.literal("visitor")),
+    submittedBy: v.id("users"),
+    innings: v.array(
+      v.object({
+        inningNumber: v.number(),
+        batter: batter,
+        runs: v.number(),
+        isExtra: v.boolean(),
+      }),
+    ),
+    status: v.union(
+      v.literal("pending"),
+      v.literal("confirmed"),
+      v.literal("discrepancy"),
+      v.literal("resolved"),
+    ),
+  }),
+
   playerStats: defineTable({
     playerId: v.id("players"),
     seasonId: v.id("seasons"),

@@ -7,6 +7,7 @@ import { useQuery, useMutation } from "convex/react";
 import { api } from "../convex/_generated/api";
 import type { Id } from "../convex/_generated/dataModel";
 import { ScoringGrid } from "./ScoringGrid";
+import { DualEntryStatus } from "./DualEntryStatus";
 
 interface MatchScoreEntryPageProps {
   matchId: Id<"matches">;
@@ -109,6 +110,7 @@ export function MatchScoreEntryPage({ matchId, leagueId }: MatchScoreEntryPagePr
                   ) : (
                     !isCollapsed && (
                       <div className="px-4 pb-4">
+                        <DualEntryStatus gameId={game._id} leagueId={leagueId} matchId={matchId} />
                         <ScoringGrid
                           gameId={game._id}
                           leagueId={leagueId}

@@ -48,6 +48,7 @@ describe("Core database schema", () => {
       "authVerificationCodes",
       "authVerifiers",
       "authRateLimits",
+      "scoreEntries",
     ];
 
     for (const table of tableNames) {
