@@ -44,6 +44,7 @@
 - `ColumnMappingWizard` component: embed in any import page after file parsing — takes `headers`, `rawData`, `leagueId`, calls `onMappingComplete` with `ParseResult`
 - `ImportValidationPanel` component: embed after validation — takes `ValidationResult`, `onImport`, `onCancel`; shows errors, preview, summary
 - `validateImportData(parseResult, rosterNames)` validates parsed data against roster — returns `ValidationResult` with validRows, errors, counts
+- `mergeParseResults(files)` merges multiple `ParseResult` arrays by player name — returns `MergeResult` with mergedRows, conflicts, errors
 
 ## 2026-01-28 - US-001
 - Scaffolded Vite + React + TypeScript project
@@ -600,4 +601,21 @@
   - `validateImportData` takes `ParseResult` + roster names array — keeps validation decoupled from data source
   - Case-insensitive roster matching via `toLowerCase()` prevents false negatives from capitalization differences
   - `skippedCount` includes both validation-rejected rows AND parse-level errors for accurate totals
+---
+
+## 2026-01-29 - US-038
+- Added multi-file merge: upload multiple CSV files, merge by player, detect and resolve conflicts
+- Pure `mergeParseResults()` function groups rows by normalized player name, auto-merges identical data, flags conflicts
+- Pure `resolveConflict()` function resolves by selecting an entry or providing custom innings
+- Frontend: `MultiFileMergePage` with file upload list, merge button, conflict resolution UI, merged preview table
+- Route: `/leagues/:leagueId/matches/:matchId/import-merge` as child of LeagueLayout
+- Added "Merge Files" link on SchedulePage per match
+- **Tests added:** 15 new tests in `src/fileMerger.test.ts` (8) and `src/MultiFileMergePage.test.tsx` (7)
+- **Files changed:** src/fileMerger.ts (new), src/fileMerger.test.ts (new), src/MultiFileMergePage.tsx (new), src/MultiFileMergePage.test.tsx (new), src/App.tsx, src/SchedulePage.tsx
+- **Learnings for future iterations:**
+  - Merge logic is a pure function with no Convex dependencies — easy to test without DB mocking
+  - Case-insensitive player matching via `toLowerCase().trim()` for merge grouping
+  - `JSON.stringify` comparison for detecting identical innings arrays across files
+  - FileReader mock in tests: use `vi.spyOn(FileReader.prototype, "readAsText")` with `setTimeout` to simulate async read
+  - Reset file input with `e.target.value = ""` after reading to allow re-adding the same file
 ---

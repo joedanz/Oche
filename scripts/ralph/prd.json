@@ -669,7 +669,7 @@
       ],
       "epic": "Score Import",
       "priority": 38,
-      "passes": false,
+      "passes": true,
       "notes": ""
     },
     {
