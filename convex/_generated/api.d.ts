@@ -16,6 +16,7 @@ import type * as divisions from "../divisions.js";
 import type * as dnpBlind from "../dnpBlind.js";
 import type * as dualEntry from "../dualEntry.js";
 import type * as gameWinner from "../gameWinner.js";
+import type * as handicapConfig from "../handicapConfig.js";
 import type * as http from "../http.js";
 import type * as importTemplates from "../importTemplates.js";
 import type * as invites from "../invites.js";
@@ -54,6 +55,7 @@ declare const fullApi: ApiFromModules<{
   dnpBlind: typeof dnpBlind;
   dualEntry: typeof dualEntry;
   gameWinner: typeof gameWinner;
+  handicapConfig: typeof handicapConfig;
   http: typeof http;
   importTemplates: typeof importTemplates;
   invites: typeof invites;

@@ -24,6 +24,11 @@ const matchConfig = v.object({
   extraExclude: v.boolean(),
   blindRules,
 });
+const handicapRecalcFrequency = v.union(
+  v.literal("weekly"),
+  v.literal("per-match"),
+  v.literal("manual"),
+);
 
 export default defineSchema({
   ...authTables,
@@ -40,6 +45,7 @@ export default defineSchema({
     matchConfig,
     handicapEnabled: v.boolean(),
     handicapPercent: v.optional(v.number()),
+    handicapRecalcFrequency: v.optional(handicapRecalcFrequency),
   }),
 
   leagueMemberships: defineTable({
@@ -107,6 +113,7 @@ export default defineSchema({
         bonusWinner: v.optional(v.union(v.literal("home"), v.literal("visitor"))),
       }),
     ),
+    handicapPercent: v.optional(v.number()),
   }).index("by_league", ["leagueId"]),
 
   games: defineTable({
@@ -116,6 +123,7 @@ export default defineSchema({
     visitorPlayerId: v.union(v.id("players"), v.literal("blind")),
     winner: v.optional(v.union(v.literal("home"), v.literal("visitor"), v.literal("tie"))),
     isDnp: v.optional(v.boolean()),
+    handicapPercent: v.optional(v.number()),
   }),
 
   innings: defineTable({
