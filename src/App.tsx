@@ -1,16 +1,11 @@
 // ABOUTME: Root application component
-// ABOUTME: Renders the main app shell with Convex provider and routing
-import { ConvexProvider, ConvexReactClient } from "convex/react";
+// ABOUTME: Renders the main app shell with routing and auth-aware redirects
 import { Routes, Route, Navigate } from "react-router-dom";
 import { LandingPage } from "./LandingPage";
 import { LoginPage } from "./LoginPage";
 import { SignupPage } from "./SignupPage";
 import { Dashboard } from "./Dashboard";
 import { useAuth } from "./useAuth";
-
-const convex = new ConvexReactClient(
-  import.meta.env.VITE_CONVEX_URL ?? "https://placeholder.convex.cloud",
-);
 
 function AppRoutes() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -40,11 +35,7 @@ function AppRoutes() {
 }
 
 function App() {
-  return (
-    <ConvexProvider client={convex}>
-      <AppRoutes />
-    </ConvexProvider>
-  );
+  return <AppRoutes />;
 }
 
 export default App;

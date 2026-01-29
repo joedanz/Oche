@@ -1,5 +1,8 @@
-// ABOUTME: Auth state hook for checking authentication status
-// ABOUTME: Placeholder until auth provider is configured in US-005
+// ABOUTME: Auth state hook wrapping Convex authentication
+// ABOUTME: Provides isAuthenticated and isLoading state for routing
+import { useConvexAuth } from "convex/react";
+
 export function useAuth(): { isAuthenticated: boolean; isLoading: boolean } {
-  return { isAuthenticated: false, isLoading: false };
+  const { isAuthenticated, isLoading } = useConvexAuth();
+  return { isAuthenticated, isLoading };
 }

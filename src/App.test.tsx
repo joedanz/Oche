@@ -1,14 +1,14 @@
 // ABOUTME: Tests for the root App component
-// ABOUTME: Verifies basic rendering and Convex provider setup
+// ABOUTME: Verifies basic rendering and routing setup
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, it, expect, vi } from "vitest";
 import { MemoryRouter } from "react-router-dom";
 
-vi.mock("convex/react", () => ({
-  ConvexProvider: ({ children }: { children: React.ReactNode }) => (
-    <>{children}</>
-  ),
-  ConvexReactClient: vi.fn(),
+vi.mock("./useAuth", () => ({
+  useAuth: vi.fn(() => ({
+    isAuthenticated: false,
+    isLoading: false,
+  })),
 }));
 
 import App from "./App";

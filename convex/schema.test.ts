@@ -42,6 +42,12 @@ describe("Core database schema", () => {
       "games",
       "innings",
       "playerStats",
+      "authAccounts",
+      "authSessions",
+      "authRefreshTokens",
+      "authVerificationCodes",
+      "authVerifiers",
+      "authRateLimits",
     ];
 
     for (const table of tableNames) {
