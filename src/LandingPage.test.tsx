@@ -2,6 +2,7 @@
 // ABOUTME: Verifies all required sections render correctly
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, it, expect } from "vitest";
+import { MemoryRouter } from "react-router-dom";
 import { LandingPage } from "./LandingPage";
 
 afterEach(() => {
@@ -10,7 +11,11 @@ afterEach(() => {
 
 describe("LandingPage", () => {
   it("renders the hero section with headline and CTA", () => {
-    render(<LandingPage />);
+    render(
+      <MemoryRouter>
+        <LandingPage />
+      </MemoryRouter>,
+    );
     expect(
       screen.getByRole("heading", { level: 1 }),
     ).toBeInTheDocument();
@@ -19,7 +24,11 @@ describe("LandingPage", () => {
   });
 
   it("renders the feature highlights section", () => {
-    render(<LandingPage />);
+    render(
+      <MemoryRouter>
+        <LandingPage />
+      </MemoryRouter>,
+    );
     const headings = screen.getAllByRole("heading", { level: 3 });
     const titles = headings.map((h) => h.textContent);
     expect(titles).toContain("Score Entry");
@@ -29,14 +38,22 @@ describe("LandingPage", () => {
   });
 
   it("renders the social proof section", () => {
-    render(<LandingPage />);
+    render(
+      <MemoryRouter>
+        <LandingPage />
+      </MemoryRouter>,
+    );
     expect(
       screen.getByText(/trusted by leagues/i),
     ).toBeInTheDocument();
   });
 
   it("renders the pricing section", () => {
-    render(<LandingPage />);
+    render(
+      <MemoryRouter>
+        <LandingPage />
+      </MemoryRouter>,
+    );
     expect(
       screen.getByRole("heading", { name: /free to start/i }),
     ).toBeInTheDocument();
@@ -44,7 +61,11 @@ describe("LandingPage", () => {
   });
 
   it("renders the footer with navigation links", () => {
-    render(<LandingPage />);
+    render(
+      <MemoryRouter>
+        <LandingPage />
+      </MemoryRouter>,
+    );
     const footer = screen.getByRole("contentinfo");
     expect(footer).toBeInTheDocument();
     const loginLinks = screen.getAllByRole("link", { name: /log in/i });
@@ -54,7 +75,11 @@ describe("LandingPage", () => {
   });
 
   it("is responsive with appropriate layout classes", () => {
-    render(<LandingPage />);
+    render(
+      <MemoryRouter>
+        <LandingPage />
+      </MemoryRouter>,
+    );
     const main = screen.getByRole("main");
     expect(main).toBeInTheDocument();
   });

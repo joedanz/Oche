@@ -2,12 +2,17 @@
 // ABOUTME: Verifies basic rendering and Convex provider setup
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, it, expect, vi } from "vitest";
+import { MemoryRouter } from "react-router-dom";
 
 vi.mock("convex/react", () => ({
   ConvexProvider: ({ children }: { children: React.ReactNode }) => (
     <>{children}</>
   ),
   ConvexReactClient: vi.fn(),
+  useConvexAuth: vi.fn(() => ({
+    isAuthenticated: false,
+    isLoading: false,
+  })),
 }));
 
 import App from "./App";
@@ -18,12 +23,20 @@ afterEach(() => {
 
 describe("App", () => {
   it("renders the landing page", () => {
-    render(<App />);
+    render(
+      <MemoryRouter initialEntries={["/"]}>
+        <App />
+      </MemoryRouter>,
+    );
     expect(screen.getByRole("heading", { level: 1 })).toBeInTheDocument();
   });
 
   it("renders with a main element", () => {
-    render(<App />);
+    render(
+      <MemoryRouter initialEntries={["/"]}>
+        <App />
+      </MemoryRouter>,
+    );
     const main = screen.getByRole("main");
     expect(main).toBeInTheDocument();
   });

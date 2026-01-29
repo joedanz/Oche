@@ -2,6 +2,7 @@
 // ABOUTME: Public page with hero, features, social proof, pricing, and footer
 
 import { useEffect, useRef, useState, useCallback } from "react";
+import { Link } from "react-router-dom";
 
 // ── Data ────────────────────────────────────────────────────────────────────
 
@@ -276,18 +277,18 @@ export function LandingPage() {
             OCHE
           </a>
           <nav className="flex items-center gap-6">
-            <a
-              href="/login"
+            <Link
+              to="/login"
               className="text-sm font-medium text-oche-400 transition hover:text-oche-100"
             >
               Log In
-            </a>
-            <a
-              href="/signup"
+            </Link>
+            <Link
+              to="/signup"
               className="rounded-lg bg-amber-500 px-4 py-2 text-sm font-semibold text-oche-900 shadow-md shadow-amber-500/20 transition hover:bg-amber-400 hover:shadow-amber-400/25"
             >
               Sign Up
-            </a>
+            </Link>
           </nav>
         </div>
       </header>
@@ -321,12 +322,12 @@ export function LandingPage() {
                 for scoring, stats, scheduling, and standings.
               </p>
               <div className="mt-10 flex animate-fade-in-up flex-col items-center gap-4 [animation-delay:300ms] sm:flex-row sm:justify-center">
-                <a
-                  href="/signup"
+                <Link
+                  to="/signup"
                   className="group relative rounded-xl bg-amber-500 px-8 py-3.5 font-semibold text-oche-900 shadow-lg shadow-amber-500/25 transition-all duration-300 hover:bg-amber-400 hover:shadow-xl hover:shadow-amber-400/30"
                 >
                   Start Your League
-                </a>
+                </Link>
                 <a
                   href="#features"
                   className="rounded-xl border border-oche-600 px-8 py-3.5 font-semibold text-oche-300 transition-all duration-300 hover:border-oche-400 hover:bg-oche-800/50 hover:text-oche-100"
@@ -429,12 +430,12 @@ export function LandingPage() {
                     </li>
                   ))}
                 </ul>
-                <a
-                  href="/signup"
+                <Link
+                  to="/signup"
                   className="mt-10 block rounded-xl bg-amber-500 px-6 py-3 text-center font-semibold text-oche-900 shadow-md shadow-amber-500/20 transition-all duration-300 hover:bg-amber-400 hover:shadow-lg hover:shadow-amber-400/25"
                 >
                   Get Started
-                </a>
+                </Link>
               </div>
             </div>
           </div>
@@ -453,12 +454,12 @@ export function LandingPage() {
             <p className="mt-4 text-oche-400">
               Set up your league in minutes. Your first season is on us.
             </p>
-            <a
-              href="/signup"
+            <Link
+              to="/signup"
               className="mt-8 inline-block rounded-xl bg-amber-500 px-8 py-3.5 font-semibold text-oche-900 shadow-lg shadow-amber-500/25 transition-all duration-300 hover:bg-amber-400 hover:shadow-xl hover:shadow-amber-400/30"
             >
               Start Your League
-            </a>
+            </Link>
           </div>
         </section>
       </main>
@@ -473,12 +474,12 @@ export function LandingPage() {
             </p>
           </div>
           <nav className="flex gap-8 text-sm text-oche-500">
-            <a href="/login" className="transition hover:text-oche-200">
+            <Link to="/login" className="transition hover:text-oche-200">
               Log In
-            </a>
-            <a href="/signup" className="transition hover:text-oche-200">
+            </Link>
+            <Link to="/signup" className="transition hover:text-oche-200">
               Sign Up
-            </a>
+            </Link>
           </nav>
         </div>
       </footer>

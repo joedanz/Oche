@@ -70,7 +70,7 @@ If the account doesn't exist, create it via the signup form. This ensures consis
 - **Storage URLs**: Use `ctx.storage.getUrl(storageId)` in queries to generate CDN-backed URLs. Don't construct URLs manually. Store only the `storageId`, generate URLs on-the-fly.
 
 ## Design Standards
-See @DESIGN.md for CSS styling details and best practices.
+See @DESIGN.md for CSS styling details and best practices.  Use /frontend-design skill to create great designs that are WCAG 2.1 compliant.
 
 ## Human_Overview
 Maintain a detailed HUMAN.md file that explains the whole project in plain language. 
