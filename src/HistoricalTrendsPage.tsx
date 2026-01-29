@@ -5,6 +5,8 @@ import { useState } from "react";
 import { useQuery } from "convex/react";
 import { api } from "../convex/_generated/api";
 import type { Id } from "../convex/_generated/dataModel";
+import { usePlan } from "./usePlan";
+import { UpgradePrompt } from "./UpgradePrompt";
 import {
   LineChart,
   Line,
@@ -24,6 +26,7 @@ const COLORS = [
 type Mode = "players" | "teams";
 
 export function HistoricalTrendsPage({ leagueId }: { leagueId: Id<"leagues"> }) {
+  const { isLoading, canUse } = usePlan();
   const [seasonId, setSeasonId] = useState<string>("");
   const [mode, setMode] = useState<Mode>("players");
   const [selectedPlayerIds, setSelectedPlayerIds] = useState<string[]>([]);
@@ -60,6 +63,11 @@ export function HistoricalTrendsPage({ leagueId }: { leagueId: Id<"leagues"> }) 
     api.trends.getTeamTrend,
     selectedTeamIds[2] ? { teamId: selectedTeamIds[2] as Id<"teams">, leagueId, ...seasonArg } : "skip",
   );
+
+  if (isLoading) return null;
+  if (!canUse("historical_trends")) {
+    return <UpgradePrompt message="Historical trends require a League plan or higher." />;
+  }
 
   if (!metadata) {
     return <div className="p-6">Loading…</div>;

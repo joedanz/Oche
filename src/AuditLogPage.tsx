@@ -5,6 +5,8 @@ import { useState } from "react";
 import { useQuery } from "convex/react";
 import { api } from "../convex/_generated/api";
 import type { Id } from "../convex/_generated/dataModel";
+import { usePlan } from "./usePlan";
+import { UpgradePrompt } from "./UpgradePrompt";
 
 type AuditAction = "score_entry" | "score_edit" | "score_import" | "role_change";
 
@@ -27,6 +29,7 @@ interface AuditLogEntry {
 }
 
 export function AuditLogPage({ leagueId }: { leagueId: Id<"leagues"> }) {
+  const { isLoading, canUse } = usePlan();
   const [actionFilter, setActionFilter] = useState<AuditAction | "">("");
 
   const queryArgs: { leagueId: Id<"leagues">; action?: AuditAction } = { leagueId };
@@ -35,6 +38,11 @@ export function AuditLogPage({ leagueId }: { leagueId: Id<"leagues"> }) {
   }
 
   const entries = useQuery(api.auditLog.getAuditLog, queryArgs) as AuditLogEntry[] | undefined;
+
+  if (isLoading) return null;
+  if (!canUse("audit_log")) {
+    return <UpgradePrompt message="Audit log requires a League plan or higher." />;
+  }
 
   return (
     <div>

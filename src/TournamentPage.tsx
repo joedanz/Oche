@@ -6,6 +6,8 @@ import { Link } from "react-router-dom";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "../convex/_generated/api";
 import type { Id } from "../convex/_generated/dataModel";
+import { usePlan } from "./usePlan";
+import { UpgradePrompt } from "./UpgradePrompt";
 
 interface TournamentPageProps {
   leagueId: Id<"leagues">;
@@ -35,6 +37,7 @@ interface Tournament {
 }
 
 export function TournamentPage({ leagueId }: TournamentPageProps) {
+  const { isLoading, canUse } = usePlan();
   const tournaments = useQuery(api.tournaments.getTournaments, { leagueId }) as
     | Tournament[]
     | undefined;
@@ -91,6 +94,11 @@ export function TournamentPage({ leagueId }: TournamentPageProps) {
       setError(err.message || "Failed to create tournament");
     }
   };
+
+  if (isLoading) return null;
+  if (!canUse("tournaments")) {
+    return <UpgradePrompt message="Tournaments require a League plan or higher." />;
+  }
 
   const viewing = viewingTournament
     ? tournaments?.find((t) => t._id === viewingTournament)

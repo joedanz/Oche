@@ -4,14 +4,22 @@
 import { useQuery, useMutation } from "convex/react";
 import { api } from "../convex/_generated/api";
 import type { Id } from "../convex/_generated/dataModel";
+import { usePlan } from "./usePlan";
+import { UpgradePrompt } from "./UpgradePrompt";
 
 interface Props {
   leagueId: Id<"leagues">;
 }
 
 export function LeagueVisibilityToggle({ leagueId }: Props) {
+  const { isLoading, canUse } = usePlan();
   const league = useQuery(api.leagues.getLeague, { leagueId });
   const toggle = useMutation(api.publicLeague.toggleVisibility);
+
+  if (isLoading) return null;
+  if (!canUse("public_pages")) {
+    return <UpgradePrompt message="Public league pages require a League plan or higher." />;
+  }
 
   if (!league) return null;
 

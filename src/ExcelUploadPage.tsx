@@ -4,6 +4,8 @@
 import { useState, useCallback } from "react";
 import { parseExcelScores, type ExcelParseResult } from "./excelParser";
 import type { ParsedScoreRow } from "./csvParser";
+import { usePlan } from "./usePlan";
+import { UpgradePrompt } from "./UpgradePrompt";
 
 interface ExcelUploadPageProps {
   leagueId: string;
@@ -11,6 +13,7 @@ interface ExcelUploadPageProps {
 }
 
 export function ExcelUploadPage({ leagueId, matchId }: ExcelUploadPageProps) {
+  const { isLoading, canUse } = usePlan();
   const [preview, setPreview] = useState<ParsedScoreRow[] | null>(null);
   const [errors, setErrors] = useState<string[]>([]);
   const [fileName, setFileName] = useState<string>("");
@@ -66,6 +69,11 @@ export function ExcelUploadPage({ leagueId, matchId }: ExcelUploadPageProps) {
     void leagueId;
     void matchId;
   }, [preview, leagueId, matchId]);
+
+  if (isLoading) return null;
+  if (!canUse("score_import")) {
+    return <UpgradePrompt message="Score import requires a League plan or higher." />;
+  }
 
   return (
     <div className="max-w-4xl mx-auto p-6">

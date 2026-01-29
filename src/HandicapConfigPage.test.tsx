@@ -15,6 +15,10 @@ vi.mock("convex/react", () => ({
   useMutation: (...args: any[]) => mockUseMutation(...args),
 }));
 
+vi.mock("./usePlan", () => ({
+  usePlan: () => ({ isLoading: false, canUse: () => true }),
+}));
+
 vi.mock("../convex/_generated/api", () => ({
   api: {
     leagues: { getLeague: "leagues:getLeague" },

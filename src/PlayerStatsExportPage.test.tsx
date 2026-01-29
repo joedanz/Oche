@@ -11,6 +11,10 @@ vi.mock("convex/react", () => ({
   useMutation: vi.fn(() => vi.fn()),
 }));
 
+vi.mock("./usePlan", () => ({
+  usePlan: () => ({ isLoading: false, canUse: () => true }),
+}));
+
 vi.mock("../convex/_generated/api", () => ({
   api: {
     statsExport: { getExportData: "statsExport:getExportData" },
