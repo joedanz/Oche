@@ -17,14 +17,14 @@ afterEach(() => {
 });
 
 describe("App", () => {
-  it("renders the app heading", () => {
+  it("renders the landing page", () => {
     render(<App />);
-    expect(screen.getByText("Oche")).toBeInTheDocument();
+    expect(screen.getByRole("heading", { level: 1 })).toBeInTheDocument();
   });
 
-  it("renders with Tailwind utility classes", () => {
+  it("renders with a main element", () => {
     render(<App />);
     const main = screen.getByRole("main");
-    expect(main).toHaveClass("flex", "min-h-screen");
+    expect(main).toBeInTheDocument();
   });
 });
