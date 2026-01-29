@@ -31,6 +31,9 @@ vi.mock("../convex/_generated/api", () => ({
       getScoreEntries: "dualEntry:getScoreEntries",
       resolveDiscrepancy: "dualEntry:resolveDiscrepancy",
     },
+    handicapScoring: {
+      getGameHandicap: "handicapScoring:getGameHandicap",
+    },
   },
 }));
 

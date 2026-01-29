@@ -26,6 +26,10 @@ export function ScoringGrid({
     leagueId,
   });
   const saveInnings = useMutation(api.scoring.saveInnings);
+  const handicapData = useQuery(api.handicapScoring.getGameHandicap, {
+    gameId,
+    leagueId,
+  });
 
   // Grid state: [row][col] where row 0=home, row 1=visitor
   // Columns 0-8 are regulation innings 1-9, columns 9+ are extra innings
@@ -231,12 +235,33 @@ export function ScoringGrid({
     }
   }, [grid, gameId, leagueId, saveInnings, totalColumns]);
 
+  // Compute adjusted totals when handicap is active
+  const hasHandicap = handicapData && handicapData.spotRuns > 0;
+  const adjustedTotals = useMemo(() => {
+    if (!hasHandicap || !handicapData) return null;
+    const homeAdj = totals.homePlus + (handicapData.recipientSide === "home" ? handicapData.spotRuns : 0);
+    const visitorAdj = totals.visitorPlus + (handicapData.recipientSide === "visitor" ? handicapData.spotRuns : 0);
+    return { homeAdj, visitorAdj };
+  }, [totals, hasHandicap, handicapData]);
+
   if (existingInnings === undefined) {
     return <p>Loading…</p>;
   }
 
   return (
     <div className="overflow-x-auto touch-action-manipulation" data-testid="scoring-grid-container">
+      {hasHandicap && handicapData && (
+        <div data-testid="handicap-info" className="mb-2 text-sm bg-purple-900/30 border border-purple-700 rounded px-3 py-2">
+          <span className="font-medium text-purple-300">Handicap ({handicapData.handicapPercent}%):</span>{" "}
+          <span>
+            Spot: +{handicapData.spotRuns} to{" "}
+            {handicapData.recipientSide === "home" ? homePlayerName : visitorPlayerName}
+          </span>
+          <span className="ml-3 text-gray-400">
+            (Avg: {homePlayerName} {handicapData.homeAverage} / {visitorPlayerName} {handicapData.visitorAverage})
+          </span>
+        </div>
+      )}
       <table className="border-collapse w-full text-sm">
         <thead>
           <tr>
@@ -257,6 +282,9 @@ export function ScoringGrid({
             <th className="border border-gray-600 px-2 py-1 text-center w-12">Plus</th>
             <th className="border border-gray-600 px-2 py-1 text-center w-12">Minus</th>
             <th className="border border-gray-600 px-2 py-1 text-center w-12">Total</th>
+            {hasHandicap && (
+              <th className="border border-gray-600 px-2 py-1 text-center w-12 bg-purple-900/30">Adj</th>
+            )}
             <th className="border border-gray-600 px-2 py-1 text-center w-10">9s</th>
           </tr>
         </thead>
@@ -309,6 +337,11 @@ export function ScoringGrid({
               <td data-testid={`${row === 0 ? "home" : "visitor"}-total`} className="border border-gray-600 px-2 py-1 text-center font-bold">
                 {row === 0 ? totals.homeTotal : totals.visitorTotal}
               </td>
+              {hasHandicap && adjustedTotals && (
+                <td data-testid={`${row === 0 ? "home" : "visitor"}-adjusted`} className="border border-gray-600 px-2 py-1 text-center font-bold bg-purple-900/20 text-purple-300">
+                  {row === 0 ? adjustedTotals.homeAdj : adjustedTotals.visitorAdj}
+                </td>
+              )}
               <td data-testid={`${row === 0 ? "home" : "visitor"}-high-innings`} className="border border-gray-600 px-2 py-1 text-center font-semibold text-yellow-400">
                 {row === 0 ? highInningsCounts.home : highInningsCounts.visitor}
               </td>
