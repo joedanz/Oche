@@ -36,6 +36,7 @@
 - When a component calls `useMutation` multiple times, use `mockUseMutation.mockImplementation((ref) => { ... })` dispatching on API reference string instead of `mockReturnValueOnce` chains (re-renders consume mocked values)
 - When deleting a parent entity (e.g., division), unassign child references first (e.g., clear team.divisionId) to avoid orphaned foreign keys
 - Matches table has `by_league` index — use `withIndex("by_league", ...)` for league-scoped match queries
+- Export pure algorithm functions separately from Convex mutations for direct unit testing without mocking
 
 ## 2026-01-28 - US-001
 - Scaffolded Vite + React + TypeScript project
@@ -334,4 +335,20 @@
   - Matches table needs `by_league` index for efficient league-scoped queries
   - Double-booking check filters existing matches by date AND checks both homeTeamId and visitorTeamId positions
   - `getMatchesHandler` enriches matches with team names by joining homeTeamId/visitorTeamId to teams table
+---
+
+## 2026-01-29 - US-021
+- Added auto-generate round-robin schedule: algorithm + mutation + UI page
+- Backend: `convex/scheduleGenerator.ts` with pure `generateRoundRobin()` function and `generateScheduleHandler`
+- Circle method: fix one team, rotate the rest to produce N-1 rounds
+- Frontend: `src/ScheduleGeneratorPage.tsx` with team checkboxes, select all/deselect all, start date, weeks between rounds
+- Added "Auto-Generate" link on SchedulePage linking to `/leagues/:leagueId/schedule/generate`
+- Route: `/leagues/:leagueId/schedule/generate` as child of LeagueLayout
+- **Tests added:** 18 new tests in `convex/scheduleGenerator.test.ts` (10) and `src/ScheduleGeneratorPage.test.tsx` (8)
+- **Files changed:** convex/scheduleGenerator.ts (new), convex/scheduleGenerator.test.ts (new), src/ScheduleGeneratorPage.tsx (new), src/ScheduleGeneratorPage.test.tsx (new), src/App.tsx, src/SchedulePage.tsx, convex/_generated/api.d.ts
+- **Learnings for future iterations:**
+  - Pure algorithm functions (like `generateRoundRobin`) should be exported separately from Convex mutations for easy unit testing
+  - Circle method round-robin doesn't guarantee perfect home/away balance for small N (4 teams) — some teams may have 0 home or 0 away games
+  - `getByRole("button", { name: /select all/i })` matches "Deselect All" too — use `^select all$` anchors
+  - Date arithmetic with `new Date(dateStr + "T00:00:00")` avoids timezone offset issues when adding days
 ---
