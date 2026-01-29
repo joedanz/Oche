@@ -70,7 +70,7 @@ export default defineSchema({
   divisions: defineTable({
     leagueId: v.id("leagues"),
     name: v.string(),
-  }),
+  }).index("by_league", ["leagueId"]),
 
   teams: defineTable({
     name: v.string(),
