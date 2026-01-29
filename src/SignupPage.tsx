@@ -1,11 +1,12 @@
 // ABOUTME: Signup page with email, password, and display name form
 // ABOUTME: Validates password requirements and creates account via Convex auth
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuthActions } from "@convex-dev/auth/react";
 
 export function SignupPage() {
   const { signIn } = useAuthActions();
+  const navigate = useNavigate();
   const [error, setError] = useState("");
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -22,6 +23,7 @@ export function SignupPage() {
     formData.set("flow", "signUp");
     try {
       await signIn("password", formData);
+      navigate("/", { replace: true });
     } catch {
       setError("Could not create account. Please try again.");
     }

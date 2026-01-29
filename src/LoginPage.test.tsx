@@ -7,10 +7,16 @@ import { MemoryRouter } from "react-router-dom";
 import { LoginPage } from "./LoginPage";
 
 const mockSignIn = vi.fn();
+const mockNavigate = vi.fn();
 
 vi.mock("@convex-dev/auth/react", () => ({
   useAuthActions: () => ({ signIn: mockSignIn }),
 }));
+
+vi.mock("react-router-dom", async () => {
+  const actual = await vi.importActual("react-router-dom");
+  return { ...actual, useNavigate: () => mockNavigate };
+});
 
 afterEach(() => {
   cleanup();
@@ -106,6 +112,24 @@ describe("LoginPage", () => {
     );
 
     expect(mockSignIn).toHaveBeenCalledWith("google");
+  });
+
+  it("navigates to / after successful login", async () => {
+    mockSignIn.mockResolvedValue(undefined);
+    const user = userEvent.setup();
+    render(
+      <MemoryRouter initialEntries={["/login"]}>
+        <LoginPage />
+      </MemoryRouter>,
+    );
+
+    await user.type(screen.getByLabelText(/email/i), "test@example.com");
+    await user.type(screen.getByLabelText(/password/i), "password123");
+    await user.click(
+      screen.getByRole("button", { name: /^log in$/i }),
+    );
+
+    expect(mockNavigate).toHaveBeenCalledWith("/", { replace: true });
   });
 
   it("has a link to the signup page", () => {
