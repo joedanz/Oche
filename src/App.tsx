@@ -18,6 +18,7 @@ import { DivisionsPage } from "./DivisionsPage";
 import { TeamsPage } from "./TeamsPage";
 import { RosterPage } from "./RosterPage";
 import { SchedulePage } from "./SchedulePage";
+import { ScheduleGeneratorPage } from "./ScheduleGeneratorPage";
 import { useAuth } from "./useAuth";
 
 function AuthenticatedRedirect() {
@@ -88,6 +89,7 @@ function AppRoutes() {
         <Route path="teams" element={<TeamsRoute />} />
         <Route path="teams/:teamId/roster" element={<RosterRoute />} />
         <Route path="schedule" element={<ScheduleRoute />} />
+        <Route path="schedule/generate" element={<ScheduleGeneratorRoute />} />
       </Route>
     </Routes>
   );
@@ -147,6 +149,12 @@ function ScheduleRoute() {
   const { leagueId } = useParams<{ leagueId: string }>();
   if (!leagueId) return null;
   return <SchedulePage leagueId={leagueId as any} />;
+}
+
+function ScheduleGeneratorRoute() {
+  const { leagueId } = useParams<{ leagueId: string }>();
+  if (!leagueId) return null;
+  return <ScheduleGeneratorPage leagueId={leagueId as any} />;
 }
 
 function App() {
