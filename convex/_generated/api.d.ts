@@ -11,6 +11,7 @@
 import type * as auth from "../auth.js";
 import type * as authorization from "../authorization.js";
 import type * as dashboard from "../dashboard.js";
+import type * as divisions from "../divisions.js";
 import type * as http from "../http.js";
 import type * as invites from "../invites.js";
 import type * as leagues from "../leagues.js";
@@ -29,6 +30,7 @@ declare const fullApi: ApiFromModules<{
   auth: typeof auth;
   authorization: typeof authorization;
   dashboard: typeof dashboard;
+  divisions: typeof divisions;
   http: typeof http;
   invites: typeof invites;
   leagues: typeof leagues;
