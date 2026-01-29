@@ -12,6 +12,9 @@
 - Use `cleanup()` from @testing-library/react in `afterEach` to avoid duplicate DOM elements between tests
 - Schema exports a default object with `.tables` property — use `Object.keys(schema.tables)` for introspection
 - Blind players represented as `v.union(v.id("players"), v.literal("blind"))` in match pairings and games
+- `BrowserRouter` goes in `main.tsx`, not `App.tsx` — tests use `MemoryRouter` wrapping `<App />`
+- `useConvexAuth()` requires `ConvexProviderWithAuth`, not basic `ConvexProvider` — use `useAuth` hook as abstraction
+- Internal nav links must use `<Link>` from react-router-dom, not `<a>` tags
 
 ## 2026-01-28 - US-001
 - Scaffolded Vite + React + TypeScript project
@@ -50,4 +53,20 @@
   - Use `getAllByRole` + map to check multiple headings when `getByText` matches too broadly
   - Use `getByRole("heading", { name: /pattern/i })` for specific heading assertions
   - Landing page is a pure component with no backend dependencies — no mocking needed
+---
+
+## 2026-01-28 - US-004
+- Added client-side routing with react-router-dom
+- Header nav Log In/Sign Up use `<Link>` for SPA navigation
+- Stub pages: LoginPage, SignupPage, Dashboard
+- Auth redirect: authenticated users go from `/` to `/dashboard`
+- Created `useAuth` hook as abstraction over Convex auth (stub for now)
+- Updated all existing tests to wrap components in `MemoryRouter`
+- **Tests added:** 6 new tests in `src/Navigation.test.tsx`
+- **Files changed:** src/App.tsx, src/main.tsx, src/LandingPage.tsx, src/LoginPage.tsx (new), src/SignupPage.tsx (new), src/Dashboard.tsx (new), src/useAuth.tsx (new), src/Navigation.test.tsx (new), src/App.test.tsx, src/LandingPage.test.tsx
+- **Learnings for future iterations:**
+  - `BrowserRouter` belongs in main.tsx, not App.tsx — keeps App testable with MemoryRouter
+  - `useConvexAuth()` throws if no auth provider configured — need `ConvexProviderWithAuth`
+  - When multiple elements match (e.g., "OCHE" in header and footer), use `element.closest()` or `getByRole` with container
+  - Convert all internal `<a href>` to `<Link to>` when adding routing
 ---
