@@ -180,3 +180,18 @@
   - Use `as LeagueEntry[] | undefined` cast on `useQuery` return when `_generated/api` stubs don't provide types
   - Export handler functions (e.g., `getUserLeaguesWithDetailsHandler`) for direct unit testing without auth mocking
 ---
+
+## 2026-01-28 - US-011
+- Added league invitation system: generate, list, revoke, and accept invite codes
+- Backend: `convex/invites.ts` with exported handler functions for unit testing
+- Frontend: `src/InvitationsPage.tsx` with admin UI for managing invites
+- Added schema indexes: `by_code` and `by_league` on invites table
+- Added `/leagues/:leagueId/invitations` route in App.tsx
+- **Tests added:** 14 new tests in `convex/invites.test.ts` (6) and `src/InvitationsPage.test.tsx` (8)
+- **Files changed:** convex/invites.ts (new), convex/invites.test.ts (new), convex/schema.ts, src/InvitationsPage.tsx (new), src/InvitationsPage.test.tsx (new), src/App.tsx
+- **Learnings for future iterations:**
+  - Schema indexes need `.index("name", ["field"])` chained after `defineTable()` — add `by_code` and `by_league` for invite lookups
+  - `getByText(/captain/i)` can match `<option>` elements in select dropdowns — use `getAllByText` or more specific selectors when a combobox has matching text
+  - Invite codes use ambiguity-resistant characters (no 0/O/1/l/I) for readability
+  - `revokeInvite` marks `used: true` rather than deleting — preserves audit trail
+---
