@@ -2,3 +2,26 @@
 # Feature: oche-darts-league
 # Started: 2026-01-28
 
+## Codebase Patterns
+- Use `npm run check` to run typecheck + tests before merging
+- Tailwind CSS v4 uses `@import "tailwindcss"` in CSS (no directives like v3)
+- Convex directory has its own tsconfig.json separate from the app
+- Vitest uses jsdom environment with @testing-library/react for component tests
+- Test setup file at `src/test-setup.ts` imports jest-dom matchers
+- Mock Convex hooks with `vi.mock("convex/react", ...)` at module level
+- Use `cleanup()` from @testing-library/react in `afterEach` to avoid duplicate DOM elements between tests
+
+## 2026-01-28 - US-001
+- Scaffolded Vite + React + TypeScript project
+- Configured Tailwind CSS v4 with @tailwindcss/vite plugin
+- Initialized Convex directory with tsconfig
+- Set up Vitest with jsdom, @testing-library/react, jest-dom
+- Added npm scripts: typecheck, test, test:watch, check
+- **Tests added:** 2 new tests in src/App.test.tsx
+- **Files changed:** 16 new files (project scaffolding)
+- **Learnings for future iterations:**
+  - Vite scaffolding with `npm create vite@latest` won't overwrite existing files — use a temp dir
+  - Package name defaults to template name — remember to update it
+  - Tailwind v4 uses `@import "tailwindcss"` instead of v3's `@tailwind` directives
+  - Need `afterEach(cleanup)` in tests or DOM elements accumulate across tests
+---
