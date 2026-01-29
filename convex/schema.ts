@@ -55,6 +55,7 @@ export default defineSchema({
         v.literal("per-match"),
       ),
     ),
+    isPublic: v.optional(v.boolean()),
   }),
 
   leagueMemberships: defineTable({
