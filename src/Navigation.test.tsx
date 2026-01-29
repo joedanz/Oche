@@ -4,6 +4,22 @@ import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, it, expect, vi } from "vitest";
 import { MemoryRouter } from "react-router-dom";
 
+const mockUseQuery = vi.fn();
+
+vi.mock("convex/react", () => ({
+  useQuery: (...args: any[]) => mockUseQuery(...args),
+  useMutation: vi.fn(() => vi.fn()),
+}));
+
+vi.mock("../convex/_generated/api", () => ({
+  api: {
+    onboarding: {
+      getUserLeagues: "onboarding:getUserLeagues",
+      createLeague: "onboarding:createLeague",
+    },
+  },
+}));
+
 vi.mock("./useAuth", () => ({
   useAuth: vi.fn(() => ({
     isAuthenticated: false,
@@ -62,12 +78,13 @@ describe("Navigation", () => {
     ).toBeInTheDocument();
   });
 
-  it("redirects authenticated users from landing to dashboard", async () => {
+  it("redirects authenticated users with leagues from landing to dashboard", async () => {
     const { useAuth } = await import("./useAuth");
     vi.mocked(useAuth).mockReturnValue({
       isAuthenticated: true,
       isLoading: false,
     });
+    mockUseQuery.mockReturnValue([{ _id: "m1", leagueId: "l1", role: "admin" }]);
 
     render(
       <MemoryRouter initialEntries={["/"]}>
@@ -76,10 +93,26 @@ describe("Navigation", () => {
     );
 
     expect(
-      screen.queryByRole("heading", { name: /your league/i }),
-    ).not.toBeInTheDocument();
-    expect(
       screen.getByRole("heading", { name: /dashboard/i }),
+    ).toBeInTheDocument();
+  });
+
+  it("redirects authenticated users without leagues to onboarding", async () => {
+    const { useAuth } = await import("./useAuth");
+    vi.mocked(useAuth).mockReturnValue({
+      isAuthenticated: true,
+      isLoading: false,
+    });
+    mockUseQuery.mockReturnValue([]);
+
+    render(
+      <MemoryRouter initialEntries={["/"]}>
+        <App />
+      </MemoryRouter>,
+    );
+
+    expect(
+      screen.getByRole("heading", { name: /welcome to oche/i }),
     ).toBeInTheDocument();
   });
 
