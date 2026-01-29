@@ -352,3 +352,19 @@
   - `getByRole("button", { name: /select all/i })` matches "Deselect All" too — use `^select all$` anchors
   - Date arithmetic with `new Date(dateStr + "T00:00:00")` avoids timezone offset issues when adding days
 ---
+
+## 2026-01-29 - US-022
+- Added player pairings per game: assign home/visitor players or blinds to match slots
+- Backend: `convex/pairings.ts` with `savePairingsHandler` (captain/admin) and `getMatchWithRostersHandler`
+- Duplicate player validation (blinds exempt), active-only roster filtering
+- Frontend: `src/PairingsPage.tsx` with slot-based dropdowns, add/remove slots, save button
+- Added "Pairings" link on each match in SchedulePage
+- Route: `/leagues/:leagueId/matches/:matchId/pairings` as child of LeagueLayout
+- **Tests added:** 13 new tests in `convex/pairings.test.ts` (5) and `src/PairingsPage.test.tsx` (8)
+- **Files changed:** convex/pairings.ts (new), convex/pairings.test.ts (new), convex/_generated/api.d.ts, src/PairingsPage.tsx (new), src/PairingsPage.test.tsx (new), src/App.tsx, src/SchedulePage.tsx
+- **Learnings for future iterations:**
+  - Pairings are stored as an array on the `matches` table — no separate pairings table needed
+  - Blind detection: check `=== "blind"` before adding to duplicate-check set
+  - PairingsPage uses `useEffect` with `initialized` flag to load existing pairings from match data without re-triggering on state changes
+  - Route with two params (`leagueId` + `matchId`) needs both extracted in the route wrapper component
+---

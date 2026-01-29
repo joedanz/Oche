@@ -393,7 +393,7 @@
       ],
       "epic": "Match Scheduling",
       "priority": 22,
-      "passes": false,
+      "passes": true,
       "notes": ""
     },
     {
