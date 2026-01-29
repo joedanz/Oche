@@ -907,7 +907,7 @@
       ],
       "epic": "Tournaments",
       "priority": 52,
-      "passes": false,
+      "passes": true,
       "notes": ""
     },
     {

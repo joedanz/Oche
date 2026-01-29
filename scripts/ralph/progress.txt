@@ -838,3 +838,20 @@
   - `afterEach(cleanup)` required in component tests to avoid duplicate DOM elements across tests
   - `getByLabelText` requires label to wrap input or use `htmlFor` — nesting `<input>` inside `<label>` is simplest
 ---
+
+## 2026-01-29 - US-052
+- Added tournament match scoring with automatic bracket advancement
+- Backend: `convex/tournamentScoring.ts` with `recordTournamentMatchResultHandler` (admin-only)
+- Winner recorded on bracket match, automatically advanced to next round's participant slot
+- Tournament status transitions: pending → in_progress → completed
+- Frontend: `src/TournamentScoringPage.tsx` with interactive bracket, winner selection buttons, champion display
+- Added "Score" link on TournamentPage per tournament
+- Route: `/leagues/:leagueId/tournaments/:tournamentId/score` as child of LeagueLayout
+- **Tests added:** 12 new tests in `convex/tournamentScoring.test.ts` (5) and `src/TournamentScoringPage.test.tsx` (7)
+- **Files changed:** convex/tournamentScoring.ts (new), convex/tournamentScoring.test.ts (new), src/TournamentScoringPage.tsx (new), src/TournamentScoringPage.test.tsx (new), src/App.tsx, src/TournamentPage.tsx, convex/_generated/api.d.ts
+- **Learnings for future iterations:**
+  - Bracket advancement: find match position within its round, next match = nextRoundMatches[floor(pos/2)], even pos → participant1, odd pos → participant2
+  - Tournament status is a state machine: pending → in_progress (first result recorded) → completed (final match decided)
+  - `data-winner` attribute on participant rows enables test assertions for visual winner highlighting
+  - When `getAllByText` matches too many, use `getAllByText(/pattern/).length` assertion instead of `getByText`
+---
