@@ -38,6 +38,7 @@ import { PaymentConfigPage } from "./PaymentConfigPage";
 import { PaymentTrackingPage } from "./PaymentTrackingPage";
 import { StripePaymentPage } from "./StripePaymentPage";
 import { TournamentPage } from "./TournamentPage";
+import { TournamentScoringPage } from "./TournamentScoringPage";
 import { useAuth } from "./useAuth";
 
 function AuthenticatedRedirect() {
@@ -128,6 +129,7 @@ function AppRoutes() {
         <Route path="payment-tracking" element={<PaymentTrackingRoute />} />
         <Route path="pay" element={<StripePaymentRoute />} />
         <Route path="tournaments" element={<TournamentsRoute />} />
+        <Route path="tournaments/:tournamentId/score" element={<TournamentScoringRoute />} />
       </Route>
     </Routes>
   );
@@ -307,6 +309,12 @@ function TournamentsRoute() {
   const { leagueId } = useParams<{ leagueId: string }>();
   if (!leagueId) return null;
   return <TournamentPage leagueId={leagueId as any} />;
+}
+
+function TournamentScoringRoute() {
+  const { leagueId, tournamentId } = useParams<{ leagueId: string; tournamentId: string }>();
+  if (!leagueId || !tournamentId) return null;
+  return <TournamentScoringPage leagueId={leagueId as any} tournamentId={tournamentId as any} />;
 }
 
 function App() {
