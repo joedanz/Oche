@@ -37,6 +37,8 @@
 - When deleting a parent entity (e.g., division), unassign child references first (e.g., clear team.divisionId) to avoid orphaned foreign keys
 - Matches table has `by_league` index — use `withIndex("by_league", ...)` for league-scoped match queries
 - Export pure algorithm functions separately from Convex mutations for direct unit testing without mocking
+- Dual entry uses `scoreEntries` table with status state machine: pending → confirmed/discrepancy → resolved
+- When adding child components with `useQuery`, update ALL parent test files' API mocks to include the new module
 
 ## 2026-01-28 - US-001
 - Scaffolded Vite + React + TypeScript project
@@ -483,4 +485,22 @@
   - Use `data-*` attributes for programmatic detection of visual states in tests (e.g., `data-high-inning`)
   - `input.closest("td")` in tests to check parent cell attributes/styling
   - `useMemo` with `totalColumns` dependency ensures high innings count includes extra innings
+---
+
+## 2026-01-29 - US-031
+- Added dual score entry system: both captains submit independently, system compares inning-by-inning
+- Backend: `convex/dualEntry.ts` with `submitScoreEntryHandler`, `getScoreEntriesHandler`, `resolveDiscrepancyHandler`, and pure `compareScoreEntries` function
+- Added `scoreEntries` table to schema with gameId, side, submittedBy, innings array, and status fields
+- Auto-confirms when both entries match; flags discrepancy when they differ
+- Admin resolution: choose one side's entry or provide corrected innings
+- Frontend: `src/DiscrepancyReviewPage.tsx` shows both entries side-by-side with highlighted differences
+- Frontend: `src/DualEntryStatus.tsx` shows per-game dual entry status on match score entry page
+- Route: `/leagues/:leagueId/matches/:matchId/games/:gameId/review` for admin resolution
+- **Tests added:** 19 new tests in `convex/dualEntry.test.ts` (11) and `src/DiscrepancyReviewPage.test.tsx` (8)
+- **Files changed:** convex/dualEntry.ts (new), convex/dualEntry.test.ts (new), convex/schema.ts, convex/schema.test.ts, convex/_generated/api.d.ts, src/DiscrepancyReviewPage.tsx (new), src/DiscrepancyReviewPage.test.tsx (new), src/DualEntryStatus.tsx (new), src/App.tsx, src/MatchScoreEntryPage.tsx, src/MatchScoreEntryPage.test.tsx, src/MatchScoreEntryPage.dnp.test.tsx
+- **Learnings for future iterations:**
+  - When adding a new `useQuery` call via a child component (e.g., DualEntryStatus), ALL test files rendering the parent must update their API mock to include the new module
+  - Mock `withIndex` in test db helpers needs to capture `eq()` calls and filter properly — returning `rows[0]` silently breaks role checks for non-first memberships
+  - `compareScoreEntries` is a pure function — easy to test without any DB mocking
+  - Score entries use a "pending → confirmed/discrepancy → resolved" state machine
 ---
