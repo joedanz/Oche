@@ -449,7 +449,7 @@ export function LandingPage() {
                   <p className="mt-1 text-sm text-oche-500">per month · $99/year</p>
                   <ul className="mt-8 space-y-3 text-left text-sm text-oche-300">
                     {[
-                      "Unlimited leagues & teams",
+                      "Up to 3 leagues, unlimited teams",
                       "Historical trends & export",
                       "Score import (CSV, Excel)",
                       "Tournaments",
@@ -481,7 +481,7 @@ export function LandingPage() {
                 <p className="mt-1 text-sm text-oche-500">per month · $249/year</p>
                 <ul className="mt-8 space-y-3 text-left text-sm text-oche-300">
                   {[
-                    "Up to 10 leagues",
+                    "Unlimited leagues",
                     "Everything in League",
                     "Cross-league stats",
                     "Custom branding",

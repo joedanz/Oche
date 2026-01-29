@@ -52,8 +52,8 @@ describe("plans", () => {
   });
 
   describe("league limits", () => {
-    it("allows unlimited leagues", () => {
-      expect(PLANS.league.limits.maxLeagues).toBe(Infinity);
+    it("allows 3 leagues", () => {
+      expect(PLANS.league.limits.maxLeagues).toBe(3);
     });
 
     it("allows unlimited teams", () => {
@@ -82,8 +82,8 @@ describe("plans", () => {
   });
 
   describe("association limits", () => {
-    it("allows 10 leagues", () => {
-      expect(PLANS.association.limits.maxLeagues).toBe(10);
+    it("allows unlimited leagues", () => {
+      expect(PLANS.association.limits.maxLeagues).toBe(Infinity);
     });
 
     it("includes all league features plus association features", () => {
@@ -137,13 +137,13 @@ describe("plans", () => {
       expect(checkLimit("starter", "maxTeamsPerLeague", 6)).toBe(false);
     });
 
-    it("allows league plan unlimited leagues", () => {
-      expect(checkLimit("league", "maxLeagues", 100)).toBe(true);
+    it("allows league plan up to 3 leagues", () => {
+      expect(checkLimit("league", "maxLeagues", 2)).toBe(true);
+      expect(checkLimit("league", "maxLeagues", 3)).toBe(false);
     });
 
-    it("allows association up to 10 leagues", () => {
-      expect(checkLimit("association", "maxLeagues", 9)).toBe(true);
-      expect(checkLimit("association", "maxLeagues", 10)).toBe(false);
+    it("allows association unlimited leagues", () => {
+      expect(checkLimit("association", "maxLeagues", 100)).toBe(true);
     });
   });
 });

@@ -108,8 +108,22 @@ describe("planGating", () => {
       ).resolves.not.toThrow();
     });
 
-    it("succeeds when league user creates many leagues", async () => {
+    it("succeeds when league user is within 3 league limit", async () => {
       const db = mockDbWithSubscription("league");
+      await expect(
+        requireLimit(db as any, "user-1" as any, "maxLeagues", 2),
+      ).resolves.not.toThrow();
+    });
+
+    it("blocks league user from creating 4th league", async () => {
+      const db = mockDbWithSubscription("league");
+      await expect(
+        requireLimit(db as any, "user-1" as any, "maxLeagues", 3),
+      ).rejects.toThrow("plan limit");
+    });
+
+    it("allows association user unlimited leagues", async () => {
+      const db = mockDbWithSubscription("association");
       await expect(
         requireLimit(db as any, "user-1" as any, "maxLeagues", 50),
       ).resolves.not.toThrow();

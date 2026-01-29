@@ -66,7 +66,7 @@ export const PLANS: Record<PlanId, PlanConfig> = {
     monthlyPriceCents: 1200,
     yearlyPriceCents: 9900,
     limits: {
-      maxLeagues: Infinity,
+      maxLeagues: 3,
       maxTeamsPerLeague: Infinity,
       maxActiveSeasons: Infinity,
     },
@@ -78,7 +78,7 @@ export const PLANS: Record<PlanId, PlanConfig> = {
     monthlyPriceCents: 2900,
     yearlyPriceCents: 24900,
     limits: {
-      maxLeagues: 10,
+      maxLeagues: Infinity,
       maxTeamsPerLeague: Infinity,
       maxActiveSeasons: Infinity,
     },
