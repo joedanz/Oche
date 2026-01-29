@@ -12,6 +12,17 @@ vi.mock("@convex-dev/auth/react", () => ({
   useAuthActions: () => ({ signOut: mockSignOut }),
 }));
 
+vi.mock("convex/react", () => ({
+  useQuery: vi.fn(() => []),
+  useMutation: vi.fn(() => vi.fn()),
+}));
+
+vi.mock("../convex/_generated/api", () => ({
+  api: {
+    dashboard: { getUserLeaguesWithDetails: "getUserLeaguesWithDetails" },
+  },
+}));
+
 afterEach(() => {
   cleanup();
   vi.resetAllMocks();
