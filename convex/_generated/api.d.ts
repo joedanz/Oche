@@ -13,6 +13,8 @@ import type * as authorization from "../authorization.js";
 import type * as captains from "../captains.js";
 import type * as dashboard from "../dashboard.js";
 import type * as divisions from "../divisions.js";
+import type * as dnpBlind from "../dnpBlind.js";
+import type * as gameWinner from "../gameWinner.js";
 import type * as http from "../http.js";
 import type * as invites from "../invites.js";
 import type * as leagues from "../leagues.js";
@@ -40,6 +42,8 @@ declare const fullApi: ApiFromModules<{
   captains: typeof captains;
   dashboard: typeof dashboard;
   divisions: typeof divisions;
+  dnpBlind: typeof dnpBlind;
+  gameWinner: typeof gameWinner;
   http: typeof http;
   invites: typeof invites;
   leagues: typeof leagues;

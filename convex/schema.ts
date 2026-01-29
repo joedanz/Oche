@@ -115,6 +115,7 @@ export default defineSchema({
     homePlayerId: v.union(v.id("players"), v.literal("blind")),
     visitorPlayerId: v.union(v.id("players"), v.literal("blind")),
     winner: v.optional(v.union(v.literal("home"), v.literal("visitor"), v.literal("tie"))),
+    isDnp: v.optional(v.boolean()),
   }),
 
   innings: defineTable({

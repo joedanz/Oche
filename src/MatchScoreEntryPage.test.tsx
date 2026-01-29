@@ -23,6 +23,10 @@ vi.mock("../convex/_generated/api", () => ({
       getGameInnings: "scoring:getGameInnings",
       saveInnings: "scoring:saveInnings",
     },
+    dnpBlind: {
+      toggleDnp: "dnpBlind:toggleDnp",
+      applyBlindScores: "dnpBlind:applyBlindScores",
+    },
   },
 }));
 
