@@ -32,6 +32,7 @@ Take a PRD (markdown file or text) and convert it to `prd.json` in your ralph di
         "Criterion 2",
         "Typecheck passes"
       ],
+      "category": "[Feature category]",
       "priority": 1,
       "passes": false,
       "notes": ""
@@ -120,9 +121,10 @@ Frontend stories are NOT complete until visually verified. Ralph will use the de
 1. **Each user story becomes one JSON entry**
 2. **IDs**: Sequential (US-001, US-002, etc.)
 3. **Priority**: Based on dependency order, then document order
-4. **All stories**: `passes: false` and empty `notes`
-5. **branchName**: Derive from feature name, kebab-case, prefixed with `ralph/`
-6. **Always add**: "Typecheck passes" to every story's acceptance criteria
+4. **Category**: Based on epic/feature type (Database, UI, Backend)
+5. **All stories**: `passes: false` and empty `notes`
+6. **branchName**: Derive from feature name, kebab-case, prefixed with `ralph/`
+7. **Always add**: "Typecheck passes" to every story's acceptance criteria
 
 ---
 
@@ -177,6 +179,7 @@ Add ability to mark tasks with different statuses.
         "Typecheck passes"
       ],
       "priority": 1,
+      "category": "Database",
       "passes": false,
       "notes": ""
     },
@@ -191,6 +194,7 @@ Add ability to mark tasks with different statuses.
         "Verify in browser using dev-browser skill"
       ],
       "priority": 2,
+      "category": "UI",
       "passes": false,
       "notes": ""
     },
@@ -206,6 +210,7 @@ Add ability to mark tasks with different statuses.
         "Verify in browser using dev-browser skill"
       ],
       "priority": 3,
+      "category": "UI",
       "passes": false,
       "notes": ""
     },
@@ -220,6 +225,7 @@ Add ability to mark tasks with different statuses.
         "Verify in browser using dev-browser skill"
       ],
       "priority": 4,
+      "category": "UI",
       "passes": false,
       "notes": ""
     }

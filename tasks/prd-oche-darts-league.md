@@ -24,84 +24,6 @@ Each league is an isolated tenant. Users sign up once and can create leagues, be
 
 ---
 
-### Epic: Landing Page
-
-#### US-050: Marketing landing page
-**Description:** As a visitor, I want to see what Oche does and why I should sign up so that I can decide if it's right for my league.
-
-**Acceptance Criteria:**
-- [ ] Hero section: headline, subheadline, and primary CTA ("Start Your League" / "Get Started")
-- [ ] Feature highlights section: score entry grid, real-time stats, scheduling, handicapping
-- [ ] Social proof section: placeholder for testimonials or league count
-- [ ] Pricing section (or "Free to start" messaging if no paid tiers yet)
-- [ ] Footer: links to login, sign up, contact
-- [ ] Responsive design (mobile, tablet, desktop)
-- [ ] Page loads without authentication (public route)
-- [ ] Typecheck passes
-- [ ] Verify in browser using dev-browser skill
-
-#### US-051: Landing page navigation
-**Description:** As a visitor, I want clear navigation between the landing page and auth flows so that I can sign up or log in easily.
-
-**Acceptance Criteria:**
-- [ ] Header with logo, "Log In" and "Sign Up" buttons
-- [ ] "Sign Up" navigates to registration (US-003)
-- [ ] "Log In" navigates to login form
-- [ ] Authenticated users redirected to dashboard instead of landing page
-- [ ] Typecheck passes
-- [ ] Verify in browser using dev-browser skill
-
----
-
-### Epic: SaaS Onboarding
-
-#### US-052: Post-signup league creation flow
-**Description:** As a new user, I want to create my first league right after signing up so that I can get started immediately.
-
-**Acceptance Criteria:**
-- [ ] After first sign-up, user is prompted to "Create a League" or "Join a League"
-- [ ] "Create a League" launches the league creation form (US-007)
-- [ ] Creator is automatically the league admin
-- [ ] "Join a League" shows option to enter an invite code or browse public leagues
-- [ ] Typecheck passes
-- [ ] Verify in browser using dev-browser skill
-
-#### US-053: User dashboard
-**Description:** As a user, I want a dashboard showing all my leagues so that I can switch between them.
-
-**Acceptance Criteria:**
-- [ ] Lists all leagues the user belongs to (as admin, captain, or player)
-- [ ] Shows user's role in each league
-- [ ] "Create New League" button
-- [ ] Clicking a league navigates to that league's home page
-- [ ] Empty state for users with no leagues (prompts to create or join)
-- [ ] Typecheck passes
-- [ ] Verify in browser using dev-browser skill
-
-#### US-054: League invitations
-**Description:** As a league admin, I want to invite people to my league so that they can join as captains or players.
-
-**Acceptance Criteria:**
-- [ ] Generate a shareable invite link with a unique code
-- [ ] Invite link specifies the role (Captain or Player)
-- [ ] Visiting the link prompts sign-up/login, then adds user to the league with the specified role
-- [ ] Admin can revoke invite links
-- [ ] Admin can see pending invitations
-- [ ] Typecheck passes
-- [ ] Verify in browser using dev-browser skill
-
-#### US-055: Multi-league user context
-**Description:** As a user who belongs to multiple leagues, I want to switch between leagues so that I see the right data.
-
-**Acceptance Criteria:**
-- [ ] League switcher in the app header/sidebar
-- [ ] All league-scoped pages (standings, schedule, stats) filter to the active league
-- [ ] Active league persists across page navigation and reloads (stored in URL or session)
-- [ ] Typecheck passes
-- [ ] Verify in browser using dev-browser skill
-
----
-
 ### Epic: Data Model & Project Setup
 
 #### US-001: Project scaffolding
@@ -137,9 +59,38 @@ Each league is an isolated tenant. Users sign up once and can create leagues, be
 
 ---
 
+### Epic: Landing Page
+
+#### US-003: Marketing landing page
+**Description:** As a visitor, I want to see what Oche does and why I should sign up so that I can decide if it's right for my league.
+
+**Acceptance Criteria:**
+- [ ] Hero section: headline, subheadline, and primary CTA ("Start Your League" / "Get Started")
+- [ ] Feature highlights section: score entry grid, real-time stats, scheduling, handicapping
+- [ ] Social proof section: placeholder for testimonials or league count
+- [ ] Pricing section (or "Free to start" messaging if no paid tiers yet)
+- [ ] Footer: links to login, sign up, contact
+- [ ] Responsive design (mobile, tablet, desktop)
+- [ ] Page loads without authentication (public route)
+- [ ] Typecheck passes
+- [ ] Verify in browser using dev-browser skill
+
+#### US-004: Landing page navigation
+**Description:** As a visitor, I want clear navigation between the landing page and auth flows so that I can sign up or log in easily.
+
+**Acceptance Criteria:**
+- [ ] Header with logo, "Log In" and "Sign Up" buttons
+- [ ] "Sign Up" navigates to registration (US-005)
+- [ ] "Log In" navigates to login form
+- [ ] Authenticated users redirected to dashboard instead of landing page
+- [ ] Typecheck passes
+- [ ] Verify in browser using dev-browser skill
+
+---
+
 ### Epic: Authentication & Roles
 
-#### US-003: Email/password authentication
+#### US-005: Email/password authentication
 **Description:** As a user, I want to sign up and log in with email and password so that I can access the app.
 
 **Acceptance Criteria:**
@@ -151,7 +102,7 @@ Each league is an isolated tenant. Users sign up once and can create leagues, be
 - [ ] Typecheck passes
 - [ ] Verify in browser using dev-browser skill
 
-#### US-004: OAuth login (Google)
+#### US-006: OAuth login (Google)
 **Description:** As a user, I want to log in with Google so that I can use my existing account.
 
 **Acceptance Criteria:**
@@ -161,7 +112,7 @@ Each league is an isolated tenant. Users sign up once and can create leagues, be
 - [ ] Typecheck passes
 - [ ] Verify in browser using dev-browser skill
 
-#### US-005: Role-based access control
+#### US-007: Role-based access control
 **Description:** As a system, I need role-based permissions scoped per league so that users can only perform actions appropriate to their role within each league.
 
 **Acceptance Criteria:**
@@ -175,7 +126,7 @@ Each league is an isolated tenant. Users sign up once and can create leagues, be
 - [ ] Unauthorized actions return clear error messages
 - [ ] Typecheck passes
 
-#### US-006: Role assignment UI
+#### US-008: Role assignment UI
 **Description:** As an admin, I want to assign roles to users so that I can control access.
 
 **Acceptance Criteria:**
@@ -188,9 +139,58 @@ Each league is an isolated tenant. Users sign up once and can create leagues, be
 
 ---
 
+### Epic: SaaS Onboarding
+
+#### US-009: Post-signup league creation flow
+**Description:** As a new user, I want to create my first league right after signing up so that I can get started immediately.
+
+**Acceptance Criteria:**
+- [ ] After first sign-up, user is prompted to "Create a League" or "Join a League"
+- [ ] "Create a League" launches the league creation form (US-013)
+- [ ] Creator is automatically the league admin
+- [ ] "Join a League" shows option to enter an invite code or browse public leagues
+- [ ] Typecheck passes
+- [ ] Verify in browser using dev-browser skill
+
+#### US-010: User dashboard
+**Description:** As a user, I want a dashboard showing all my leagues so that I can switch between them.
+
+**Acceptance Criteria:**
+- [ ] Lists all leagues the user belongs to (as admin, captain, or player)
+- [ ] Shows user's role in each league
+- [ ] "Create New League" button
+- [ ] Clicking a league navigates to that league's home page
+- [ ] Empty state for users with no leagues (prompts to create or join)
+- [ ] Typecheck passes
+- [ ] Verify in browser using dev-browser skill
+
+#### US-011: League invitations
+**Description:** As a league admin, I want to invite people to my league so that they can join as captains or players.
+
+**Acceptance Criteria:**
+- [ ] Generate a shareable invite link with a unique code
+- [ ] Invite link specifies the role (Captain or Player)
+- [ ] Visiting the link prompts sign-up/login, then adds user to the league with the specified role
+- [ ] Admin can revoke invite links
+- [ ] Admin can see pending invitations
+- [ ] Typecheck passes
+- [ ] Verify in browser using dev-browser skill
+
+#### US-012: Multi-league user context
+**Description:** As a user who belongs to multiple leagues, I want to switch between leagues so that I see the right data.
+
+**Acceptance Criteria:**
+- [ ] League switcher in the app header/sidebar
+- [ ] All league-scoped pages (standings, schedule, stats) filter to the active league
+- [ ] Active league persists across page navigation and reloads (stored in URL or session)
+- [ ] Typecheck passes
+- [ ] Verify in browser using dev-browser skill
+
+---
+
 ### Epic: League Management
 
-#### US-007: Create league
+#### US-013: Create league
 **Description:** As an admin, I want to create a new league so that I can begin organizing play.
 
 **Acceptance Criteria:**
@@ -200,7 +200,7 @@ Each league is an isolated tenant. Users sign up once and can create leagues, be
 - [ ] Typecheck passes
 - [ ] Verify in browser using dev-browser skill
 
-#### US-008: Configure match structure
+#### US-014: Configure match structure
 **Description:** As an admin, I want to configure how matches work so that the app reflects my league's rules.
 
 **Acceptance Criteria:**
@@ -213,7 +213,7 @@ Each league is an isolated tenant. Users sign up once and can create leagues, be
 - [ ] Typecheck passes
 - [ ] Verify in browser using dev-browser skill
 
-#### US-009: Manage seasons
+#### US-015: Manage seasons
 **Description:** As an admin, I want to create and manage seasons so that stats and standings reset appropriately.
 
 **Acceptance Criteria:**
@@ -223,7 +223,7 @@ Each league is an isolated tenant. Users sign up once and can create leagues, be
 - [ ] Typecheck passes
 - [ ] Verify in browser using dev-browser skill
 
-#### US-010: Manage divisions
+#### US-016: Manage divisions
 **Description:** As an admin, I want to organize teams into divisions so that scheduling and standings are grouped.
 
 **Acceptance Criteria:**
@@ -237,7 +237,7 @@ Each league is an isolated tenant. Users sign up once and can create leagues, be
 
 ### Epic: Teams & Rosters
 
-#### US-011: Create and edit teams
+#### US-017: Create and edit teams
 **Description:** As an admin, I want to create teams so that players can be organized.
 
 **Acceptance Criteria:**
@@ -247,7 +247,7 @@ Each league is an isolated tenant. Users sign up once and can create leagues, be
 - [ ] Typecheck passes
 - [ ] Verify in browser using dev-browser skill
 
-#### US-012: Assign team captain
+#### US-018: Assign team captain
 **Description:** As an admin, I want to assign a captain to a team so that they can manage their roster and scores.
 
 **Acceptance Criteria:**
@@ -258,7 +258,7 @@ Each league is an isolated tenant. Users sign up once and can create leagues, be
 - [ ] Typecheck passes
 - [ ] Verify in browser using dev-browser skill
 
-#### US-013: Manage team roster
+#### US-019: Manage team roster
 **Description:** As a captain, I want to add and remove players from my team so that the roster stays current.
 
 **Acceptance Criteria:**
@@ -274,7 +274,7 @@ Each league is an isolated tenant. Users sign up once and can create leagues, be
 
 ### Epic: Match Scheduling
 
-#### US-014: Manual match scheduling
+#### US-020: Manual match scheduling
 **Description:** As an admin, I want to manually create match schedules so that teams know when and whom they play.
 
 **Acceptance Criteria:**
@@ -285,7 +285,7 @@ Each league is an isolated tenant. Users sign up once and can create leagues, be
 - [ ] Typecheck passes
 - [ ] Verify in browser using dev-browser skill
 
-#### US-015: Auto-generate schedule
+#### US-021: Auto-generate schedule
 **Description:** As an admin, I want to auto-generate a round-robin schedule so that I don't have to create each match manually.
 
 **Acceptance Criteria:**
@@ -296,7 +296,7 @@ Each league is an isolated tenant. Users sign up once and can create leagues, be
 - [ ] Typecheck passes
 - [ ] Verify in browser using dev-browser skill
 
-#### US-016: Player pairings per game
+#### US-022: Player pairings per game
 **Description:** As a captain, I want to set player pairings for each individual game in a match so that matchups are recorded.
 
 **Acceptance Criteria:**
@@ -307,7 +307,7 @@ Each league is an isolated tenant. Users sign up once and can create leagues, be
 - [ ] Typecheck passes
 - [ ] Verify in browser using dev-browser skill
 
-#### US-017: Match detail page
+#### US-023: Match detail page
 **Description:** As a user, I want to see match details so that I know teams, date, pairings, and results.
 
 **Acceptance Criteria:**
@@ -322,7 +322,7 @@ Each league is an isolated tenant. Users sign up once and can create leagues, be
 
 ### Epic: Score Entry (Manual)
 
-#### US-018: Innings score entry grid
+#### US-024: Innings score entry grid
 **Description:** As a captain, I want to enter runs per inning in a grid that mirrors paper scoresheets so that scoring feels familiar.
 
 **Acceptance Criteria:**
@@ -334,7 +334,7 @@ Each league is an isolated tenant. Users sign up once and can create leagues, be
 - [ ] Typecheck passes
 - [ ] Verify in browser using dev-browser skill
 
-#### US-019: Extra innings entry
+#### US-025: Extra innings entry
 **Description:** As a captain, I want to enter extra innings when a game is tied so that ties are resolved.
 
 **Acceptance Criteria:**
@@ -346,7 +346,7 @@ Each league is an isolated tenant. Users sign up once and can create leagues, be
 - [ ] Typecheck passes
 - [ ] Verify in browser using dev-browser skill
 
-#### US-020: Auto-calculated totals
+#### US-026: Auto-calculated totals
 **Description:** As a user, I want to see plus, minus, and total columns auto-calculated so that I don't have to do math.
 
 **Acceptance Criteria:**
@@ -358,7 +358,7 @@ Each league is an isolated tenant. Users sign up once and can create leagues, be
 - [ ] Typecheck passes
 - [ ] Verify in browser using dev-browser skill
 
-#### US-021: Multi-game match view
+#### US-027: Multi-game match view
 **Description:** As a captain, I want to enter scores for all games in a match from one page so that I don't navigate between pages.
 
 **Acceptance Criteria:**
@@ -370,7 +370,7 @@ Each league is an isolated tenant. Users sign up once and can create leagues, be
 - [ ] Typecheck passes
 - [ ] Verify in browser using dev-browser skill
 
-#### US-022: Game winner determination
+#### US-028: Game winner determination
 **Description:** As a system, I need to determine the winner of each individual game so that points are awarded correctly.
 
 **Acceptance Criteria:**
@@ -380,7 +380,7 @@ Each league is an isolated tenant. Users sign up once and can create leagues, be
 - [ ] Tie after extra innings handled (admin can flag as tie if league allows)
 - [ ] Typecheck passes
 
-#### US-023: DNP (Did Not Play) handling
+#### US-029: DNP (Did Not Play) handling
 **Description:** As a captain, I want to mark a game slot as DNP so that missing players are handled properly.
 
 **Acceptance Criteria:**
@@ -391,7 +391,7 @@ Each league is an isolated tenant. Users sign up once and can create leagues, be
 - [ ] Typecheck passes
 - [ ] Verify in browser using dev-browser skill
 
-#### US-024: High innings notation
+#### US-030: High innings notation
 **Description:** As a user, I want 9-run innings highlighted so that exceptional performance is visible.
 
 **Acceptance Criteria:**
@@ -401,7 +401,7 @@ Each league is an isolated tenant. Users sign up once and can create leagues, be
 - [ ] Typecheck passes
 - [ ] Verify in browser using dev-browser skill
 
-#### US-025: Dual entry with discrepancy flagging
+#### US-031: Dual entry with discrepancy flagging
 **Description:** As a league, I want both captains to enter scores independently so that accuracy is verified.
 
 **Acceptance Criteria:**
@@ -413,7 +413,7 @@ Each league is an isolated tenant. Users sign up once and can create leagues, be
 - [ ] Typecheck passes
 - [ ] Verify in browser using dev-browser skill
 
-#### US-026: Live tablet scoring
+#### US-032: Live tablet scoring
 **Description:** As a user at a match, I want to enter scores on a tablet in real-time so that remote viewers can follow along.
 
 **Acceptance Criteria:**
@@ -428,7 +428,7 @@ Each league is an isolated tenant. Users sign up once and can create leagues, be
 
 ### Epic: Score Import
 
-#### US-027: CSV file upload
+#### US-033: CSV file upload
 **Description:** As a captain, I want to upload a CSV file of scores so that I can import data from existing spreadsheets.
 
 **Acceptance Criteria:**
@@ -439,7 +439,7 @@ Each league is an isolated tenant. Users sign up once and can create leagues, be
 - [ ] Typecheck passes
 - [ ] Verify in browser using dev-browser skill
 
-#### US-028: Excel file upload
+#### US-034: Excel file upload
 **Description:** As a captain, I want to upload Excel files so that I can import from common spreadsheet formats.
 
 **Acceptance Criteria:**
@@ -450,18 +450,18 @@ Each league is an isolated tenant. Users sign up once and can create leagues, be
 - [ ] Typecheck passes
 - [ ] Verify in browser using dev-browser skill
 
-#### US-029: Google Sheets import
+#### US-035: Google Sheets import
 **Description:** As a captain, I want to import scores from Google Sheets so that I can pull from shared league spreadsheets.
 
 **Acceptance Criteria:**
-- [ ] Authenticate with Google (via OAuth, see US-004)
+- [ ] Authenticate with Google (via OAuth, see US-006)
 - [ ] Enter Google Sheet URL or select from Drive
 - [ ] Select sheet/range to import
 - [ ] Preview parsed data
 - [ ] Typecheck passes
 - [ ] Verify in browser using dev-browser skill
 
-#### US-030: Column mapping wizard
+#### US-036: Column mapping wizard
 **Description:** As a captain, I want to map spreadsheet columns to innings/players so that the import understands my data format.
 
 **Acceptance Criteria:**
@@ -472,7 +472,7 @@ Each league is an isolated tenant. Users sign up once and can create leagues, be
 - [ ] Typecheck passes
 - [ ] Verify in browser using dev-browser skill
 
-#### US-031: Import validation and error handling
+#### US-037: Import validation and error handling
 **Description:** As a captain, I want import errors clearly shown so that I can fix my spreadsheet and re-import.
 
 **Acceptance Criteria:**
@@ -483,7 +483,7 @@ Each league is an isolated tenant. Users sign up once and can create leagues, be
 - [ ] Typecheck passes
 - [ ] Verify in browser using dev-browser skill
 
-#### US-032: Multi-file merge
+#### US-038: Multi-file merge
 **Description:** As an admin, I want to merge multiple import files into one match so that split spreadsheets are combined.
 
 **Acceptance Criteria:**
@@ -497,7 +497,7 @@ Each league is an isolated tenant. Users sign up once and can create leagues, be
 
 ### Epic: Statistics
 
-#### US-033: Player statistics calculation
+#### US-039: Player statistics calculation
 **Description:** As a system, I need to calculate player stats from regular innings only so that stats are accurate.
 
 **Acceptance Criteria:**
@@ -511,7 +511,7 @@ Each league is an isolated tenant. Users sign up once and can create leagues, be
 - [ ] Stats update when scores are entered or edited
 - [ ] Typecheck passes
 
-#### US-034: Player stats page
+#### US-040: Player stats page
 **Description:** As a player, I want to see my stats so that I can track my performance.
 
 **Acceptance Criteria:**
@@ -521,7 +521,7 @@ Each league is an isolated tenant. Users sign up once and can create leagues, be
 - [ ] Typecheck passes
 - [ ] Verify in browser using dev-browser skill
 
-#### US-035: Team statistics
+#### US-041: Team statistics
 **Description:** As a user, I want to see team-level stats so that I can compare teams.
 
 **Acceptance Criteria:**
@@ -533,7 +533,7 @@ Each league is an isolated tenant. Users sign up once and can create leagues, be
 - [ ] Typecheck passes
 - [ ] Verify in browser using dev-browser skill
 
-#### US-036: League standings
+#### US-042: League standings
 **Description:** As a user, I want to see league standings so that I know the rankings.
 
 **Acceptance Criteria:**
@@ -545,7 +545,7 @@ Each league is an isolated tenant. Users sign up once and can create leagues, be
 - [ ] Typecheck passes
 - [ ] Verify in browser using dev-browser skill
 
-#### US-037: Leaderboards
+#### US-043: Leaderboards
 **Description:** As a user, I want individual player leaderboards so that top performers are recognized.
 
 **Acceptance Criteria:**
@@ -555,7 +555,7 @@ Each league is an isolated tenant. Users sign up once and can create leagues, be
 - [ ] Typecheck passes
 - [ ] Verify in browser using dev-browser skill
 
-#### US-038: Historical trends
+#### US-044: Historical trends
 **Description:** As a user, I want to see performance trends over time so that I can track improvement.
 
 **Acceptance Criteria:**
@@ -565,7 +565,7 @@ Each league is an isolated tenant. Users sign up once and can create leagues, be
 - [ ] Typecheck passes
 - [ ] Verify in browser using dev-browser skill
 
-#### US-039: Stats export
+#### US-045: Stats export
 **Description:** As an admin, I want to export stats to CSV or PDF so that I can share them outside the app.
 
 **Acceptance Criteria:**
@@ -580,7 +580,7 @@ Each league is an isolated tenant. Users sign up once and can create leagues, be
 
 ### Epic: Handicapping
 
-#### US-040: Configure handicap rules
+#### US-046: Configure handicap rules
 **Description:** As an admin, I want to configure handicapping so that weaker players get spot runs based on average differentials.
 
 **Acceptance Criteria:**
@@ -591,7 +591,7 @@ Each league is an isolated tenant. Users sign up once and can create leagues, be
 - [ ] Typecheck passes
 - [ ] Verify in browser using dev-browser skill
 
-#### US-041: Apply handicaps to scoring
+#### US-047: Apply handicaps to scoring
 **Description:** As a system, I need to apply handicap spot runs to scoring so that adjusted results are calculated.
 
 **Acceptance Criteria:**
@@ -608,7 +608,7 @@ Each league is an isolated tenant. Users sign up once and can create leagues, be
 
 ### Epic: Payments
 
-#### US-042: Payment configuration
+#### US-048: Payment configuration
 **Description:** As an admin, I want to configure league fees so that players know what they owe.
 
 **Acceptance Criteria:**
@@ -617,7 +617,7 @@ Each league is an isolated tenant. Users sign up once and can create leagues, be
 - [ ] Typecheck passes
 - [ ] Verify in browser using dev-browser skill
 
-#### US-043: Payment tracking
+#### US-049: Payment tracking
 **Description:** As an admin, I want to track who has paid so that I can follow up on outstanding fees.
 
 **Acceptance Criteria:**
@@ -628,7 +628,7 @@ Each league is an isolated tenant. Users sign up once and can create leagues, be
 - [ ] Typecheck passes
 - [ ] Verify in browser using dev-browser skill
 
-#### US-044: Online payment (Stripe)
+#### US-050: Online payment (Stripe)
 **Description:** As a player, I want to pay league fees online so that I don't need cash.
 
 **Acceptance Criteria:**
@@ -642,7 +642,7 @@ Each league is an isolated tenant. Users sign up once and can create leagues, be
 
 ### Epic: Tournaments
 
-#### US-045: Create tournament bracket
+#### US-051: Create tournament bracket
 **Description:** As an admin, I want to create a single-elimination tournament so that the league can hold playoff events.
 
 **Acceptance Criteria:**
@@ -653,7 +653,7 @@ Each league is an isolated tenant. Users sign up once and can create leagues, be
 - [ ] Typecheck passes
 - [ ] Verify in browser using dev-browser skill
 
-#### US-046: Tournament match scoring
+#### US-052: Tournament match scoring
 **Description:** As a captain, I want to enter tournament match scores using the same grid so that scoring is consistent.
 
 **Acceptance Criteria:**
@@ -667,7 +667,7 @@ Each league is an isolated tenant. Users sign up once and can create leagues, be
 
 ### Epic: Public & Social
 
-#### US-047: Public league page
+#### US-053: Public league page
 **Description:** As an admin, I want to make my league publicly viewable so that spectators can follow along.
 
 **Acceptance Criteria:**
@@ -678,7 +678,7 @@ Each league is an isolated tenant. Users sign up once and can create leagues, be
 - [ ] Typecheck passes
 - [ ] Verify in browser using dev-browser skill
 
-#### US-048: Notifications
+#### US-054: Notifications
 **Description:** As a user, I want to receive notifications about match schedules and deadlines so that I don't miss anything.
 
 **Acceptance Criteria:**
@@ -689,7 +689,7 @@ Each league is an isolated tenant. Users sign up once and can create leagues, be
 - [ ] Typecheck passes
 - [ ] Verify in browser using dev-browser skill
 
-#### US-049: Audit log
+#### US-055: Audit log
 **Description:** As an admin, I want an audit log of score changes so that I can track who changed what.
 
 **Acceptance Criteria:**
@@ -754,7 +754,7 @@ Each league is an isolated tenant. Users sign up once and can create leagues, be
 - **Payments:** Stripe
 - **Import Libraries:** PapaParse (CSV), SheetJS (Excel)
 - **Real-time:** Convex subscriptions for live scoring and standings
-- **Charts:** Consider Recharts or similar for trend visualizations (US-038)
+- **Charts:** Consider Recharts or similar for trend visualizations (US-044)
 - **Multi-tenancy:** Logical isolation via `leagueId` foreign key on all league-scoped tables. All queries filter by active league. No shared data between leagues except user accounts.
 - **Data Model:** See US-002 for schema design. Statistics are computed via Convex queries, not stored (except for caching/performance optimization).
 - **Performance:** Virtualize large standings/leaderboard lists if >50 rows
