@@ -129,10 +129,10 @@ if [[ "$HAS_GUM" == "true" ]]; then
     --padding "1 3" \
     --margin "0 0" \
     --bold \
-    "🤖 Ralph  ·  Iterations: $MAX_ITERATIONS  ·  Stories: $(prd_status)"
+    "🤖 Ralph  ·  Iterations: $MAX_ITERATIONS  ·  Stories Completed: $(prd_status)"
 else
   echo "==============================================================="
-  echo "  🤖 Ralph — Iterations: $MAX_ITERATIONS — Stories: $(prd_status)"
+  echo "  🤖 Ralph — Iterations: $MAX_ITERATIONS — Stories Completed: $(prd_status)"
   echo "==============================================================="
 fi
 echo ""
