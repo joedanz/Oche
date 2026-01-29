@@ -13,6 +13,7 @@ import { InvitationsPage } from "./InvitationsPage";
 import { LeagueLayout } from "./LeagueLayout";
 import { CreateLeaguePage } from "./CreateLeaguePage";
 import { MatchConfigPage } from "./MatchConfigPage";
+import { SeasonsPage } from "./SeasonsPage";
 import { useAuth } from "./useAuth";
 
 function AuthenticatedRedirect() {
@@ -78,6 +79,7 @@ function AppRoutes() {
         <Route path="members" element={<MembersRoute />} />
         <Route path="invitations" element={<InvitationsRoute />} />
         <Route path="settings" element={<MatchConfigRoute />} />
+        <Route path="seasons" element={<SeasonsRoute />} />
       </Route>
     </Routes>
   );
@@ -107,6 +109,12 @@ function MatchConfigRoute() {
   const { leagueId } = useParams<{ leagueId: string }>();
   if (!leagueId) return null;
   return <MatchConfigPage leagueId={leagueId as any} />;
+}
+
+function SeasonsRoute() {
+  const { leagueId } = useParams<{ leagueId: string }>();
+  if (!leagueId) return null;
+  return <SeasonsPage leagueId={leagueId as any} />;
 }
 
 function App() {
