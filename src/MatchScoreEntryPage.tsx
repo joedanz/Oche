@@ -3,7 +3,7 @@
 
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { useQuery } from "convex/react";
+import { useQuery, useMutation } from "convex/react";
 import { api } from "../convex/_generated/api";
 import type { Id } from "../convex/_generated/dataModel";
 import { ScoringGrid } from "./ScoringGrid";
@@ -15,6 +15,7 @@ interface MatchScoreEntryPageProps {
 
 export function MatchScoreEntryPage({ matchId, leagueId }: MatchScoreEntryPageProps) {
   const data = useQuery(api.matchDetail.getMatchDetail, { matchId, leagueId });
+  const toggleDnp = useMutation(api.dnpBlind.toggleDnp);
   const [collapsedGames, setCollapsedGames] = useState<Set<string>>(new Set());
 
   if (data === undefined) {
@@ -69,29 +70,53 @@ export function MatchScoreEntryPage({ matchId, leagueId }: MatchScoreEntryPagePr
             {games.map((game: any) => {
               const pairing = pairingBySlot.get(game.slot);
               const isCollapsed = collapsedGames.has(game._id);
+              const isDnp = !!game.isDnp;
+              const hasBlind = game.homePlayerId === "blind" || game.visitorPlayerId === "blind";
               return (
-                <div key={game._id} className="border border-gray-700 rounded">
-                  <button
-                    onClick={() => toggleGame(game._id)}
-                    className="w-full text-left px-4 py-3 flex justify-between items-center hover:bg-gray-800/50"
-                  >
-                    <span className="font-semibold">
-                      Game {game.slot}: {pairing?.homePlayerName ?? "TBD"} vs{" "}
-                      {pairing?.visitorPlayerName ?? "TBD"}
-                    </span>
-                    <span className="text-gray-400 text-sm">
-                      {isCollapsed ? "▶" : "▼"}
-                    </span>
-                  </button>
-                  {!isCollapsed && (
-                    <div className="px-4 pb-4">
-                      <ScoringGrid
-                        gameId={game._id}
-                        leagueId={leagueId}
-                        homePlayerName={pairing?.homePlayerName ?? "Home"}
-                        visitorPlayerName={pairing?.visitorPlayerName ?? "Visitor"}
-                      />
+                <div
+                  key={game._id}
+                  className={`border rounded ${isDnp ? "border-gray-800 opacity-50" : "border-gray-700"}`}
+                  data-testid={isDnp ? `game-${game._id}-dnp` : undefined}
+                >
+                  <div className="flex items-center justify-between px-4 py-3">
+                    <button
+                      onClick={() => toggleGame(game._id)}
+                      className="text-left flex-1 flex justify-between items-center hover:bg-gray-800/50"
+                    >
+                      <span className="font-semibold">
+                        Game {game.slot}: {pairing?.homePlayerName ?? "TBD"} vs{" "}
+                        {pairing?.visitorPlayerName ?? "TBD"}
+                        {hasBlind && (
+                          <span className="ml-2 text-xs text-yellow-400 font-normal">(Blind)</span>
+                        )}
+                      </span>
+                      <span className="text-gray-400 text-sm">
+                        {isCollapsed ? "▶" : "▼"}
+                      </span>
+                    </button>
+                    <button
+                      onClick={() => toggleDnp({ gameId: game._id, leagueId, isDnp: !isDnp })}
+                      className={`ml-3 text-xs px-2 py-1 rounded ${isDnp ? "bg-red-800 text-red-200" : "bg-gray-700 text-gray-300 hover:bg-gray-600"}`}
+                      aria-label={isDnp ? "Undo DNP" : "DNP"}
+                    >
+                      DNP
+                    </button>
+                  </div>
+                  {isDnp ? (
+                    <div className="px-4 pb-3 text-sm text-gray-500">
+                      <span>No Points — Did Not Play</span>
                     </div>
+                  ) : (
+                    !isCollapsed && (
+                      <div className="px-4 pb-4">
+                        <ScoringGrid
+                          gameId={game._id}
+                          leagueId={leagueId}
+                          homePlayerName={pairing?.homePlayerName ?? "Home"}
+                          visitorPlayerName={pairing?.visitorPlayerName ?? "Visitor"}
+                        />
+                      </div>
+                    )
                   )}
                 </div>
               );
