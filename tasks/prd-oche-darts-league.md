@@ -2,9 +2,9 @@
 
 ## Introduction
 
-Oche is a multi-tenant SaaS platform where anyone can create and manage their own American Baseball Darts league. Teams play multiple individual 9-inning Baseball games per match night. Each inning targets numbers 1–9; players score runs (0–3 per dart, max 9 per inning). Ties are resolved with extra innings whose runs are excluded from statistics. The app replaces spreadsheet-based league management with digital scoresheets, real-time stats, standings, scheduling, handicapping, payments, and tournaments.
+Oche is a multi-tenant SaaS platform where anyone can create and manage their own American Baseball Darts league. Matches consist of multiple individual 9-inning Baseball games (typically 3–6 per team). Each inning targets numbers 1–9; runs scored 0–9+ via single/double/triple. Players alternate batting and fielding per inning — the batter accumulates +runs scored, the defender accumulates -runs allowed. Ties are resolved with extra innings whose runs are excluded from statistics. Short-handed teams use "blinds" (configurable placeholder scores). The app replaces spreadsheet-based league management with digital scoresheets, real-time stats, standings, scheduling, handicapping, payments, and tournaments.
 
-The scoring grid mirrors paper scoresheets used by leagues like the Mason Dixon Dart League: innings as columns, runs per inning, plus/minus/totals rows.
+The scoring grid mirrors paper scoresheets: innings as columns, runs per batting half-inning, plus/minus/totals rows.
 
 Each league is an isolated tenant. Users sign up once and can create leagues, be invited to leagues, or join public leagues. League admins manage their own teams, schedules, and data independently.
 
@@ -15,7 +15,7 @@ Each league is an isolated tenant. Users sign up once and can create leagues, be
 - Eliminate spreadsheet merging for league administration
 - Provide a digital mirror of paper scoresheets (innings 1–9, plus/minus)
 - Auto-calculate statistics excluding extra-innings runs
-- Support configurable match structures (games per match, points systems)
+- Support configurable match structures (games per match, points, blinds)
 - Deliver real-time team/player stats and standings
 - Support steel-tip and soft-tip league variants
 - Scale to thousands of users across hundreds of independent leagues
@@ -45,15 +45,15 @@ Each league is an isolated tenant. Users sign up once and can create leagues, be
 - [ ] `users` table includes: email, name, avatarUrl (global account, not league-scoped)
 - [ ] `leagueMemberships` table includes: userId, leagueId, role (admin/captain/player) — joins users to leagues
 - [ ] `invites` table includes: leagueId, code, role, createdBy, expiresAt, used
-- [ ] `leagues` table includes: name, matchConfig (gamesPerMatch, pointsPerGameWin, bonusForTotalRuns, extraInningsExcludeFromStats), handicap settings
-- [ ] `matches` table includes: leagueId, seasonId, homeTeamId, visitorTeamId, date, status, totals (homeRuns, visitorRuns, bonusWinner)
-- [ ] `games` table includes: matchId, gameNumber, homePlayerId, visitorPlayerId, winner
-- [ ] `innings` table includes: gameId, inningNumber, homeRuns (0–9), visitorRuns (0–9), isExtra boolean
+- [ ] `leagues` table includes: name, matchConfig (gamesPerMatch, pointsPerGameWin, bonusForTotal, extraExclude, blindRules: { enabled, defaultRuns }), handicap settings
+- [ ] `matches` table includes: leagueId, seasonId, homeTeamId, visitorTeamId, date, status, pairings (slot, homePlayerId or "blind", visitorPlayerId or "blind"), totals (homePlus, visitorPlus, bonusWinner)
+- [ ] `games` table includes: matchId, slot, homePlayerId (or blind), visitorPlayerId (or blind), winner
+- [ ] `innings` table includes: gameId, inningNumber, batter ("home"|"visitor"), runs (0–9), isExtra boolean
 - [ ] `players` table includes: userId, teamId, status (active/inactive)
 - [ ] `teams` table includes: name, captainId, venue, leagueId, divisionId
 - [ ] Foreign keys use `v.id("tableName")` pattern
 - [ ] Enums use `v.union(v.literal(...))` pattern
-- [ ] Schema validates runs are 0–9 per inning
+- [ ] Schema validates runs are 0–9 per half-inning
 - [ ] `npx convex dev` deploys schema without errors
 - [ ] Typecheck passes
 
@@ -204,11 +204,12 @@ Each league is an isolated tenant. Users sign up once and can create leagues, be
 **Description:** As an admin, I want to configure how matches work so that the app reflects my league's rules.
 
 **Acceptance Criteria:**
-- [ ] Settings: number of individual games per match (default 5)
+- [ ] Settings: number of individual games per match (shooters per team: 3–6 typical, 1–2 allowed)
 - [ ] Points per individual game win (default 1)
-- [ ] Bonus point for team with highest total runs that night (toggle)
+- [ ] Bonus point for team with highest total (plus or runs) that night (toggle)
 - [ ] Extra innings enabled/disabled toggle
 - [ ] Extra innings runs excluded from stats toggle
+- [ ] Blinds: enable/disable for short-handed teams; configurable default (0 runs batting, average-based, or fixed value)
 - [ ] Settings saved and applied to future matches
 - [ ] Typecheck passes
 - [ ] Verify in browser using dev-browser skill
@@ -265,7 +266,7 @@ Each league is an isolated tenant. Users sign up once and can create leagues, be
 - [ ] Add player by name/email (creates player record if needed)
 - [ ] Remove player from roster
 - [ ] Set player status: active or inactive
-- [ ] Enforce max roster size (configurable per league, default 12)
+- [ ] No fixed max roster size (typical 6–12)
 - [ ] Inactive players cannot be paired for matches
 - [ ] Typecheck passes
 - [ ] Verify in browser using dev-browser skill
@@ -297,11 +298,13 @@ Each league is an isolated tenant. Users sign up once and can create leagues, be
 - [ ] Verify in browser using dev-browser skill
 
 #### US-022: Player pairings per game
-**Description:** As a captain, I want to set player pairings for each individual game in a match so that matchups are recorded.
+**Description:** As a captain, I want to assign players (or blinds) to game slots in a match so that matchups are recorded.
 
 **Acceptance Criteria:**
-- [ ] For each game in a match, select home player and visitor player from respective rosters
+- [ ] For each game slot in a match, select home player and visitor player from respective rosters
+- [ ] Option to assign "blind" to a slot for short-handed teams
 - [ ] Only active roster players available for selection
+- [ ] Support fewer pairings than the configured games per match
 - [ ] A player can only be paired once per match (unless league config allows repeats)
 - [ ] Pairings saved and visible on match page
 - [ ] Typecheck passes
@@ -323,10 +326,11 @@ Each league is an isolated tenant. Users sign up once and can create leagues, be
 ### Epic: Score Entry (Manual)
 
 #### US-024: Innings score entry grid
-**Description:** As a captain, I want to enter runs per inning in a grid that mirrors paper scoresheets so that scoring feels familiar.
+**Description:** As a captain, I want to enter runs per batting half-inning in a grid that mirrors paper scoresheets so that scoring feels familiar.
 
 **Acceptance Criteria:**
-- [ ] Grid layout: rows for home/visitor player, columns for innings 1–9
+- [ ] Grid layout: rows for home/visitor player, columns for innings 1–9+
+- [ ] Enter runs per batting half-inning in batter's column
 - [ ] Each cell accepts a number 0–9
 - [ ] Tab/arrow key navigation between cells
 - [ ] Auto-advances to next cell after entry
@@ -350,8 +354,8 @@ Each league is an isolated tenant. Users sign up once and can create leagues, be
 **Description:** As a user, I want to see plus, minus, and total columns auto-calculated so that I don't have to do math.
 
 **Acceptance Criteria:**
-- [ ] "Plus" column: sum of runs scored in regular innings (1–9) only
-- [ ] "Minus" column: sum of runs allowed in regular innings (1–9) only
+- [ ] "Plus" column: sum of own regular batting runs (innings 1–9) only
+- [ ] "Minus" column: sum of opponent's regular batting runs (innings 1–9) only
 - [ ] "Total" column: plus minus minus (plus/minus differential)
 - [ ] Extra innings runs NOT included in plus/minus/total
 - [ ] Totals update in real-time as runs are entered
@@ -380,14 +384,15 @@ Each league is an isolated tenant. Users sign up once and can create leagues, be
 - [ ] Tie after extra innings handled (admin can flag as tie if league allows)
 - [ ] Typecheck passes
 
-#### US-029: DNP (Did Not Play) handling
-**Description:** As a captain, I want to mark a game slot as DNP so that missing players are handled properly.
+#### US-029: DNP and blind handling
+**Description:** As a captain, I want to mark a game slot as DNP or assign a blind so that missing players are handled properly.
 
 **Acceptance Criteria:**
 - [ ] "Blackout" or DNP toggle on a game
-- [ ] DNP games are excluded from stats
+- [ ] Blind games auto-populate scores based on league blind rules (0 runs, average-based, or fixed)
+- [ ] DNP games are excluded from stats; blind games handled per league config
 - [ ] DNP games do not award points
-- [ ] Visual indicator (grayed out) on the scoresheet
+- [ ] Visual indicator (grayed out / blind label) on the scoresheet
 - [ ] Typecheck passes
 - [ ] Verify in browser using dev-browser skill
 
@@ -466,7 +471,7 @@ Each league is an isolated tenant. Users sign up once and can create leagues, be
 
 **Acceptance Criteria:**
 - [ ] Step-by-step wizard after file upload
-- [ ] Map columns to: player name, innings 1–9, extra innings, plus, minus
+- [ ] Map columns to: player name, innings 1–9, extra innings, plus, minus, pairings, blinds
 - [ ] Auto-detect common column names
 - [ ] Save mapping as template for reuse
 - [ ] Typecheck passes
@@ -501,9 +506,9 @@ Each league is an isolated tenant. Users sign up once and can create leagues, be
 **Description:** As a system, I need to calculate player stats from regular innings only so that stats are accurate.
 
 **Acceptance Criteria:**
-- [ ] Runs per game average (total regular-innings runs / games played)
-- [ ] Total runs scored (regular innings only)
-- [ ] Plus/minus rating (runs scored minus runs allowed, regular only)
+- [ ] Runs per game average (total regular-innings batting runs / games played)
+- [ ] Total plus (own regular batting runs) and total minus (opponent's regular batting runs)
+- [ ] Plus/minus rating (total plus minus total minus, regular innings only)
 - [ ] High innings count (number of 9-run innings)
 - [ ] Games played count
 - [ ] Win/loss record
@@ -710,17 +715,17 @@ Each league is an isolated tenant. Users sign up once and can create leagues, be
 - FR-04: User dashboard listing all leagues with role context and league switcher
 - FR-05: Invite system with shareable links, role assignment, and revocation
 - FR-06: Role-based authentication with Admin, Captain, Player, Guest roles (scoped per league)
-- FR-07: League creation with configurable match structure (games per match, points, extra innings rules)
+- FR-07: League creation with configurable match structure (games per match, points, extra innings rules, blind rules)
 - FR-08: Season and division management within leagues
-- FR-09: Team creation with captain assignment and roster management (active/inactive, max size)
-- FR-10: Match scheduling (manual and auto round-robin) with player pairings per game
+- FR-09: Team creation with captain assignment and roster management (active/inactive, no fixed max)
+- FR-10: Match scheduling (manual and auto round-robin) with player pairings per game (including blinds)
 - FR-11: Grid-based score entry mirroring paper scoresheets (innings 1–9, extra innings, plus/minus/total)
 - FR-12: Extra innings support with runs excluded from statistics
 - FR-13: Dual entry with automatic discrepancy detection and admin resolution
 - FR-14: Score import from CSV, Excel, and Google Sheets with column mapping wizard
 - FR-15: Import validation with row-level error reporting
-- FR-16: Player statistics: average, total runs, plus/minus, high innings, W/L (regular innings only)
-- FR-17: Team statistics: game wins, total runs, match points
+- FR-16: Player statistics: average, total plus/minus, high innings, W/L (regular innings only, blinds excluded)
+- FR-17: Team statistics: game wins, total plus/runs, match points
 - FR-18: League standings sorted by total points with division filtering
 - FR-19: Individual leaderboards (average, runs, plus/minus, high innings, wins)
 - FR-20: Handicapping via spot runs based on player average differentials
@@ -732,8 +737,8 @@ Each league is an isolated tenant. Users sign up once and can create leagues, be
 - FR-26: Real-time sync via Convex subscriptions (live scoring, live standings)
 - FR-27: CSV and PDF export for standings and stats
 - FR-28: Responsive design for tablet live scoring (touch targets ≥44px)
-- FR-29: Runs per inning validated 0–9; max 9 per inning
-- FR-30: DNP game handling with exclusion from stats
+- FR-29: Runs per half-inning validated 0–9
+- FR-30: DNP and blind game handling with exclusion/adjustment from stats
 - FR-31: High innings (9-run) notation and tracking
 
 ## Non-Goals (Out of Scope)
@@ -774,7 +779,7 @@ Each league is an isolated tenant. Users sign up once and can create leagues, be
 
 1. **DNP and averages:** DNP games are excluded from the denominator. `gamesPlayed` only counts games where the player actually played.
 2. **Handicap formula:** Sum both paired players' averages, take the difference, apply a configurable percentage. Spot runs go to the lower-averaged player. Percentage is configurable at league/match/game level.
-3. **Scoring formats:** Standard Baseball Darts only for v1 (0–3 runs per dart, max 9 per inning). No doubles/triples variants.
+3. **Scoring formats:** Standard American Baseball Darts only for v1 (0–9+ runs per inning via single/double/triple). Alternating batting/fielding.
 4. **Tournament formats:** Single-elimination only for v1.
 5. **Payment reminders:** In-app notifications only for v1. No email delivery.
 6. **Standings tiebreakers:** Total match points → total runs scored → head-to-head record → plus/minus.
