@@ -129,14 +129,13 @@ if [[ "$HAS_GUM" == "true" ]]; then
     --padding "1 3" \
     --margin "0 0" \
     --bold \
-    "🎯 Ralph" \
+    "🤖 Ralph" \
     "" \
-    "Tool: $TOOL  ·  Iterations: $MAX_ITERATIONS  ·  Stories: $(prd_status)" \
-    "Next: $(next_story)"
+    "Tool: $TOOL  ·  Iterations: $MAX_ITERATIONS  ·  Stories: $(prd_status)"
 else
   echo "==============================================================="
-  echo "  🎯 Ralph — Tool: $TOOL — Iterations: $MAX_ITERATIONS"
-  echo "  Stories: $(prd_status) — Next: $(next_story)"
+  echo "  🤖 Ralph — Tool: $TOOL — Iterations: $MAX_ITERATIONS"
+  echo "  Stories: $(prd_status)"
   echo "==============================================================="
 fi
 echo ""
