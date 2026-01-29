@@ -45,7 +45,7 @@ export default defineSchema({
     userId: v.id("users"),
     leagueId: v.id("leagues"),
     role,
-  }),
+  }).index("by_user_league", ["userId", "leagueId"]),
 
   invites: defineTable({
     leagueId: v.id("leagues"),
