@@ -1,0 +1,960 @@
+{
+  "project": "Oche",
+  "branchName": "ralph/oche-darts-league",
+  "description": "Oche — Multi-tenant SaaS platform for managing American Baseball Darts leagues with digital scoresheets, real-time stats, standings, scheduling, handicapping, payments, and tournaments.",
+  "userStories": [
+    {
+      "id": "US-001",
+      "title": "Project scaffolding",
+      "description": "As a developer, I need the project initialized with the correct tech stack so that development can begin.",
+      "acceptanceCriteria": [
+        "Vite + React + TypeScript project created",
+        "Tailwind CSS configured",
+        "Convex initialized and connected",
+        "Dev server runs at localhost:5173",
+        "`npm run check` passes (typecheck + lint)",
+        "ABOUTME comments in all created files",
+        "Typecheck passes"
+      ],
+      "epic": "Data Model & Project Setup",
+      "priority": 1,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-002",
+      "title": "Core database schema",
+      "description": "As a developer, I need the database schema defined so that all features have a consistent data foundation.",
+      "acceptanceCriteria": [
+        "`convex/schema.ts` defines tables: `users`, `leagues`, `leagueMemberships`, `invites`, `seasons`, `divisions`, `teams`, `players`, `matches`, `games`, `innings`, `playerStats`",
+        "`users` table includes: email, name, avatarUrl (global account, not league-scoped)",
+        "`leagueMemberships` table includes: userId, leagueId, role (admin/captain/player) — joins users to leagues",
+        "`invites` table includes: leagueId, code, role, createdBy, expiresAt, used",
+        "`leagues` table includes: name, matchConfig (gamesPerMatch, pointsPerGameWin, bonusForTotalRuns, extraInningsExcludeFromStats), handicap settings",
+        "`matches` table includes: leagueId, seasonId, homeTeamId, visitorTeamId, date, status, totals (homeRuns, visitorRuns, bonusWinner)",
+        "`games` table includes: matchId, gameNumber, homePlayerId, visitorPlayerId, winner",
+        "`innings` table includes: gameId, inningNumber, homeRuns (0–9), visitorRuns (0–9), isExtra boolean",
+        "`players` table includes: userId, teamId, status (active/inactive)",
+        "`teams` table includes: name, captainId, venue, leagueId, divisionId",
+        "Foreign keys use `v.id(\"tableName\")` pattern",
+        "Enums use `v.union(v.literal(...))` pattern",
+        "Schema validates runs are 0–9 per inning",
+        "`npx convex dev` deploys schema without errors",
+        "Typecheck passes"
+      ],
+      "epic": "Data Model & Project Setup",
+      "priority": 2,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-003",
+      "title": "Marketing landing page",
+      "description": "As a visitor, I want to see what Oche does and why I should sign up so that I can decide if it's right for my league.",
+      "acceptanceCriteria": [
+        "Hero section: headline, subheadline, and primary CTA (\"Start Your League\" / \"Get Started\")",
+        "Feature highlights section: score entry grid, real-time stats, scheduling, handicapping",
+        "Social proof section: placeholder for testimonials or league count",
+        "Pricing section (or \"Free to start\" messaging if no paid tiers yet)",
+        "Footer: links to login, sign up, contact",
+        "Responsive design (mobile, tablet, desktop)",
+        "Page loads without authentication (public route)",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "epic": "Landing Page",
+      "priority": 3,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-004",
+      "title": "Landing page navigation",
+      "description": "As a visitor, I want clear navigation between the landing page and auth flows so that I can sign up or log in easily.",
+      "acceptanceCriteria": [
+        "Header with logo, \"Log In\" and \"Sign Up\" buttons",
+        "\"Sign Up\" navigates to registration (US-005)",
+        "\"Log In\" navigates to login form",
+        "Authenticated users redirected to dashboard instead of landing page",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "epic": "Landing Page",
+      "priority": 4,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-005",
+      "title": "Email/password authentication",
+      "description": "As a user, I want to sign up and log in with email and password so that I can access the app.",
+      "acceptanceCriteria": [
+        "Sign-up form: email, password, display name",
+        "Login form: email, password",
+        "Password requirements enforced (min 8 chars)",
+        "Session persists across page reloads",
+        "Logout clears session",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "epic": "Authentication & Roles",
+      "priority": 5,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-006",
+      "title": "OAuth login (Google)",
+      "description": "As a user, I want to log in with Google so that I can use my existing account.",
+      "acceptanceCriteria": [
+        "\"Sign in with Google\" button on login page",
+        "Google OAuth flow completes and creates/links user",
+        "Works alongside email/password auth",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "epic": "Authentication & Roles",
+      "priority": 6,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-007",
+      "title": "Role-based access control",
+      "description": "As a system, I need role-based permissions scoped per league so that users can only perform actions appropriate to their role within each league.",
+      "acceptanceCriteria": [
+        "Roles defined per league membership: Admin, Captain, Player, Guest",
+        "A user can have different roles in different leagues (e.g., Admin in one, Player in another)",
+        "Admin: full CRUD on all resources within their league",
+        "Captain: manage own team roster, enter/edit scores for own team, set pairings",
+        "Player: read-only access to own stats, team, league",
+        "Guest: read-only access to public league data (no membership required)",
+        "Convex mutations enforce role checks using `leagueMemberships`",
+        "Unauthorized actions return clear error messages",
+        "Typecheck passes"
+      ],
+      "epic": "Authentication & Roles",
+      "priority": 7,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-008",
+      "title": "Role assignment UI",
+      "description": "As an admin, I want to assign roles to users so that I can control access.",
+      "acceptanceCriteria": [
+        "Admin can view list of users in a league",
+        "Admin can assign/change roles (Admin, Captain, Player)",
+        "Role changes take effect immediately",
+        "Cannot remove the last admin from a league",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "epic": "Authentication & Roles",
+      "priority": 8,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-009",
+      "title": "Post-signup league creation flow",
+      "description": "As a new user, I want to create my first league right after signing up so that I can get started immediately.",
+      "acceptanceCriteria": [
+        "After first sign-up, user is prompted to \"Create a League\" or \"Join a League\"",
+        "\"Create a League\" launches the league creation form (US-013)",
+        "Creator is automatically the league admin",
+        "\"Join a League\" shows option to enter an invite code or browse public leagues",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "epic": "SaaS Onboarding",
+      "priority": 9,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-010",
+      "title": "User dashboard",
+      "description": "As a user, I want a dashboard showing all my leagues so that I can switch between them.",
+      "acceptanceCriteria": [
+        "Lists all leagues the user belongs to (as admin, captain, or player)",
+        "Shows user's role in each league",
+        "\"Create New League\" button",
+        "Clicking a league navigates to that league's home page",
+        "Empty state for users with no leagues (prompts to create or join)",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "epic": "SaaS Onboarding",
+      "priority": 10,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-011",
+      "title": "League invitations",
+      "description": "As a league admin, I want to invite people to my league so that they can join as captains or players.",
+      "acceptanceCriteria": [
+        "Generate a shareable invite link with a unique code",
+        "Invite link specifies the role (Captain or Player)",
+        "Visiting the link prompts sign-up/login, then adds user to the league with the specified role",
+        "Admin can revoke invite links",
+        "Admin can see pending invitations",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "epic": "SaaS Onboarding",
+      "priority": 11,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-012",
+      "title": "Multi-league user context",
+      "description": "As a user who belongs to multiple leagues, I want to switch between leagues so that I see the right data.",
+      "acceptanceCriteria": [
+        "League switcher in the app header/sidebar",
+        "All league-scoped pages (standings, schedule, stats) filter to the active league",
+        "Active league persists across page navigation and reloads (stored in URL or session)",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "epic": "SaaS Onboarding",
+      "priority": 12,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-013",
+      "title": "Create league",
+      "description": "As an admin, I want to create a new league so that I can begin organizing play.",
+      "acceptanceCriteria": [
+        "Form fields: league name, description",
+        "Creator automatically becomes league admin",
+        "League appears in \"My Leagues\" after creation",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "epic": "League Management",
+      "priority": 13,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-014",
+      "title": "Configure match structure",
+      "description": "As an admin, I want to configure how matches work so that the app reflects my league's rules.",
+      "acceptanceCriteria": [
+        "Settings: number of individual games per match (default 5)",
+        "Points per individual game win (default 1)",
+        "Bonus point for team with highest total runs that night (toggle)",
+        "Extra innings enabled/disabled toggle",
+        "Extra innings runs excluded from stats toggle",
+        "Settings saved and applied to future matches",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "epic": "League Management",
+      "priority": 14,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-015",
+      "title": "Manage seasons",
+      "description": "As an admin, I want to create and manage seasons so that stats and standings reset appropriately.",
+      "acceptanceCriteria": [
+        "Create season with name and start/end dates",
+        "Mark a season as active (only one active at a time)",
+        "Archive past seasons (data preserved, read-only)",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "epic": "League Management",
+      "priority": 15,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-016",
+      "title": "Manage divisions",
+      "description": "As an admin, I want to organize teams into divisions so that scheduling and standings are grouped.",
+      "acceptanceCriteria": [
+        "Create/edit/delete divisions within a league",
+        "Assign teams to divisions",
+        "Standings can be filtered by division",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "epic": "League Management",
+      "priority": 16,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-017",
+      "title": "Create and edit teams",
+      "description": "As an admin, I want to create teams so that players can be organized.",
+      "acceptanceCriteria": [
+        "Form fields: team name, venue/bar name, division",
+        "Edit team details after creation",
+        "Team appears in league's team list",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "epic": "Teams & Rosters",
+      "priority": 17,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-018",
+      "title": "Assign team captain",
+      "description": "As an admin, I want to assign a captain to a team so that they can manage their roster and scores.",
+      "acceptanceCriteria": [
+        "Select a player from the team roster as captain",
+        "Captain receives Captain role permissions",
+        "Only one captain per team",
+        "Admin can change captain",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "epic": "Teams & Rosters",
+      "priority": 18,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-019",
+      "title": "Manage team roster",
+      "description": "As a captain, I want to add and remove players from my team so that the roster stays current.",
+      "acceptanceCriteria": [
+        "Add player by name/email (creates player record if needed)",
+        "Remove player from roster",
+        "Set player status: active or inactive",
+        "Enforce max roster size (configurable per league, default 12)",
+        "Inactive players cannot be paired for matches",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "epic": "Teams & Rosters",
+      "priority": 19,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-020",
+      "title": "Manual match scheduling",
+      "description": "As an admin, I want to manually create match schedules so that teams know when and whom they play.",
+      "acceptanceCriteria": [
+        "Create match: select home team, visitor team, date, location",
+        "Match appears on league schedule",
+        "Prevent scheduling a team against itself",
+        "Prevent double-booking a team on the same date",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "epic": "Match Scheduling",
+      "priority": 20,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-021",
+      "title": "Auto-generate schedule",
+      "description": "As an admin, I want to auto-generate a round-robin schedule so that I don't have to create each match manually.",
+      "acceptanceCriteria": [
+        "Select teams to include and date range",
+        "Round-robin algorithm generates balanced matchups",
+        "Home/away alternates fairly",
+        "Admin can review and edit generated schedule before confirming",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "epic": "Match Scheduling",
+      "priority": 21,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-022",
+      "title": "Player pairings per game",
+      "description": "As a captain, I want to set player pairings for each individual game in a match so that matchups are recorded.",
+      "acceptanceCriteria": [
+        "For each game in a match, select home player and visitor player from respective rosters",
+        "Only active roster players available for selection",
+        "A player can only be paired once per match (unless league config allows repeats)",
+        "Pairings saved and visible on match page",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "epic": "Match Scheduling",
+      "priority": 22,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-023",
+      "title": "Match detail page",
+      "description": "As a user, I want to see match details so that I know teams, date, pairings, and results.",
+      "acceptanceCriteria": [
+        "Displays: home team, visitor team, date, location",
+        "Shows all individual game pairings",
+        "Shows game results (winner, scores) when available",
+        "Shows match totals and bonus point winner",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "epic": "Match Scheduling",
+      "priority": 23,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-024",
+      "title": "Innings score entry grid",
+      "description": "As a captain, I want to enter runs per inning in a grid that mirrors paper scoresheets so that scoring feels familiar.",
+      "acceptanceCriteria": [
+        "Grid layout: rows for home/visitor player, columns for innings 1–9",
+        "Each cell accepts a number 0–9",
+        "Tab/arrow key navigation between cells",
+        "Auto-advances to next cell after entry",
+        "Visual distinction between home and visitor rows",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "epic": "Score Entry (Manual)",
+      "priority": 24,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-025",
+      "title": "Extra innings entry",
+      "description": "As a captain, I want to enter extra innings when a game is tied so that ties are resolved.",
+      "acceptanceCriteria": [
+        "When regulation innings (1–9) result in a tie, an \"Add Extra Inning\" button appears",
+        "Extra inning columns appear to the right of inning 9",
+        "Extra innings visually distinguished (different background/border)",
+        "Extra innings flagged as `isExtra: true` in the database",
+        "No limit on number of extra innings",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "epic": "Score Entry (Manual)",
+      "priority": 25,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-026",
+      "title": "Auto-calculated totals",
+      "description": "As a user, I want to see plus, minus, and total columns auto-calculated so that I don't have to do math.",
+      "acceptanceCriteria": [
+        "\"Plus\" column: sum of runs scored in regular innings (1–9) only",
+        "\"Minus\" column: sum of runs allowed in regular innings (1–9) only",
+        "\"Total\" column: plus minus minus (plus/minus differential)",
+        "Extra innings runs NOT included in plus/minus/total",
+        "Totals update in real-time as runs are entered",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "epic": "Score Entry (Manual)",
+      "priority": 26,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-027",
+      "title": "Multi-game match view",
+      "description": "As a captain, I want to enter scores for all games in a match from one page so that I don't navigate between pages.",
+      "acceptanceCriteria": [
+        "Match score entry page shows all individual games",
+        "Each game has its own scoring grid",
+        "Games are numbered and labeled with player names",
+        "Can collapse/expand individual games",
+        "Overall match totals visible at top/bottom",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "epic": "Score Entry (Manual)",
+      "priority": 27,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-028",
+      "title": "Game winner determination",
+      "description": "As a system, I need to determine the winner of each individual game so that points are awarded correctly.",
+      "acceptanceCriteria": [
+        "Winner is the player with more runs after 9 innings (or after extra innings if tied)",
+        "Winner receives points per league config (default 1)",
+        "If extra innings were played, winner still gets standard points",
+        "Tie after extra innings handled (admin can flag as tie if league allows)",
+        "Typecheck passes"
+      ],
+      "epic": "Score Entry (Manual)",
+      "priority": 28,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-029",
+      "title": "DNP (Did Not Play) handling",
+      "description": "As a captain, I want to mark a game slot as DNP so that missing players are handled properly.",
+      "acceptanceCriteria": [
+        "\"Blackout\" or DNP toggle on a game",
+        "DNP games are excluded from stats",
+        "DNP games do not award points",
+        "Visual indicator (grayed out) on the scoresheet",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "epic": "Score Entry (Manual)",
+      "priority": 29,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-030",
+      "title": "High innings notation",
+      "description": "As a user, I want 9-run innings highlighted so that exceptional performance is visible.",
+      "acceptanceCriteria": [
+        "Any inning with 9 runs is visually highlighted (bold, color, or icon)",
+        "High innings count tracked per player",
+        "Visible on the scoring grid",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "epic": "Score Entry (Manual)",
+      "priority": 30,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-031",
+      "title": "Dual entry with discrepancy flagging",
+      "description": "As a league, I want both captains to enter scores independently so that accuracy is verified.",
+      "acceptanceCriteria": [
+        "Both home and visitor captains can enter scores for the same match",
+        "System compares both entries inning-by-inning",
+        "Matching entries are auto-confirmed",
+        "Discrepancies are flagged for admin review",
+        "Admin can resolve by choosing one entry or entering a correction",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "epic": "Score Entry (Manual)",
+      "priority": 31,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-032",
+      "title": "Live tablet scoring",
+      "description": "As a user at a match, I want to enter scores on a tablet in real-time so that remote viewers can follow along.",
+      "acceptanceCriteria": [
+        "Score entry works on tablet-sized screens (responsive grid)",
+        "Touch-friendly input targets (≥44px)",
+        "Changes sync in real-time via Convex subscriptions",
+        "Other viewers see updates without refreshing",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "epic": "Score Entry (Manual)",
+      "priority": 32,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-033",
+      "title": "CSV file upload",
+      "description": "As a captain, I want to upload a CSV file of scores so that I can import data from existing spreadsheets.",
+      "acceptanceCriteria": [
+        "File upload accepts .csv files",
+        "Uses Convex internal storage for uploaded files",
+        "File is parsed with PapaParse",
+        "Preview of parsed data shown before import",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "epic": "Score Import",
+      "priority": 33,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-034",
+      "title": "Excel file upload",
+      "description": "As a captain, I want to upload Excel files so that I can import from common spreadsheet formats.",
+      "acceptanceCriteria": [
+        "File upload accepts .xlsx and .xls files",
+        "Parsed with SheetJS",
+        "Sheet selector if workbook has multiple sheets",
+        "Preview of parsed data shown before import",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "epic": "Score Import",
+      "priority": 34,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-035",
+      "title": "Google Sheets import",
+      "description": "As a captain, I want to import scores from Google Sheets so that I can pull from shared league spreadsheets.",
+      "acceptanceCriteria": [
+        "Authenticate with Google (via OAuth, see US-006)",
+        "Enter Google Sheet URL or select from Drive",
+        "Select sheet/range to import",
+        "Preview parsed data",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "epic": "Score Import",
+      "priority": 35,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-036",
+      "title": "Column mapping wizard",
+      "description": "As a captain, I want to map spreadsheet columns to innings/players so that the import understands my data format.",
+      "acceptanceCriteria": [
+        "Step-by-step wizard after file upload",
+        "Map columns to: player name, innings 1–9, extra innings, plus, minus",
+        "Auto-detect common column names",
+        "Save mapping as template for reuse",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "epic": "Score Import",
+      "priority": 36,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-037",
+      "title": "Import validation and error handling",
+      "description": "As a captain, I want import errors clearly shown so that I can fix my spreadsheet and re-import.",
+      "acceptanceCriteria": [
+        "Validate: runs 0–9, player names match roster, required columns present",
+        "Row-level error messages (e.g., \"Row 5: Invalid runs value '12' in inning 3\")",
+        "Option to skip invalid rows and import the rest",
+        "Summary of imported vs. skipped rows",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "epic": "Score Import",
+      "priority": 37,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-038",
+      "title": "Multi-file merge",
+      "description": "As an admin, I want to merge multiple import files into one match so that split spreadsheets are combined.",
+      "acceptanceCriteria": [
+        "Upload multiple files for a single match",
+        "System merges data by player/game",
+        "Conflicts highlighted for manual resolution",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "epic": "Score Import",
+      "priority": 38,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-039",
+      "title": "Player statistics calculation",
+      "description": "As a system, I need to calculate player stats from regular innings only so that stats are accurate.",
+      "acceptanceCriteria": [
+        "Runs per game average (total regular-innings runs / games played)",
+        "Total runs scored (regular innings only)",
+        "Plus/minus rating (runs scored minus runs allowed, regular only)",
+        "High innings count (number of 9-run innings)",
+        "Games played count",
+        "Win/loss record",
+        "Extra innings runs excluded from all calculations",
+        "Stats update when scores are entered or edited",
+        "Typecheck passes"
+      ],
+      "epic": "Statistics",
+      "priority": 39,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-040",
+      "title": "Player stats page",
+      "description": "As a player, I want to see my stats so that I can track my performance.",
+      "acceptanceCriteria": [
+        "Page shows: average, total runs, plus/minus, high innings, W/L record",
+        "Season selector to view historical stats",
+        "Game-by-game history table",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "epic": "Statistics",
+      "priority": 40,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-041",
+      "title": "Team statistics",
+      "description": "As a user, I want to see team-level stats so that I can compare teams.",
+      "acceptanceCriteria": [
+        "Individual game wins total",
+        "Total runs scored/allowed (regular innings)",
+        "Match points (game wins + bonus points)",
+        "Team plus/minus",
+        "Team roster with per-player stats summary",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "epic": "Statistics",
+      "priority": 41,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-042",
+      "title": "League standings",
+      "description": "As a user, I want to see league standings so that I know the rankings.",
+      "acceptanceCriteria": [
+        "Standings table sorted by total match points (descending)",
+        "Columns: rank, team name, match points, game wins, total runs, plus/minus",
+        "Filter by division",
+        "Filter by season",
+        "Tiebreaker order: total match points → total runs scored → head-to-head record → plus/minus",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "epic": "Statistics",
+      "priority": 42,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-043",
+      "title": "Leaderboards",
+      "description": "As a user, I want individual player leaderboards so that top performers are recognized.",
+      "acceptanceCriteria": [
+        "Leaderboard categories: highest average, most runs, best plus/minus, most high innings, most wins",
+        "Top 10 displayed per category",
+        "Season and all-time views",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "epic": "Statistics",
+      "priority": 43,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-044",
+      "title": "Historical trends",
+      "description": "As a user, I want to see performance trends over time so that I can track improvement.",
+      "acceptanceCriteria": [
+        "Line chart of player average over weeks/matches",
+        "Line chart of team points over weeks",
+        "Comparison view (select multiple players or teams)",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "epic": "Statistics",
+      "priority": 44,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-045",
+      "title": "Stats export",
+      "description": "As an admin, I want to export stats to CSV or PDF so that I can share them outside the app.",
+      "acceptanceCriteria": [
+        "Export standings table as CSV",
+        "Export standings table as PDF",
+        "Export player stats as CSV",
+        "Export includes season/division context",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "epic": "Statistics",
+      "priority": 45,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-046",
+      "title": "Configure handicap rules",
+      "description": "As an admin, I want to configure handicapping so that weaker players get spot runs based on average differentials.",
+      "acceptanceCriteria": [
+        "Enable/disable handicapping per league",
+        "Handicap formula: sum both paired players' averages, compute the difference, apply a configurable percentage to get spot runs awarded to the lower-averaged player",
+        "Handicap percentage configurable at three levels: league-wide default, per-match override, per-game override",
+        "Handicap recalculation frequency (weekly, per-match, manual)",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "epic": "Handicapping",
+      "priority": 46,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-047",
+      "title": "Apply handicaps to scoring",
+      "description": "As a system, I need to apply handicap spot runs to scoring so that adjusted results are calculated.",
+      "acceptanceCriteria": [
+        "For each game, compute: `spotRuns = floor((higherPlayerAvg - lowerPlayerAvg) * handicapPercent)`",
+        "Spot runs awarded to the lower-averaged player",
+        "Handicap runs shown on the scoresheet alongside actual runs",
+        "Adjusted totals displayed (actual + spot runs)",
+        "Winner determined by adjusted totals when handicapping is enabled",
+        "Raw (non-handicap) stats preserved for statistical purposes",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "epic": "Handicapping",
+      "priority": 47,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-048",
+      "title": "Payment configuration",
+      "description": "As an admin, I want to configure league fees so that players know what they owe.",
+      "acceptanceCriteria": [
+        "Set fee amounts: league fee, weekly fee",
+        "Fee schedule (one-time, weekly, per-match)",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "epic": "Payments",
+      "priority": 48,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-049",
+      "title": "Payment tracking",
+      "description": "As an admin, I want to track who has paid so that I can follow up on outstanding fees.",
+      "acceptanceCriteria": [
+        "Mark payments as received (manual entry)",
+        "Payment status per player: paid, partial, unpaid",
+        "Payment history log",
+        "Outstanding balance calculation",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "epic": "Payments",
+      "priority": 49,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-050",
+      "title": "Online payment (Stripe)",
+      "description": "As a player, I want to pay league fees online so that I don't need cash.",
+      "acceptanceCriteria": [
+        "Stripe checkout integration for league fees",
+        "Payment confirmation and receipt",
+        "Auto-update payment status on successful charge",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "epic": "Payments",
+      "priority": 50,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-051",
+      "title": "Create tournament bracket",
+      "description": "As an admin, I want to create a single-elimination tournament so that the league can hold playoff events.",
+      "acceptanceCriteria": [
+        "Create tournament: name, date, format (single-elimination)",
+        "Select participating players or teams",
+        "Auto-generate seeded bracket",
+        "Bracket visualization (tree view)",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "epic": "Tournaments",
+      "priority": 51,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-052",
+      "title": "Tournament match scoring",
+      "description": "As a captain, I want to enter tournament match scores using the same grid so that scoring is consistent.",
+      "acceptanceCriteria": [
+        "Tournament matches use same scoring grid as league matches",
+        "Winners advance automatically in the bracket",
+        "Championship match and final results displayed",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "epic": "Tournaments",
+      "priority": 52,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-053",
+      "title": "Public league page",
+      "description": "As an admin, I want to make my league publicly viewable so that spectators can follow along.",
+      "acceptanceCriteria": [
+        "Toggle league visibility: private (default) or public",
+        "Public page shows: standings, schedule, recent results",
+        "No login required for public pages",
+        "Shareable URL",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "epic": "Public & Social",
+      "priority": 53,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-054",
+      "title": "Notifications",
+      "description": "As a user, I want to receive notifications about match schedules and deadlines so that I don't miss anything.",
+      "acceptanceCriteria": [
+        "In-app notification center",
+        "Notifications for: upcoming matches, score submission deadlines, roster changes",
+        "Mark as read/unread",
+        "Notification preferences (opt out per category)",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "epic": "Public & Social",
+      "priority": 54,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-055",
+      "title": "Audit log",
+      "description": "As an admin, I want an audit log of score changes so that I can track who changed what.",
+      "acceptanceCriteria": [
+        "Log entries for: score entry, score edit, score import, role changes",
+        "Each entry: who, what, when, old value, new value",
+        "Filterable by date, user, action type",
+        "Read-only (cannot edit log)",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "epic": "Public & Social",
+      "priority": 55,
+      "passes": false,
+      "notes": ""
+    }
+  ]
+}
