@@ -93,7 +93,10 @@ prd_status() {
 
 prd_remaining() {
   if [[ "$HAS_JQ" == "true" && -f "$PRD_FILE" ]]; then
-    jq '[.userStories[] | select(.passes == false)] | length' "$PRD_FILE"
+    local total remaining
+    total=$(jq '.userStories | length' "$PRD_FILE")
+    remaining=$(jq '[.userStories[] | select(.passes == false)] | length' "$PRD_FILE")
+    echo "${remaining}/${total}"
   else
     echo "?"
   fi
