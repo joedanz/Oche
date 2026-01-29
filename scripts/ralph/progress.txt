@@ -715,3 +715,21 @@
   - Convex `useQuery` with `"skip"` argument skips the query entirely — use for conditional fetching based on selection state
   - Limit comparison to 3 entities to keep charts readable and avoid excessive queries
 ---
+
+## 2026-01-29 - US-045
+- Added CSV and PDF export for league standings and player statistics
+- Backend: `convex/statsExport.ts` with `getExportDataHandler` returning enriched player stats
+- Frontend: `src/statsExport.ts` pure utility functions for CSV generation and PDF generation (jsPDF + jspdf-autotable)
+- Frontend: `src/PlayerStatsExportPage.tsx` with season selector, stats table, export buttons
+- Export buttons added to `StandingsPage` for standings CSV/PDF
+- Route: `/leagues/:leagueId/player-stats-export` as child of LeagueLayout
+- Installed `jspdf` and `jspdf-autotable` for PDF generation
+- **Tests added:** 19 new tests in `src/statsExport.test.ts` (6), `src/StandingsPage.test.tsx` (4), `src/PlayerStatsExportPage.test.tsx` (6), `convex/statsExport.test.ts` (3)
+- **Files changed:** convex/statsExport.ts (new), convex/statsExport.test.ts (new), src/statsExport.ts (new), src/statsExport.test.ts (new), src/PlayerStatsExportPage.tsx (new), src/PlayerStatsExportPage.test.tsx (new), src/StandingsPage.tsx, src/StandingsPage.test.tsx, src/App.tsx, package.json
+- **Learnings for future iterations:**
+  - CSV export is best done client-side with `Blob` + `URL.createObjectURL` — no server-side generation needed
+  - jsPDF with jspdf-autotable provides table formatting in PDFs — use dynamic import to keep it out of initial bundle
+  - `downloadCsv` helper creates a temporary `<a>` element with download attribute for browser file download
+  - CSV field escaping: wrap in quotes if field contains commas, quotes, or newlines; double-escape internal quotes
+  - Reuse existing query data from `useQuery` for export — no need for separate export-specific mutations
+---
