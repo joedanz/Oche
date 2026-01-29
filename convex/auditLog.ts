@@ -5,6 +5,7 @@ import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
 import { auth } from "./auth";
 import { requireRole } from "./authorization";
+import { requireFeature } from "./planGating";
 import type { Id } from "./_generated/dataModel";
 import type { DatabaseReader, DatabaseWriter } from "./_generated/server";
 
@@ -96,6 +97,7 @@ export const getAuditLog = query({
     const userId = await auth.getUserId(ctx);
     if (!userId) throw new Error("Not authenticated");
     await requireRole(ctx.db, userId as Id<"users">, args.leagueId, ["admin"]);
+    await requireFeature(ctx.db, userId as Id<"users">, "audit_log");
     return getAuditLogHandler(ctx as any, args);
   },
 });

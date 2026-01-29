@@ -6,6 +6,7 @@ import { v } from "convex/values";
 import { auth } from "./auth";
 import type { Id } from "./_generated/dataModel";
 import type { DatabaseWriter, DatabaseReader } from "./_generated/server";
+import { requireLimit } from "./planGating";
 
 const defaultMatchConfig = {
   gamesPerMatch: 5,
@@ -54,6 +55,19 @@ export const createLeague = mutation({
   handler: async (ctx, args) => {
     const userId = await auth.getUserId(ctx);
     if (!userId) throw new Error("Not authenticated");
+
+    // Check league count limit
+    const memberships = await getUserLeaguesHandler(ctx, {
+      userId: userId as Id<"users">,
+    });
+    const adminLeagues = memberships.filter((m) => m.role === "admin");
+    await requireLimit(
+      ctx.db,
+      userId as Id<"users">,
+      "maxLeagues",
+      adminLeagues.length,
+    );
+
     return await createLeagueHandler(ctx, {
       name: args.name,
       description: args.description,

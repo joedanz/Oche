@@ -5,6 +5,8 @@ import { useState } from "react";
 import { useQuery } from "convex/react";
 import { api } from "../convex/_generated/api";
 import type { Id } from "../convex/_generated/dataModel";
+import { usePlan } from "./usePlan";
+import { UpgradePrompt } from "./UpgradePrompt";
 
 type AuditAction = "score_entry" | "score_edit" | "score_import" | "role_change";
 
@@ -27,6 +29,8 @@ interface AuditLogEntry {
 }
 
 export function AuditLogPage({ leagueId }: { leagueId: Id<"leagues"> }) {
+  const { isLoading, canUse } = usePlan();
+  const allowed = !isLoading && canUse("audit_log");
   const [actionFilter, setActionFilter] = useState<AuditAction | "">("");
 
   const queryArgs: { leagueId: Id<"leagues">; action?: AuditAction } = { leagueId };
@@ -34,7 +38,12 @@ export function AuditLogPage({ leagueId }: { leagueId: Id<"leagues"> }) {
     queryArgs.action = actionFilter;
   }
 
-  const entries = useQuery(api.auditLog.getAuditLog, queryArgs) as AuditLogEntry[] | undefined;
+  const entries = useQuery(api.auditLog.getAuditLog, allowed ? queryArgs : "skip") as AuditLogEntry[] | undefined;
+
+  if (isLoading) return null;
+  if (!canUse("audit_log")) {
+    return <UpgradePrompt feature="Audit Log" description="Track every score entry, edit, and role change with a complete activity history." />;
+  }
 
   return (
     <div>

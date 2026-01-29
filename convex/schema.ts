@@ -248,6 +248,27 @@ export default defineSchema({
     createdAt: v.number(),
   }).index("by_league", ["leagueId"]),
 
+  subscriptions: defineTable({
+    userId: v.id("users"),
+    planId: v.union(
+      v.literal("starter"),
+      v.literal("league"),
+      v.literal("association"),
+    ),
+    billingInterval: v.union(v.literal("monthly"), v.literal("yearly")),
+    status: v.union(
+      v.literal("active"),
+      v.literal("canceled"),
+      v.literal("past_due"),
+    ),
+    stripeCustomerId: v.optional(v.string()),
+    stripeSubscriptionId: v.optional(v.string()),
+    currentPeriodEnd: v.optional(v.number()),
+    createdAt: v.number(),
+  })
+    .index("by_user", ["userId"])
+    .index("by_stripe_subscription", ["stripeSubscriptionId"]),
+
   playerStats: defineTable({
     playerId: v.id("players"),
     seasonId: v.id("seasons"),

@@ -24,12 +24,20 @@ export function Dashboard() {
           <h1 className="font-display text-3xl tracking-tight text-oche-100">
             My Leagues
           </h1>
-          <button
-            onClick={() => void signOut()}
-            className="rounded-md border border-oche-700 px-4 py-2 text-sm text-oche-300 transition hover:bg-oche-800 hover:text-oche-100 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 focus:ring-offset-oche-900"
-          >
-            Log Out
-          </button>
+          <div className="flex items-center gap-3">
+            <Link
+              to="/billing"
+              className="rounded-md border border-oche-700 px-4 py-2 text-sm text-oche-300 transition hover:bg-oche-800 hover:text-oche-100 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 focus:ring-offset-oche-900"
+            >
+              Billing
+            </Link>
+            <button
+              onClick={() => void signOut()}
+              className="rounded-md border border-oche-700 px-4 py-2 text-sm text-oche-300 transition hover:bg-oche-800 hover:text-oche-100 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 focus:ring-offset-oche-900"
+            >
+              Log Out
+            </button>
+          </div>
         </div>
 
         {leagues === undefined ? null : leagues.length === 0 ? (

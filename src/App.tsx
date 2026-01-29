@@ -43,6 +43,7 @@ import { PublicLeaguePage } from "./PublicLeaguePage";
 import { LeagueVisibilityToggle } from "./LeagueVisibilityToggle";
 import { NotificationsPage } from "./NotificationsPage";
 import { AuditLogPage } from "./AuditLogPage";
+import { BillingPage } from "./BillingPage";
 import { useAuth } from "./useAuth";
 
 function AuthenticatedRedirect() {
@@ -91,6 +92,12 @@ function AppRoutes() {
         path="/dashboard"
         element={
           isAuthenticated ? <Dashboard /> : <Navigate to="/login" replace />
+        }
+      />
+      <Route
+        path="/billing"
+        element={
+          isAuthenticated ? <BillingPage /> : <Navigate to="/login" replace />
         }
       />
       <Route

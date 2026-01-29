@@ -6,14 +6,23 @@ import { useQuery } from "convex/react";
 import { api } from "../convex/_generated/api";
 import type { Id } from "../convex/_generated/dataModel";
 import { playerStatsToCsv, playerStatsToPdf, downloadCsv } from "./statsExport";
+import { usePlan } from "./usePlan";
+import { UpgradePrompt } from "./UpgradePrompt";
 
 export function PlayerStatsExportPage({ leagueId }: { leagueId: Id<"leagues"> }) {
+  const { isLoading, canUse } = usePlan();
+  const allowed = !isLoading && canUse("csv_pdf_export");
   const [seasonId, setSeasonId] = useState<string>("");
 
-  const data = useQuery(api.statsExport.getExportData, {
-    leagueId,
-    ...(seasonId ? { seasonId: seasonId as Id<"seasons"> } : {}),
-  });
+  const data = useQuery(
+    api.statsExport.getExportData,
+    allowed ? { leagueId, ...(seasonId ? { seasonId: seasonId as Id<"seasons"> } : {}) } : "skip",
+  );
+
+  if (isLoading) return null;
+  if (!canUse("csv_pdf_export")) {
+    return <UpgradePrompt feature="Stats Export" description="Export player statistics to CSV and PDF for record-keeping and league communications." />;
+  }
 
   if (!data) {
     return <div className="p-6">Loading…</div>;

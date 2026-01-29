@@ -5,6 +5,7 @@ import { query } from "./_generated/server";
 import { v } from "convex/values";
 import { requireLeagueMember } from "./authorization";
 import { auth } from "./auth";
+import { requireFeature } from "./planGating";
 import type { Id } from "./_generated/dataModel";
 import type { DatabaseReader } from "./_generated/server";
 
@@ -108,6 +109,7 @@ export const getExportData = query({
   handler: async (ctx, args) => {
     const userId = await auth.getUserId(ctx);
     if (!userId) return null;
+    await requireFeature(ctx.db, userId as Id<"users">, "csv_pdf_export");
     return await getExportDataHandler(ctx, {
       ...args,
       userId: userId as Id<"users">,

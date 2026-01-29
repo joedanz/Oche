@@ -5,12 +5,15 @@ import { useState, useEffect } from "react";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "../convex/_generated/api";
 import type { Id } from "../convex/_generated/dataModel";
+import { usePlan } from "./usePlan";
+import { UpgradePrompt } from "./UpgradePrompt";
 
 interface HandicapConfigPageProps {
   leagueId: Id<"leagues">;
 }
 
 export function HandicapConfigPage({ leagueId }: HandicapConfigPageProps) {
+  const { isLoading, canUse } = usePlan();
   const league = useQuery(api.leagues.getLeague, { leagueId });
   const updateConfig = useMutation(api.handicapConfig.updateHandicapConfig);
 
@@ -31,6 +34,11 @@ export function HandicapConfigPage({ leagueId }: HandicapConfigPageProps) {
       );
     }
   }, [league]);
+
+  if (isLoading) return null;
+  if (!canUse("full_handicapping")) {
+    return <UpgradePrompt feature="Full Handicapping" description="Configure handicap percentage, recalculation frequency, and per-match overrides." />;
+  }
 
   if (!league) {
     return <p className="text-oche-400">Loading…</p>;

@@ -3,6 +3,9 @@
 
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
+import { auth } from "./auth";
+import { requireFeature } from "./planGating";
+import type { Id } from "./_generated/dataModel";
 
 const mappingValidator = v.object({
   playerName: v.optional(v.number()),
@@ -43,6 +46,9 @@ export const saveTemplate = mutation({
     mapping: mappingValidator,
   },
   handler: async (ctx, args) => {
+    const userId = await auth.getUserId(ctx);
+    if (!userId) throw new Error("Not authenticated");
+    await requireFeature(ctx.db, userId as Id<"users">, "score_import");
     return await saveTemplateHandler(ctx.db, args);
   },
 });

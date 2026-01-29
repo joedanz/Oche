@@ -3,6 +3,8 @@
 
 import { useState, useCallback } from "react";
 import { parseCsvScores, type ParsedScoreRow } from "./csvParser";
+import { usePlan } from "./usePlan";
+import { UpgradePrompt } from "./UpgradePrompt";
 
 interface CsvUploadPageProps {
   leagueId: string;
@@ -10,6 +12,7 @@ interface CsvUploadPageProps {
 }
 
 export function CsvUploadPage({ leagueId, matchId }: CsvUploadPageProps) {
+  const { isLoading, canUse } = usePlan();
   const [preview, setPreview] = useState<ParsedScoreRow[] | null>(null);
   const [errors, setErrors] = useState<string[]>([]);
   const [fileName, setFileName] = useState<string>("");
@@ -43,6 +46,11 @@ export function CsvUploadPage({ leagueId, matchId }: CsvUploadPageProps) {
     void leagueId;
     void matchId;
   }, [preview, leagueId, matchId]);
+
+  if (isLoading) return null;
+  if (!canUse("score_import")) {
+    return <UpgradePrompt feature="Score Import" description="Import scores from CSV files to quickly enter match results in bulk." />;
+  }
 
   return (
     <div className="max-w-4xl mx-auto p-6">

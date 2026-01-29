@@ -5,6 +5,7 @@ import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
 import { requireRole } from "./authorization";
 import { auth } from "./auth";
+import { requireFeature } from "./planGating";
 import type { Id } from "./_generated/dataModel";
 import type { DatabaseReader } from "./_generated/server";
 
@@ -229,6 +230,7 @@ export const toggleVisibility = mutation({
   handler: async (ctx, args) => {
     const userId = await auth.getUserId(ctx);
     if (!userId) throw new Error("Not authenticated");
+    await requireFeature(ctx.db, userId as Id<"users">, "public_pages");
     return await toggleVisibilityHandler(ctx, {
       ...args,
       userId: userId as Id<"users">,

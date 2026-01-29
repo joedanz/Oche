@@ -48,7 +48,7 @@ describe("LandingPage", () => {
     ).toBeInTheDocument();
   });
 
-  it("renders the pricing section", () => {
+  it("renders the pricing section with three tiers", () => {
     render(
       <MemoryRouter>
         <LandingPage />
@@ -58,6 +58,8 @@ describe("LandingPage", () => {
       screen.getByRole("heading", { name: /free to start/i }),
     ).toBeInTheDocument();
     expect(screen.getByText("$0")).toBeInTheDocument();
+    expect(screen.getByText("$12")).toBeInTheDocument();
+    expect(screen.getByText("$29")).toBeInTheDocument();
   });
 
   it("renders the footer with navigation links", () => {

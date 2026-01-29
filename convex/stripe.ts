@@ -207,6 +207,7 @@ export const stripeWebhook = httpAction(async (ctx, request) => {
     event = JSON.parse(body);
   }
 
+  // Handle one-time payment events
   const paymentData = validateWebhookPayload(event);
   if (paymentData) {
     const amountDollars = paymentData.amountCents / 100;
@@ -216,6 +217,44 @@ export const stripeWebhook = httpAction(async (ctx, request) => {
       amount: amountDollars,
       stripeSessionId: paymentData.sessionId,
     });
+  }
+
+  // Handle subscription events
+  if (
+    event.type === "checkout.session.completed" &&
+    event.data?.object?.mode === "subscription"
+  ) {
+    const session = event.data.object;
+    const meta = session.metadata ?? {};
+    if (meta.userId && meta.planId) {
+      await ctx.runMutation(internal.subscriptions.handleSubscriptionWebhook, {
+        eventType: "checkout_completed",
+        userId: meta.userId,
+        planId: meta.planId,
+        billingInterval: meta.billingInterval ?? "monthly",
+        stripeCustomerId: session.customer,
+        stripeSubscriptionId: session.subscription,
+        currentPeriodEnd: Math.floor(Date.now() / 1000) + 30 * 86400,
+      });
+    }
+  } else if (event.type === "customer.subscription.updated") {
+    const sub = event.data?.object;
+    if (sub?.id) {
+      await ctx.runMutation(internal.subscriptions.handleSubscriptionWebhook, {
+        eventType: "subscription_updated",
+        stripeSubscriptionId: sub.id,
+        status: sub.status === "past_due" ? "past_due" : "active",
+        currentPeriodEnd: sub.current_period_end,
+      });
+    }
+  } else if (event.type === "customer.subscription.deleted") {
+    const sub = event.data?.object;
+    if (sub?.id) {
+      await ctx.runMutation(internal.subscriptions.handleSubscriptionWebhook, {
+        eventType: "subscription_deleted",
+        stripeSubscriptionId: sub.id,
+      });
+    }
   }
 
   return new Response("OK", { status: 200 });
