@@ -1,6 +1,6 @@
 // ABOUTME: User dashboard showing all leagues the user belongs to.
 // ABOUTME: Displays league cards with role badges, empty state, and create/join actions.
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuthActions } from "@convex-dev/auth/react";
 import { useQuery } from "convex/react";
 import { api } from "../convex/_generated/api";
@@ -13,6 +13,7 @@ interface LeagueEntry {
 
 export function Dashboard() {
   const { signOut } = useAuthActions();
+  const navigate = useNavigate();
   const leagues = useQuery(api.dashboard.getUserLeaguesWithDetails) as
     | LeagueEntry[]
     | undefined;
@@ -32,7 +33,7 @@ export function Dashboard() {
               Billing
             </Link>
             <button
-              onClick={() => void signOut()}
+              onClick={() => void signOut().then(() => navigate("/"))}
               className="rounded-md border border-oche-700 px-4 py-2 text-sm text-oche-300 transition hover:bg-oche-800 hover:text-oche-100 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 focus:ring-offset-oche-900"
             >
               Log Out
