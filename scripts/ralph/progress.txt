@@ -504,3 +504,16 @@
   - `compareScoreEntries` is a pure function — easy to test without any DB mocking
   - Score entries use a "pending → confirmed/discrepancy → resolved" state machine
 ---
+
+## 2026-01-29 - US-032
+- Made ScoringGrid tablet-friendly: touch targets ≥44px, `inputmode="numeric"`, `touch-action: manipulation`
+- Added `touch-action-manipulation` custom Tailwind v4 utility in index.css
+- Real-time sync already provided by Convex `useQuery` subscriptions — no backend changes needed
+- **Tests added:** 5 new tests in `src/ScoringGrid.tablet.test.tsx`
+- **Files changed:** src/ScoringGrid.tsx, src/ScoringGrid.tablet.test.tsx (new), src/index.css
+- **Learnings for future iterations:**
+  - Convex `useQuery` is subscription-based — all viewers auto-receive updates when any user calls `useMutation`, no additional real-time code needed
+  - Tailwind CSS v4 custom utilities use `@utility name { ... }` syntax in the CSS file
+  - Use `inputmode="numeric"` (not `type="number"`) for mobile numeric keyboards without spinner buttons
+  - `min-h-[44px]` ensures WCAG/Apple HIG minimum touch target size
+---
