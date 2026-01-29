@@ -472,3 +472,15 @@
   - `/blind/i` regex in tests matches both player name "Blind" and "(Blind)" label — use exact string match `"(Blind)"` for the label
   - `applyBlindScores` inserts 18 innings (9 for each batter) — blind side gets `defaultRuns`, real side gets 0 as placeholder
 ---
+## 2026-01-29 - US-030
+- Added visual highlighting for 9-run innings: yellow background + bold text + `data-high-inning` attribute
+- Added "9s" column to ScoringGrid showing high innings count per player
+- High innings count computed via `useMemo` from grid state — reactive, no backend needed
+- `playerStats.highInnings` field already exists in schema for US-039 to populate
+- **Tests added:** 4 new tests in `src/ScoringGrid.test.tsx`
+- **Files changed:** src/ScoringGrid.tsx, src/ScoringGrid.test.tsx
+- **Learnings for future iterations:**
+  - Use `data-*` attributes for programmatic detection of visual states in tests (e.g., `data-high-inning`)
+  - `input.closest("td")` in tests to check parent cell attributes/styling
+  - `useMemo` with `totalColumns` dependency ensures high innings count includes extra innings
+---
