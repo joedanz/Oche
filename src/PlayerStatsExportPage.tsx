@@ -11,12 +11,13 @@ import { UpgradePrompt } from "./UpgradePrompt";
 
 export function PlayerStatsExportPage({ leagueId }: { leagueId: Id<"leagues"> }) {
   const { isLoading, canUse } = usePlan();
+  const allowed = !isLoading && canUse("csv_pdf_export");
   const [seasonId, setSeasonId] = useState<string>("");
 
-  const data = useQuery(api.statsExport.getExportData, {
-    leagueId,
-    ...(seasonId ? { seasonId: seasonId as Id<"seasons"> } : {}),
-  });
+  const data = useQuery(
+    api.statsExport.getExportData,
+    allowed ? { leagueId, ...(seasonId ? { seasonId: seasonId as Id<"seasons"> } : {}) } : "skip",
+  );
 
   if (isLoading) return null;
   if (!canUse("csv_pdf_export")) {

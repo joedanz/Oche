@@ -27,41 +27,42 @@ type Mode = "players" | "teams";
 
 export function HistoricalTrendsPage({ leagueId }: { leagueId: Id<"leagues"> }) {
   const { isLoading, canUse } = usePlan();
+  const allowed = !isLoading && canUse("historical_trends");
   const [seasonId, setSeasonId] = useState<string>("");
   const [mode, setMode] = useState<Mode>("players");
   const [selectedPlayerIds, setSelectedPlayerIds] = useState<string[]>([]);
   const [selectedTeamIds, setSelectedTeamIds] = useState<string[]>([]);
 
-  const metadata = useQuery(api.trends.getTrendsMetadata, { leagueId });
+  const metadata = useQuery(api.trends.getTrendsMetadata, allowed ? { leagueId } : "skip");
 
   const seasonArg = seasonId ? { seasonId: seasonId as Id<"seasons"> } : {};
 
   // Fetch trend data for each selected player
   const playerTrend0 = useQuery(
     api.trends.getPlayerTrend,
-    selectedPlayerIds[0] ? { playerId: selectedPlayerIds[0] as Id<"players">, leagueId, ...seasonArg } : "skip",
+    allowed && selectedPlayerIds[0] ? { playerId: selectedPlayerIds[0] as Id<"players">, leagueId, ...seasonArg } : "skip",
   );
   const playerTrend1 = useQuery(
     api.trends.getPlayerTrend,
-    selectedPlayerIds[1] ? { playerId: selectedPlayerIds[1] as Id<"players">, leagueId, ...seasonArg } : "skip",
+    allowed && selectedPlayerIds[1] ? { playerId: selectedPlayerIds[1] as Id<"players">, leagueId, ...seasonArg } : "skip",
   );
   const playerTrend2 = useQuery(
     api.trends.getPlayerTrend,
-    selectedPlayerIds[2] ? { playerId: selectedPlayerIds[2] as Id<"players">, leagueId, ...seasonArg } : "skip",
+    allowed && selectedPlayerIds[2] ? { playerId: selectedPlayerIds[2] as Id<"players">, leagueId, ...seasonArg } : "skip",
   );
 
   // Fetch trend data for each selected team
   const teamTrend0 = useQuery(
     api.trends.getTeamTrend,
-    selectedTeamIds[0] ? { teamId: selectedTeamIds[0] as Id<"teams">, leagueId, ...seasonArg } : "skip",
+    allowed && selectedTeamIds[0] ? { teamId: selectedTeamIds[0] as Id<"teams">, leagueId, ...seasonArg } : "skip",
   );
   const teamTrend1 = useQuery(
     api.trends.getTeamTrend,
-    selectedTeamIds[1] ? { teamId: selectedTeamIds[1] as Id<"teams">, leagueId, ...seasonArg } : "skip",
+    allowed && selectedTeamIds[1] ? { teamId: selectedTeamIds[1] as Id<"teams">, leagueId, ...seasonArg } : "skip",
   );
   const teamTrend2 = useQuery(
     api.trends.getTeamTrend,
-    selectedTeamIds[2] ? { teamId: selectedTeamIds[2] as Id<"teams">, leagueId, ...seasonArg } : "skip",
+    allowed && selectedTeamIds[2] ? { teamId: selectedTeamIds[2] as Id<"teams">, leagueId, ...seasonArg } : "skip",
   );
 
   if (isLoading) return null;
