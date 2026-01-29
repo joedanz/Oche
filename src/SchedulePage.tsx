@@ -167,6 +167,12 @@ export function SchedulePage({ leagueId }: SchedulePageProps) {
                 >
                   Scores
                 </Link>
+                <Link
+                  to={`/leagues/${leagueId}/matches/${m._id}/import-csv`}
+                  className="text-blue-400 hover:text-blue-300 text-sm"
+                >
+                  Import CSV
+                </Link>
                 <span className="text-sm text-gray-500">{m.date}</span>
               </div>
             </li>
