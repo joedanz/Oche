@@ -764,3 +764,17 @@
   - Pure functions for handicap math (computeSpotRuns, resolveHandicapPercent, determineHandicappedWinner) enable easy testing without DB
   - Cascading override pattern: game > match > league — resolved with simple `undefined` checks
 ---
+
+## 2026-01-29 - US-048
+- Added payment configuration page: league fee, weekly fee, and fee schedule settings
+- Backend: `convex/paymentConfig.ts` with `updatePaymentConfigHandler` (admin-only)
+- Frontend: `src/PaymentConfigPage.tsx` with form for all payment settings
+- Schema: added `leagueFee`, `weeklyFee`, `feeSchedule` optional fields to leagues table
+- Route: `/leagues/:leagueId/payments` as child of LeagueLayout
+- **Tests added:** 9 new tests in `convex/paymentConfig.test.ts` (3) and `src/PaymentConfigPage.test.tsx` (6)
+- **Files changed:** convex/schema.ts, convex/paymentConfig.ts (new), convex/paymentConfig.test.ts (new), convex/_generated/api.d.ts, src/PaymentConfigPage.tsx (new), src/PaymentConfigPage.test.tsx (new), src/App.tsx
+- **Learnings for future iterations:**
+  - Payment config follows exact same pattern as handicap config — admin-only mutation with exported handler, form page with useEffect sync
+  - Fee fields are optional on leagues table (existing leagues don't have them) — defaults to 0 in frontend via `?? 0`
+  - `feeSchedule` uses union type: "one-time" | "weekly" | "per-match"
+---
