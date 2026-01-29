@@ -185,6 +185,12 @@ export function TeamsPage({ leagueId }: TeamsPageProps) {
                       >
                         Roster
                       </Link>
+                      <Link
+                        to={`/leagues/${leagueId}/teams/${team._id}/stats`}
+                        className="rounded-md bg-oche-700 px-3 py-1 text-sm text-oche-200 transition hover:bg-oche-600"
+                      >
+                        Stats
+                      </Link>
                       <button
                         onClick={() =>
                           setCaptainPickerTeamId(
