@@ -301,3 +301,20 @@
   - Enrich queries (e.g., `getTeamsHandler`) to join related data (player→user) rather than forcing multiple queries from the frontend
   - `players` table has no `by_team` index — uses `filter()` for team-scoped queries
 ---
+
+## 2026-01-29 - US-019
+- Added team roster management: add player by name/email, remove player, toggle active/inactive status
+- Backend: `convex/roster.ts` with exported handler functions (getRosterHandler, addPlayerHandler, removePlayerHandler, setPlayerStatusHandler)
+- Frontend: `src/RosterPage.tsx` with player list, status badges, add form, and action buttons
+- Route: `/leagues/:leagueId/teams/:teamId/roster` as child of LeagueLayout
+- Added "Roster" link on TeamsPage for each team
+- Add player creates user record if email not found, and creates league membership
+- Remove player clears captainId if removing the team captain
+- **Tests added:** 15 new tests in `convex/roster.test.ts` (7) and `src/RosterPage.test.tsx` (8)
+- **Files changed:** convex/roster.ts (new), convex/roster.test.ts (new), src/RosterPage.tsx (new), src/RosterPage.test.tsx (new), src/App.tsx, src/TeamsPage.tsx, convex/_generated/api.d.ts
+- **Learnings for future iterations:**
+  - `getAllByRole("button", { name: /activate/i })` matches "Activate" AND "Deactivate" — use `^activate$` anchors for exact match
+  - When removing a player who is team captain, clear `team.captainId` first to avoid orphaned references
+  - Roster route uses two URL params: `:leagueId` and `:teamId` — both extracted in the route wrapper
+  - Add player flow: find-or-create user by email, check for existing player on team, insert player, ensure league membership
+---
