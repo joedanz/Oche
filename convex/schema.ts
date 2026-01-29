@@ -174,6 +174,15 @@ export default defineSchema({
     }),
   }),
 
+  payments: defineTable({
+    leagueId: v.id("leagues"),
+    playerId: v.id("players"),
+    amount: v.number(),
+    note: v.string(),
+    recordedBy: v.id("users"),
+    recordedAt: v.number(),
+  }).index("by_league", ["leagueId"]),
+
   playerStats: defineTable({
     playerId: v.id("players"),
     seasonId: v.id("seasons"),

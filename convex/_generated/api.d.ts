@@ -30,6 +30,7 @@ import type * as members from "../members.js";
 import type * as onboarding from "../onboarding.js";
 import type * as pairings from "../pairings.js";
 import type * as paymentConfig from "../paymentConfig.js";
+import type * as payments from "../payments.js";
 import type * as playerStats from "../playerStats.js";
 import type * as playerStatsPage from "../playerStatsPage.js";
 import type * as roster from "../roster.js";
@@ -71,6 +72,7 @@ declare const fullApi: ApiFromModules<{
   onboarding: typeof onboarding;
   pairings: typeof pairings;
   paymentConfig: typeof paymentConfig;
+  payments: typeof payments;
   playerStats: typeof playerStats;
   playerStatsPage: typeof playerStatsPage;
   roster: typeof roster;
