@@ -21,6 +21,8 @@
 - Auth forms use `signIn("password", formData)` with a hidden `flow` field ("signIn" or "signUp")
 - `authTables` spread into schema adds 6 tables: authAccounts, authSessions, authRefreshTokens, authVerificationCodes, authVerifiers, authRateLimits
 - Clear Vite dep cache (`rm -rf node_modules/.vite`) when adding packages that share peer deps like React
+- OAuth providers: import from `@auth/core/providers/<name>` and add to `convexAuth({ providers: [...] })`
+- Client OAuth: call `signIn("<provider>")` (lowercase) — no FormData needed for OAuth redirects
 
 ## 2026-01-28 - US-001
 - Scaffolded Vite + React + TypeScript project
@@ -94,4 +96,18 @@
   - `authTables` adds 6 tables to schema — update schema tests' allowed tables list
   - Vite dep cache (`node_modules/.vite`) can cause "duplicate React" errors when adding new packages — clear it
   - `@testing-library/user-event` needed for form interaction tests (type, click)
+---
+
+## 2026-01-28 - US-006
+- Added Google OAuth provider to convex/auth.ts
+- Added "Sign in with Google" button with Google logo SVG on login page
+- Added "or" divider between Google button and email/password form
+- Tightened existing test regex from `/log in|sign in/i` to `/^log in$/i` to avoid matching Google button
+- **Tests added:** 2 new tests in src/LoginPage.test.tsx (Google button render + click behavior)
+- **Files changed:** convex/auth.ts, src/LoginPage.tsx, src/LoginPage.test.tsx
+- **Learnings for future iterations:**
+  - OAuth providers from `@auth/core/providers/` can be added directly to `convexAuth({ providers: [...] })`
+  - Client calls `signIn("google")` (lowercase provider name) for OAuth redirect flow
+  - Google OAuth needs `AUTH_GOOGLE_ID` and `AUTH_GOOGLE_SECRET` env vars in Convex deployment
+  - When adding buttons that match existing test regexes (e.g., "Sign in with Google" vs "Log In"), tighten regexes with `^` and `$` anchors
 ---
