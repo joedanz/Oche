@@ -17,6 +17,7 @@ import type * as http from "../http.js";
 import type * as invites from "../invites.js";
 import type * as leagues from "../leagues.js";
 import type * as matchConfig from "../matchConfig.js";
+import type * as matches from "../matches.js";
 import type * as members from "../members.js";
 import type * as onboarding from "../onboarding.js";
 import type * as roster from "../roster.js";
@@ -39,6 +40,7 @@ declare const fullApi: ApiFromModules<{
   invites: typeof invites;
   leagues: typeof leagues;
   matchConfig: typeof matchConfig;
+  matches: typeof matches;
   members: typeof members;
   onboarding: typeof onboarding;
   roster: typeof roster;

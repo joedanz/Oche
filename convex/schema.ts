@@ -107,7 +107,7 @@ export default defineSchema({
         bonusWinner: v.optional(v.union(v.literal("home"), v.literal("visitor"))),
       }),
     ),
-  }),
+  }).index("by_league", ["leagueId"]),
 
   games: defineTable({
     matchId: v.id("matches"),
