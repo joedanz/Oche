@@ -35,7 +35,7 @@ describe("LoginPage", () => {
       </MemoryRouter>,
     );
     expect(
-      screen.getByRole("button", { name: /log in|sign in/i }),
+      screen.getByRole("button", { name: /^log in$/i }),
     ).toBeInTheDocument();
   });
 
@@ -51,7 +51,7 @@ describe("LoginPage", () => {
     await user.type(screen.getByLabelText(/email/i), "test@example.com");
     await user.type(screen.getByLabelText(/password/i), "password123");
     await user.click(
-      screen.getByRole("button", { name: /log in|sign in/i }),
+      screen.getByRole("button", { name: /^log in$/i }),
     );
 
     expect(mockSignIn).toHaveBeenCalledWith("password", expect.any(FormData));
@@ -73,12 +73,39 @@ describe("LoginPage", () => {
     await user.type(screen.getByLabelText(/email/i), "test@example.com");
     await user.type(screen.getByLabelText(/password/i), "password123");
     await user.click(
-      screen.getByRole("button", { name: /log in|sign in/i }),
+      screen.getByRole("button", { name: /^log in$/i }),
     );
 
     expect(
       await screen.findByText(/invalid|incorrect|failed/i),
     ).toBeInTheDocument();
+  });
+
+  it("renders a 'Sign in with Google' button", () => {
+    render(
+      <MemoryRouter>
+        <LoginPage />
+      </MemoryRouter>,
+    );
+    expect(
+      screen.getByRole("button", { name: /sign in with google/i }),
+    ).toBeInTheDocument();
+  });
+
+  it("calls signIn with 'google' when Google button is clicked", async () => {
+    mockSignIn.mockResolvedValue(undefined);
+    const user = userEvent.setup();
+    render(
+      <MemoryRouter>
+        <LoginPage />
+      </MemoryRouter>,
+    );
+
+    await user.click(
+      screen.getByRole("button", { name: /sign in with google/i }),
+    );
+
+    expect(mockSignIn).toHaveBeenCalledWith("google");
   });
 
   it("has a link to the signup page", () => {
