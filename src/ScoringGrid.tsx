@@ -94,6 +94,17 @@ export function ScoringGrid({
     };
   }, [grid]);
 
+  // Count high innings (9-run innings) per player
+  const highInningsCounts = useMemo(() => {
+    let home = 0;
+    let visitor = 0;
+    for (let col = 0; col < totalColumns; col++) {
+      if (grid[0][col] === 9) home++;
+      if (grid[1][col] === 9) visitor++;
+    }
+    return { home, visitor };
+  }, [grid, totalColumns]);
+
   // Check if regulation innings are tied
   const regulationTied = useMemo(() => {
     let homeTotal = 0;
@@ -246,6 +257,7 @@ export function ScoringGrid({
             <th className="border border-gray-600 px-2 py-1 text-center w-12">Plus</th>
             <th className="border border-gray-600 px-2 py-1 text-center w-12">Minus</th>
             <th className="border border-gray-600 px-2 py-1 text-center w-12">Total</th>
+            <th className="border border-gray-600 px-2 py-1 text-center w-10">9s</th>
           </tr>
         </thead>
         <tbody>
@@ -263,10 +275,12 @@ export function ScoringGrid({
               </td>
               {Array.from({ length: totalColumns }, (_, col) => {
                 const isExtra = col >= REGULATION_INNINGS;
+                const isHighInning = grid[row][col] === 9;
                 return (
                   <td
                     key={col}
-                    className={`border border-gray-600 p-0 text-center ${isExtra ? "bg-amber-900/20 border-amber-600" : ""}`}
+                    {...(isHighInning ? { "data-high-inning": "true" } : {})}
+                    className={`border border-gray-600 p-0 text-center ${isExtra ? "bg-amber-900/20 border-amber-600" : ""} ${isHighInning ? "bg-yellow-500/30 font-bold" : ""}`}
                   >
                     <input
                       ref={(el) => {
@@ -293,6 +307,9 @@ export function ScoringGrid({
               </td>
               <td data-testid={`${row === 0 ? "home" : "visitor"}-total`} className="border border-gray-600 px-2 py-1 text-center font-bold">
                 {row === 0 ? totals.homeTotal : totals.visitorTotal}
+              </td>
+              <td data-testid={`${row === 0 ? "home" : "visitor"}-high-innings`} className="border border-gray-600 px-2 py-1 text-center font-semibold text-yellow-400">
+                {row === 0 ? highInningsCounts.home : highInningsCounts.visitor}
               </td>
             </tr>
           ))}

@@ -270,4 +270,59 @@ describe("ScoringGrid", () => {
     // Extra inning visitor value = 2 (index 19 = 10th visitor cell)
     expect(inputs[19]).toHaveValue(2);
   });
+
+  it("highlights 9-run innings with a visual indicator", () => {
+    const innings = [
+      { inningNumber: 1, batter: "home", runs: 9, isExtra: false },
+      { inningNumber: 1, batter: "visitor", runs: 3, isExtra: false },
+      { inningNumber: 2, batter: "home", runs: 5, isExtra: false },
+      { inningNumber: 2, batter: "visitor", runs: 9, isExtra: false },
+    ];
+    mockUseQuery.mockReturnValue(innings);
+    renderGrid();
+    const inputs = screen.getAllByRole("spinbutton");
+    // Home inning 1 = 9 → should be highlighted
+    expect(inputs[0].closest("td")).toHaveAttribute("data-high-inning", "true");
+    // Home inning 2 = 5 → should NOT be highlighted
+    expect(inputs[1].closest("td")).not.toHaveAttribute("data-high-inning");
+    // Visitor inning 1 = 3 → should NOT be highlighted
+    expect(inputs[9].closest("td")).not.toHaveAttribute("data-high-inning");
+    // Visitor inning 2 = 9 → should be highlighted
+    expect(inputs[10].closest("td")).toHaveAttribute("data-high-inning", "true");
+  });
+
+  it("highlights 9-run innings entered interactively", async () => {
+    mockUseQuery.mockReturnValue([]);
+    renderGrid();
+    const inputs = screen.getAllByRole("spinbutton");
+    const user = userEvent.setup();
+    await user.click(inputs[0]);
+    await user.keyboard("9");
+    expect(inputs[0].closest("td")).toHaveAttribute("data-high-inning", "true");
+  });
+
+  it("displays high innings count per player on the grid", () => {
+    const innings = [];
+    for (let i = 1; i <= 9; i++) {
+      innings.push({ inningNumber: i, batter: "home", runs: i <= 3 ? 9 : 5, isExtra: false });
+      innings.push({ inningNumber: i, batter: "visitor", runs: i === 1 ? 9 : 4, isExtra: false });
+    }
+    mockUseQuery.mockReturnValue(innings);
+    renderGrid();
+    // Home has 3 high innings (innings 1-3), visitor has 1 (inning 1)
+    expect(screen.getByTestId("home-high-innings")).toHaveTextContent("3");
+    expect(screen.getByTestId("visitor-high-innings")).toHaveTextContent("1");
+  });
+
+  it("shows 0 high innings when no 9-run innings exist", () => {
+    const innings = [];
+    for (let i = 1; i <= 9; i++) {
+      innings.push({ inningNumber: i, batter: "home", runs: 5, isExtra: false });
+      innings.push({ inningNumber: i, batter: "visitor", runs: 3, isExtra: false });
+    }
+    mockUseQuery.mockReturnValue(innings);
+    renderGrid();
+    expect(screen.getByTestId("home-high-innings")).toHaveTextContent("0");
+    expect(screen.getByTestId("visitor-high-innings")).toHaveTextContent("0");
+  });
 });
