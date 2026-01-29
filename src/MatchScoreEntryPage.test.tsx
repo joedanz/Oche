@@ -27,6 +27,10 @@ vi.mock("../convex/_generated/api", () => ({
       toggleDnp: "dnpBlind:toggleDnp",
       applyBlindScores: "dnpBlind:applyBlindScores",
     },
+    dualEntry: {
+      getScoreEntries: "dualEntry:getScoreEntries",
+      resolveDiscrepancy: "dualEntry:resolveDiscrepancy",
+    },
   },
 }));
 
