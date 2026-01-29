@@ -148,7 +148,15 @@ export function SchedulePage({ leagueId }: SchedulePageProps) {
                 <strong>{m.homeTeamName}</strong> vs{" "}
                 <strong>{m.visitorTeamName}</strong>
               </span>
-              <span className="text-sm text-gray-500">{m.date}</span>
+              <div className="flex items-center gap-3">
+                <Link
+                  to={`/leagues/${leagueId}/matches/${m._id}/pairings`}
+                  className="text-blue-400 hover:text-blue-300 text-sm"
+                >
+                  Pairings
+                </Link>
+                <span className="text-sm text-gray-500">{m.date}</span>
+              </div>
             </li>
           ))}
         </ul>
