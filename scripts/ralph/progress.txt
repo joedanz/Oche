@@ -414,3 +414,16 @@
   - Input refs array must be resized when extra innings are added for keyboard navigation to work
   - Existing extra innings loaded by checking `isExtra` flag and computing column offset from `inningNumber - REGULATION_INNINGS`
 ---
+
+## 2026-01-29 - US-026
+- Added auto-calculated Plus, Minus, and Total columns to ScoringGrid component
+- Plus = sum of own regulation batting runs (innings 1-9), Minus = sum of opponent's regulation runs, Total = Plus - Minus
+- Extra innings excluded from all calculations via `useMemo` computing only columns 0-8
+- Columns update in real-time as runs are entered (reactive via grid state dependency)
+- **Tests added:** 6 new tests in `src/ScoringGrid.test.tsx`
+- **Files changed:** src/ScoringGrid.tsx, src/ScoringGrid.test.tsx
+- **Learnings for future iterations:**
+  - ScoringGrid totals are computed via `useMemo` depending on `grid` state — no backend calculation needed
+  - Use `data-testid` attributes for totals cells since text content (numbers) is ambiguous with inning headers
+  - Plus/Minus/Total columns are read-only `<td>` elements, not inputs — they follow the inning input columns
+---
