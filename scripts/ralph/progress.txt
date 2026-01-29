@@ -456,3 +456,19 @@
   - Export pure `determineGameWinner` separately from handler for direct unit testing
   - `db.patch()` used to update existing game record with winner field
 ---
+
+## 2026-01-29 - US-029
+- Added DNP (Did Not Play) toggle and blind score auto-population
+- Backend: `convex/dnpBlind.ts` with `toggleDnpHandler` and `applyBlindScoresHandler`
+- Added `isDnp` optional boolean field to `games` table schema
+- DNP toggle clears winner field; undoing DNP restores ability to score
+- Blind auto-scoring reads `league.matchConfig.blindRules.defaultRuns` for fixed-value blind innings
+- Frontend: MatchScoreEntryPage shows DNP button per game, "(Blind)" label, grayed-out DNP games with "No Points" text
+- **Tests added:** 11 new tests in `convex/dnpBlind.test.ts` (6) and `src/MatchScoreEntryPage.dnp.test.tsx` (5)
+- **Files changed:** convex/schema.ts, convex/dnpBlind.ts (new), convex/dnpBlind.test.ts (new), src/MatchScoreEntryPage.tsx, src/MatchScoreEntryPage.test.tsx, src/MatchScoreEntryPage.dnp.test.tsx (new), convex/_generated/api.d.ts
+- **Learnings for future iterations:**
+  - Convex `v.optional(v.boolean())` for the `isDnp` field — clearing winner uses `undefined` not `null` (Convex doesn't allow null in patches for optional fields)
+  - When adding `useMutation` for a new module in a component, ALL test files rendering that component must add the new API module to their mock
+  - `/blind/i` regex in tests matches both player name "Blind" and "(Blind)" label — use exact string match `"(Blind)"` for the label
+  - `applyBlindScores` inserts 18 innings (9 for each batter) — blind side gets `defaultRuns`, real side gets 0 as placeholder
+---
