@@ -37,8 +37,18 @@ function AppRoutes() {
           isAuthenticated ? <AuthenticatedRedirect /> : <LandingPage />
         }
       />
-      <Route path="/login" element={<LoginPage />} />
-      <Route path="/signup" element={<SignupPage />} />
+      <Route
+        path="/login"
+        element={
+          isAuthenticated ? <Navigate to="/" replace /> : <LoginPage />
+        }
+      />
+      <Route
+        path="/signup"
+        element={
+          isAuthenticated ? <Navigate to="/" replace /> : <SignupPage />
+        }
+      />
       <Route
         path="/onboarding"
         element={

@@ -11,7 +11,19 @@ vi.mock("./useAuth", () => ({
   })),
 }));
 
+vi.mock("@convex-dev/auth/react", () => ({
+  useAuthActions: () => ({ signIn: vi.fn() }),
+}));
+
+vi.mock("convex/react", async () => {
+  const actual = await vi.importActual("convex/react");
+  return { ...actual, useQuery: () => [], useMutation: () => vi.fn() };
+});
+
+import { useAuth } from "./useAuth";
 import App from "./App";
+
+const mockUseAuth = vi.mocked(useAuth);
 
 afterEach(() => {
   cleanup();
@@ -35,5 +47,25 @@ describe("App", () => {
     );
     const main = screen.getByRole("main");
     expect(main).toBeInTheDocument();
+  });
+
+  it("redirects /login to / when authenticated", () => {
+    mockUseAuth.mockReturnValue({ isAuthenticated: true, isLoading: false });
+    render(
+      <MemoryRouter initialEntries={["/login"]}>
+        <App />
+      </MemoryRouter>,
+    );
+    expect(screen.queryByText(/log in/i, { selector: "h1" })).not.toBeInTheDocument();
+  });
+
+  it("redirects /signup to / when authenticated", () => {
+    mockUseAuth.mockReturnValue({ isAuthenticated: true, isLoading: false });
+    render(
+      <MemoryRouter initialEntries={["/signup"]}>
+        <App />
+      </MemoryRouter>,
+    );
+    expect(screen.queryByText(/create an account/i, { selector: "h1" })).not.toBeInTheDocument();
   });
 });

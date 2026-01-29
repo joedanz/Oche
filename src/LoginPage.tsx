@@ -1,11 +1,12 @@
 // ABOUTME: Login page with email/password form and Google OAuth
 // ABOUTME: Uses Convex auth signIn action to authenticate users
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuthActions } from "@convex-dev/auth/react";
 
 export function LoginPage() {
   const { signIn } = useAuthActions();
+  const navigate = useNavigate();
   const [error, setError] = useState("");
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -15,6 +16,7 @@ export function LoginPage() {
     formData.set("flow", "signIn");
     try {
       await signIn("password", formData);
+      navigate("/", { replace: true });
     } catch {
       setError("Invalid email or password. Please try again.");
     }
@@ -24,6 +26,7 @@ export function LoginPage() {
     setError("");
     try {
       await signIn("google");
+      navigate("/", { replace: true });
     } catch {
       setError("Google sign-in failed. Please try again.");
     }
