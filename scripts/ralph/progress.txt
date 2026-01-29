@@ -226,3 +226,17 @@
   - Dashboard action links should go to dedicated pages (`/create-league`) not onboarding flow
   - Without `npx convex dev` running, auth-gated pages show empty (isLoading stays true) — browser verification of auth flows requires the Convex backend
 ---
+
+## 2026-01-29 - US-014
+- Added match configuration settings page at `/leagues/:leagueId/settings`
+- Backend: `convex/matchConfig.ts` with admin-only `updateMatchConfig` mutation and exported handler
+- Frontend: `src/MatchConfigPage.tsx` with form for all matchConfig fields (gamesPerMatch, pointsPerGameWin, bonusForTotal, extraExclude, blindRules)
+- Validation: gamesPerMatch must be at least 1
+- Route added to App.tsx as child of LeagueLayout
+- **Tests added:** 9 new tests in `convex/matchConfig.test.ts` (3) and `src/MatchConfigPage.test.tsx` (6)
+- **Files changed:** convex/matchConfig.ts (new), convex/matchConfig.test.ts (new), src/MatchConfigPage.tsx (new), src/MatchConfigPage.test.tsx (new), src/App.tsx
+- **Learnings for future iterations:**
+  - Flatten nested config objects in mutation args (e.g., `blindEnabled` + `blindDefaultRuns` instead of nested `blindRules`) for simpler form binding
+  - Use `useEffect` to sync form state from query data — avoids stale defaults when league data loads async
+  - Settings pages follow same pattern as other league-scoped pages: prop `leagueId`, route wrapper in App.tsx
+---
