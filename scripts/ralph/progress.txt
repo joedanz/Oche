@@ -681,3 +681,18 @@
   - Head-to-head tiebreaker would require per-pair aggregation — skipped in favor of runs scored and plus/minus
   - `font-variant-numeric: tabular-nums` ensures columns of numbers align properly in standings table
 ---
+
+## 2026-01-29 - US-043
+- Added player leaderboards page with 5 categories: highest average, most runs, best plus/minus, most high innings, most wins
+- Backend: `convex/leaderboards.ts` with `getLeaderboardsHandler` reading from `playerStats` table
+- Frontend: `src/LeaderboardsPage.tsx` with category cards in 2-column grid, season selector
+- Top 10 per category, sorted descending by each metric
+- Route: `/leagues/:leagueId/leaderboards` as child of LeagueLayout
+- **Tests added:** 11 new tests in `convex/leaderboards.test.ts` (5) and `src/LeaderboardsPage.test.tsx` (6)
+- **Files changed:** convex/leaderboards.ts (new), convex/leaderboards.test.ts (new), src/LeaderboardsPage.tsx (new), src/LeaderboardsPage.test.tsx (new), src/App.tsx
+- **Learnings for future iterations:**
+  - Leaderboards read from pre-computed `playerStats` table rather than re-aggregating from innings — much more efficient
+  - Filter league players by checking if their team exists in the league's teams (via teamMap)
+  - Average is computed as `totalPlus / gamesPlayed` with rounding to 1 decimal place
+  - Player names appear in multiple categories — use `getAllByText` in frontend tests
+---
