@@ -5,6 +5,7 @@ import { mutation } from "./_generated/server";
 import { v } from "convex/values";
 import { requireRole } from "./authorization";
 import { auth } from "./auth";
+import { requireFeature } from "./planGating";
 import type { Id } from "./_generated/dataModel";
 import type { DatabaseWriter } from "./_generated/server";
 
@@ -45,6 +46,7 @@ export const updateHandicapConfig = mutation({
   handler: async (ctx, args) => {
     const userId = await auth.getUserId(ctx);
     if (!userId) throw new Error("Not authenticated");
+    await requireFeature(ctx.db, userId as Id<"users">, "full_handicapping");
     await updateHandicapConfigHandler(ctx, {
       ...args,
       userId: userId as Id<"users">,
