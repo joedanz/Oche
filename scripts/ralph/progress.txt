@@ -10,6 +10,8 @@
 - Test setup file at `src/test-setup.ts` imports jest-dom matchers
 - Mock Convex hooks with `vi.mock("convex/react", ...)` at module level
 - Use `cleanup()` from @testing-library/react in `afterEach` to avoid duplicate DOM elements between tests
+- Schema exports a default object with `.tables` property — use `Object.keys(schema.tables)` for introspection
+- Blind players represented as `v.union(v.id("players"), v.literal("blind"))` in match pairings and games
 
 ## 2026-01-28 - US-001
 - Scaffolded Vite + React + TypeScript project
@@ -24,4 +26,16 @@
   - Package name defaults to template name — remember to update it
   - Tailwind v4 uses `@import "tailwindcss"` instead of v3's `@tailwind` directives
   - Need `afterEach(cleanup)` in tests or DOM elements accumulate across tests
+---
+
+## 2026-01-28 - US-002
+- Defined core database schema with 12 tables in `convex/schema.ts`
+- Tables: users, leagues, leagueMemberships, invites, seasons, divisions, teams, players, matches, games, innings, playerStats
+- Foreign keys use `v.id("tableName")`, enums use `v.union(v.literal(...))`
+- **Tests added:** 2 new tests in `convex/schema.test.ts`
+- **Files changed:** convex/schema.ts (new), convex/schema.test.ts (new)
+- **Learnings for future iterations:**
+  - Convex schema `defineSchema` returns an object with a `.tables` property that maps table names to their definitions
+  - Schema tests can validate structure by checking `Object.keys(schema.tables)`
+  - Match pairings use `v.union(v.id("players"), v.literal("blind"))` for blind support
 ---
