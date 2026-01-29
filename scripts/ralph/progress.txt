@@ -35,6 +35,7 @@
 - League-scoped routes nest under `/leagues/:leagueId` as children of `LeagueLayout` in App.tsx
 - When a component calls `useMutation` multiple times, use `mockUseMutation.mockImplementation((ref) => { ... })` dispatching on API reference string instead of `mockReturnValueOnce` chains (re-renders consume mocked values)
 - When deleting a parent entity (e.g., division), unassign child references first (e.g., clear team.divisionId) to avoid orphaned foreign keys
+- Matches table has `by_league` index — use `withIndex("by_league", ...)` for league-scoped match queries
 
 ## 2026-01-28 - US-001
 - Scaffolded Vite + React + TypeScript project
@@ -317,4 +318,20 @@
   - When removing a player who is team captain, clear `team.captainId` first to avoid orphaned references
   - Roster route uses two URL params: `:leagueId` and `:teamId` — both extracted in the route wrapper
   - Add player flow: find-or-create user by email, check for existing player on team, insert player, ensure league membership
+---
+
+## 2026-01-29 - US-020
+- Added manual match scheduling: create matches with home/visitor team, date, and season
+- Backend: `convex/matches.ts` with exported handler functions (createMatchHandler, getMatchesHandler)
+- Validation: prevents self-play and double-booking a team on the same date
+- Frontend: `src/SchedulePage.tsx` with create form (team selectors, date picker) and match list
+- Added `by_league` index on matches table in schema
+- Route: `/leagues/:leagueId/schedule` as child of LeagueLayout
+- **Tests added:** 11 new tests in `convex/matches.test.ts` (5) and `src/SchedulePage.test.tsx` (6)
+- **Files changed:** convex/matches.ts (new), convex/matches.test.ts (new), convex/schema.ts, convex/_generated/api.d.ts, src/SchedulePage.tsx (new), src/SchedulePage.test.tsx (new), src/App.tsx
+- **Learnings for future iterations:**
+  - Team names appear in both match list and `<option>` dropdowns — use `getAllByText` instead of `getByText` in tests
+  - Matches table needs `by_league` index for efficient league-scoped queries
+  - Double-booking check filters existing matches by date AND checks both homeTeamId and visitorTeamId positions
+  - `getMatchesHandler` enriches matches with team names by joining homeTeamId/visitorTeamId to teams table
 ---
