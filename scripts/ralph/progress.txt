@@ -15,6 +15,12 @@
 - `BrowserRouter` goes in `main.tsx`, not `App.tsx` — tests use `MemoryRouter` wrapping `<App />`
 - `useConvexAuth()` requires `ConvexProviderWithAuth`, not basic `ConvexProvider` — use `useAuth` hook as abstraction
 - Internal nav links must use `<Link>` from react-router-dom, not `<a>` tags
+- `ConvexAuthProvider` replaces `ConvexProvider` in main.tsx — wraps the entire app
+- `useConvexAuth()` provides `isAuthenticated` and `isLoading` from the auth provider
+- `useAuthActions()` from `@convex-dev/auth/react` provides `signIn` and `signOut`
+- Auth forms use `signIn("password", formData)` with a hidden `flow` field ("signIn" or "signUp")
+- `authTables` spread into schema adds 6 tables: authAccounts, authSessions, authRefreshTokens, authVerificationCodes, authVerifiers, authRateLimits
+- Clear Vite dep cache (`rm -rf node_modules/.vite`) when adding packages that share peer deps like React
 
 ## 2026-01-28 - US-001
 - Scaffolded Vite + React + TypeScript project
@@ -69,4 +75,23 @@
   - `useConvexAuth()` throws if no auth provider configured — need `ConvexProviderWithAuth`
   - When multiple elements match (e.g., "OCHE" in header and footer), use `element.closest()` or `getByRole` with container
   - Convert all internal `<a href>` to `<Link to>` when adding routing
+---
+
+## 2026-01-28 - US-005
+- Added email/password authentication with @convex-dev/auth
+- Backend: convex/auth.ts (Password provider), convex/http.ts (HTTP routes), authTables in schema
+- Frontend: LoginPage with email/password form, SignupPage with name/email/password form
+- Dashboard now has Log Out button using signOut from useAuthActions
+- useAuth hook wraps useConvexAuth for isAuthenticated/isLoading
+- App.tsx simplified (ConvexProvider moved to main.tsx as ConvexAuthProvider)
+- Password validation: minimum 8 characters enforced client-side
+- Error display on login failure and signup failure
+- **Tests added:** 12 new tests in src/LoginPage.test.tsx (5), src/SignupPage.test.tsx (5), src/AuthFlow.test.tsx (2)
+- **Files changed:** convex/auth.ts (new), convex/http.ts (new), convex/schema.ts, convex/schema.test.ts, package.json, src/App.tsx, src/App.test.tsx, src/Dashboard.tsx, src/LoginPage.tsx, src/LoginPage.test.tsx (new), src/SignupPage.tsx, src/SignupPage.test.tsx (new), src/AuthFlow.test.tsx (new), src/Navigation.test.tsx, src/main.tsx, src/useAuth.tsx
+- **Learnings for future iterations:**
+  - `ConvexAuthProvider` replaces `ConvexProvider` — wraps app in main.tsx
+  - `signIn("password", formData)` with hidden `flow` field distinguishes signup vs login
+  - `authTables` adds 6 tables to schema — update schema tests' allowed tables list
+  - Vite dep cache (`node_modules/.vite`) can cause "duplicate React" errors when adding new packages — clear it
+  - `@testing-library/user-event` needed for form interaction tests (type, click)
 ---
