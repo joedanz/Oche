@@ -183,6 +183,33 @@ export default defineSchema({
     recordedAt: v.number(),
   }).index("by_league", ["leagueId"]),
 
+  tournaments: defineTable({
+    leagueId: v.id("leagues"),
+    name: v.string(),
+    date: v.string(),
+    format: v.literal("single-elimination"),
+    participantType: v.union(v.literal("player"), v.literal("team")),
+    rounds: v.number(),
+    bracket: v.array(
+      v.object({
+        matchIndex: v.number(),
+        round: v.number(),
+        participant1Id: v.union(v.string(), v.null()),
+        participant1Name: v.union(v.string(), v.null()),
+        participant1Seed: v.union(v.number(), v.null()),
+        participant2Id: v.union(v.string(), v.null()),
+        participant2Name: v.union(v.string(), v.null()),
+        participant2Seed: v.union(v.number(), v.null()),
+        winnerId: v.union(v.string(), v.null()),
+      }),
+    ),
+    status: v.union(
+      v.literal("pending"),
+      v.literal("in_progress"),
+      v.literal("completed"),
+    ),
+  }).index("by_league", ["leagueId"]),
+
   playerStats: defineTable({
     playerId: v.id("players"),
     seasonId: v.id("seasons"),
