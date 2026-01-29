@@ -42,6 +42,8 @@
 - Excel/CSV parsers share `ParsedScoreRow` type from `csvParser.ts` — reuse for consistent import data shape
 - Google Sheets public CSV export: `https://docs.google.com/spreadsheets/d/{ID}/gviz/tq?tqx=out:csv` — reuse `parseCsvScores()` for parsing
 - `ColumnMappingWizard` component: embed in any import page after file parsing — takes `headers`, `rawData`, `leagueId`, calls `onMappingComplete` with `ParseResult`
+- `ImportValidationPanel` component: embed after validation — takes `ValidationResult`, `onImport`, `onCancel`; shows errors, preview, summary
+- `validateImportData(parseResult, rosterNames)` validates parsed data against roster — returns `ValidationResult` with validRows, errors, counts
 
 ## 2026-01-28 - US-001
 - Scaffolded Vite + React + TypeScript project
@@ -583,4 +585,19 @@
   - `ColumnMappingWizard` is a reusable component that any import page can embed after file parsing
   - Use `mockUseQuery` / `mockUseMutation` pattern (not `require("convex/react")`) for component tests
   - `importTemplates` table stores mappings per league — templates are league-scoped
+---
+
+## 2026-01-29 - US-037
+- Added import validation with roster-aware player name matching (case-insensitive)
+- Pure `validateImportData()` function validates runs 0-9, required innings, and roster membership
+- `ImportValidationPanel` component displays row-level errors, valid row preview, and import/skip summary
+- Parse-level errors from CSV/Excel parsers forwarded into validation results
+- Import button shows count and disables when no valid rows
+- **Tests added:** 16 new tests in `src/importValidator.test.ts` (8) and `src/ImportValidationPanel.test.tsx` (8)
+- **Files changed:** src/importValidator.ts (new), src/importValidator.test.ts (new), src/ImportValidationPanel.tsx (new), src/ImportValidationPanel.test.tsx (new)
+- **Learnings for future iterations:**
+  - `ImportValidationPanel` is a reusable component — embed after parsing in any import page, pass `ValidationResult` + callbacks
+  - `validateImportData` takes `ParseResult` + roster names array — keeps validation decoupled from data source
+  - Case-insensitive roster matching via `toLowerCase()` prevents false negatives from capitalization differences
+  - `skippedCount` includes both validation-rejected rows AND parse-level errors for accurate totals
 ---
