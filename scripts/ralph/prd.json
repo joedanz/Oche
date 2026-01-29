@@ -619,8 +619,8 @@
       ],
       "epic": "Score Import",
       "priority": 35,
-      "passes": false,
-      "notes": ""
+      "passes": true,
+      "notes": "Uses public CSV export URL pattern instead of full Google API OAuth. Sheet must be shared publicly."
     },
     {
       "id": "US-036",

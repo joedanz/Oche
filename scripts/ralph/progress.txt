@@ -40,6 +40,7 @@
 - Dual entry uses `scoreEntries` table with status state machine: pending → confirmed/discrepancy → resolved
 - When adding child components with `useQuery`, update ALL parent test files' API mocks to include the new module
 - Excel/CSV parsers share `ParsedScoreRow` type from `csvParser.ts` — reuse for consistent import data shape
+- Google Sheets public CSV export: `https://docs.google.com/spreadsheets/d/{ID}/gviz/tq?tqx=out:csv` — reuse `parseCsvScores()` for parsing
 
 ## 2026-01-28 - US-001
 - Scaffolded Vite + React + TypeScript project
@@ -549,4 +550,20 @@
   - Excel parser reuses `ParsedScoreRow` type from csvParser for consistent data shape across import formats
   - Mock `xlsx` module and `./excelParser` separately in component tests — avoids needing real binary parsing in jsdom
   - `FileReader.readAsArrayBuffer()` (not `readAsText`) for Excel binary files
+---
+
+## 2026-01-29 - US-035
+- Added Google Sheets import page: paste public sheet URL, fetch as CSV, preview, import
+- Pure `googleSheetsParser.ts` utility: extract sheet ID from URLs, build CSV export URL
+- Uses Google's public CSV export endpoint (`/gviz/tq?tqx=out:csv`) — no API key or OAuth token needed
+- Reuses existing `parseCsvScores()` from csvParser for parsing fetched CSV data
+- Route: `/leagues/:leagueId/matches/:matchId/import-gsheets` as child of LeagueLayout
+- Added "Import Google Sheets" link on SchedulePage per match
+- **Tests added:** 16 new tests in `src/googleSheetsParser.test.ts` (10) and `src/GoogleSheetsImportPage.test.tsx` (6)
+- **Files changed:** src/googleSheetsParser.ts (new), src/googleSheetsParser.test.ts (new), src/GoogleSheetsImportPage.tsx (new), src/GoogleSheetsImportPage.test.tsx (new), src/App.tsx, src/SchedulePage.tsx
+- **Learnings for future iterations:**
+  - Google Sheets public CSV export URL pattern: `https://docs.google.com/spreadsheets/d/{ID}/gviz/tq?tqx=out:csv&sheet={SHEET}` — works for sheets shared with "Anyone with the link"
+  - Reusing `parseCsvScores()` for Google Sheets avoids duplicating parsing logic — the CSV export format is standard
+  - `global.fetch = vi.fn()` in tests to mock fetch for URL-based data fetching
+  - Sheet ID regex: `/docs\.google\.com\/spreadsheets\/d\/([a-zA-Z0-9_-]+)/` handles edit, view, and gid URL variants
 ---
