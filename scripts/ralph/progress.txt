@@ -383,3 +383,18 @@
   - Games table has no `by_match` index — uses `filter()` for match-scoped queries (consider adding index for performance)
   - Match detail is read-only so only needs `requireLeagueMember` not `requireRole`
 ---
+
+## 2026-01-29 - US-024
+- Added innings score entry grid: backend mutations/queries + frontend ScoringGrid component
+- Backend: `convex/scoring.ts` with `saveInningsHandler` (captain/admin) and `getGameInningsHandler`
+- Frontend: `src/ScoringGrid.tsx` with 9-column grid, home/visitor rows, keyboard navigation, auto-advance
+- Runs validation (0-9), delete-and-replace on re-save, arrow key/tab navigation between cells
+- **Tests added:** 13 new tests in `convex/scoring.test.ts` (5) and `src/ScoringGrid.test.tsx` (8)
+- **Files changed:** convex/scoring.ts (new), convex/scoring.test.ts (new), convex/_generated/api.d.ts, src/ScoringGrid.tsx (new), src/ScoringGrid.test.tsx (new)
+- **Learnings for future iterations:**
+  - ScoringGrid is a reusable component taking `gameId`, `leagueId`, player names — designed for embedding in match views (US-027)
+  - `saveInningsHandler` deletes all existing innings for a game before inserting new ones (full replace pattern)
+  - Innings table has no indexes — uses `filter()` for game-scoped queries; consider adding `by_game` index for performance
+  - `type="number"` inputs use `spinbutton` role in testing-library — use `getAllByRole("spinbutton")`
+  - Auto-advance: after entering a digit, focus moves to next cell; wraps from end of row to start of next row
+---
