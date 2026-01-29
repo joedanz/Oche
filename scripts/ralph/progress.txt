@@ -886,3 +886,18 @@
   - Default preferences (all enabled) returned when no preference record exists — no need to create records upfront
   - `data-unread` attribute for visual distinction testing — avoids relying on CSS class assertions
 ---
+
+## 2026-01-29 - US-055
+- Added audit log system: immutable, filterable log of score and role changes
+- Backend: `convex/auditLog.ts` with `createAuditLogEntryHandler` (write) and `getAuditLogHandler` (admin-only read with user name enrichment)
+- Schema: `auditLog` table with `by_league` index, action types: score_entry, score_edit, score_import, role_change
+- Frontend: `src/AuditLogPage.tsx` with action type filter dropdown, old/new value display, timestamps
+- Route: `/leagues/:leagueId/audit-log` as child of LeagueLayout
+- **Tests added:** 15 new tests in `convex/auditLog.test.ts` (7) and `src/AuditLogPage.test.tsx` (8)
+- **Files changed:** convex/schema.ts, convex/schema.test.ts, convex/auditLog.ts (new), convex/auditLog.test.ts (new), convex/_generated/api.d.ts, src/AuditLogPage.tsx (new), src/AuditLogPage.test.tsx (new), src/App.tsx
+- **Learnings for future iterations:**
+  - Audit log entries are immutable (write-once) — no update/delete mutations exposed
+  - `getAuditLogHandler` enriches entries with user names via `db.get(userId)` — follows same pattern as other enriched queries
+  - Action type filter uses server-side `filter()` after index query since Convex doesn't support compound indexes with union fields
+  - Old/new value fields are optional strings — callers stringify values before logging
+---
