@@ -32,6 +32,7 @@ import type * as roster from "../roster.js";
 import type * as scheduleGenerator from "../scheduleGenerator.js";
 import type * as scoring from "../scoring.js";
 import type * as seasons from "../seasons.js";
+import type * as standings from "../standings.js";
 import type * as teamStats from "../teamStats.js";
 import type * as teams from "../teams.js";
 
@@ -66,6 +67,7 @@ declare const fullApi: ApiFromModules<{
   scheduleGenerator: typeof scheduleGenerator;
   scoring: typeof scoring;
   seasons: typeof seasons;
+  standings: typeof standings;
   teamStats: typeof teamStats;
   teams: typeof teams;
 }>;
