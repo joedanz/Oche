@@ -65,7 +65,7 @@ export default defineSchema({
     startDate: v.string(),
     endDate: v.string(),
     isActive: v.boolean(),
-  }),
+  }).index("by_league", ["leagueId"]),
 
   divisions: defineTable({
     leagueId: v.id("leagues"),
