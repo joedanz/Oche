@@ -748,3 +748,19 @@
   - Handicap percentage validation: 0-100 range enforced in handler
   - Schema already had `handicapEnabled` and `handicapPercent` on leagues — only needed to add `handicapRecalcFrequency` and override fields
 ---
+
+## 2026-01-29 - US-047
+- Added handicap scoring: pure functions for spot runs computation, cascading percent resolution, and handicapped winner determination
+- Backend: `convex/handicapScoring.ts` with `computeSpotRuns`, `resolveHandicapPercent`, `determineHandicappedWinner` pure functions, and `getGameHandicapHandler` query
+- Frontend: ScoringGrid shows handicap info bar (spot runs, recipient, averages) and "Adj" column with adjusted totals
+- Three-tier cascading: league default → per-match override → per-game override via `resolveHandicapPercent`
+- Blind games excluded from handicap (no averages to compare)
+- Raw stats preserved — handicap only affects adjusted totals display and winner determination
+- **Tests added:** 17 new tests in `convex/handicapScoring.test.ts` (13) and `src/ScoringGrid.handicap.test.tsx` (4)
+- **Files changed:** convex/handicapScoring.ts (new), convex/handicapScoring.test.ts (new), src/ScoringGrid.tsx, src/ScoringGrid.handicap.test.tsx (new), src/ScoringGrid.test.tsx, src/ScoringGrid.tablet.test.tsx, src/MatchScoreEntryPage.test.tsx, src/MatchScoreEntryPage.dnp.test.tsx
+- **Learnings for future iterations:**
+  - When adding `useQuery` to ScoringGrid, ALL test files rendering ScoringGrid or its parent (MatchScoreEntryPage) need the new API module in their mock
+  - `handicapData && handicapData.spotRuns > 0` pattern safely handles null/undefined/zero — existing tests return `[]` from mockUseQuery which has no `spotRuns`
+  - Pure functions for handicap math (computeSpotRuns, resolveHandicapPercent, determineHandicappedWinner) enable easy testing without DB
+  - Cascading override pattern: game > match > league — resolved with simple `undefined` checks
+---
