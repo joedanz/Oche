@@ -733,3 +733,18 @@
   - CSV field escaping: wrap in quotes if field contains commas, quotes, or newlines; double-escape internal quotes
   - Reuse existing query data from `useQuery` for export — no need for separate export-specific mutations
 ---
+
+## 2026-01-29 - US-046
+- Added handicap configuration page: enable/disable, percentage, recalculation frequency
+- Backend: `convex/handicapConfig.ts` with `updateHandicapConfigHandler` (admin-only)
+- Frontend: `src/HandicapConfigPage.tsx` with form for all handicap settings
+- Schema: added `handicapRecalcFrequency` to leagues, optional `handicapPercent` to matches and games for per-match/per-game overrides
+- Route: `/leagues/:leagueId/handicap` as child of LeagueLayout
+- **Tests added:** 9 new tests in `convex/handicapConfig.test.ts` (3) and `src/HandicapConfigPage.test.tsx` (6)
+- **Files changed:** convex/schema.ts, convex/handicapConfig.ts (new), convex/handicapConfig.test.ts (new), convex/_generated/api.d.ts, src/HandicapConfigPage.tsx (new), src/HandicapConfigPage.test.tsx (new), src/App.tsx
+- **Learnings for future iterations:**
+  - Three-tier handicap override pattern: league default → per-match → per-game via optional `handicapPercent` on matches and games tables
+  - `handicapRecalcFrequency` uses union type: "weekly" | "per-match" | "manual"
+  - Handicap percentage validation: 0-100 range enforced in handler
+  - Schema already had `handicapEnabled` and `handicapPercent` on leagues — only needed to add `handicapRecalcFrequency` and override fields
+---
