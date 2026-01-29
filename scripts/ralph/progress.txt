@@ -517,3 +517,18 @@
   - Use `inputmode="numeric"` (not `type="number"`) for mobile numeric keyboards without spinner buttons
   - `min-h-[44px]` ensures WCAG/Apple HIG minimum touch target size
 ---
+
+## 2026-01-29 - US-033
+- Added CSV file upload page with PapaParse parsing and preview table
+- Pure `parseCsvScores()` utility validates runs 0-9, requires 9 innings, trims whitespace
+- Frontend: `CsvUploadPage` with file input (.csv only), error display, preview table, import button
+- Route: `/leagues/:leagueId/matches/:matchId/import-csv` as child of LeagueLayout
+- Added "Import CSV" link on SchedulePage per match
+- **Tests added:** 10 new tests in `src/csvParser.test.ts` (5) and `src/CsvUploadPage.test.tsx` (5)
+- **Files changed:** package.json, src/csvParser.ts (new), src/csvParser.test.ts (new), src/CsvUploadPage.tsx (new), src/CsvUploadPage.test.tsx (new), src/App.tsx, src/SchedulePage.tsx
+- **Learnings for future iterations:**
+  - PapaParse runs client-side — parse CSV in the browser, send structured data to Convex mutations
+  - `getByText(/csv/i)` matches multiple elements (heading + label) — use `getByRole("heading", { name: /csv/i })` for specificity
+  - `FileReader.readAsText()` in `fireEvent.change` tests requires `waitFor` since reading is async
+  - CSV parser is a pure function with no Convex dependencies — easy to test without DB mocking
+---
