@@ -47,6 +47,8 @@
 - `mergeParseResults(files)` merges multiple `ParseResult` arrays by player name — returns `MergeResult` with mergedRows, conflicts, errors
 - Recharts for charts: mock entire module in tests with `vi.mock("recharts", ...)` returning simple divs — jsdom can't render SVG
 - Convex `useQuery(ref, "skip")` skips the query — use for conditional fetching based on user selection
+- Stripe SDK runs in Convex `action` (dynamic import), not mutation/query — use `internalQuery` for reads, `internalMutation` for writes from actions
+- `useAction` from `convex/react` for Convex actions in frontend (not `useMutation`)
 
 ## 2026-01-28 - US-001
 - Scaffolded Vite + React + TypeScript project
@@ -793,4 +795,24 @@
   - Balance calculation: `totalOwed` is simplified (leagueFee for one-time, leagueFee + weeklyFee for recurring) — real weekly tracking would need match/week counting
   - `payments` table uses `by_league` index; payments query enriches with player names via player→user lookup
   - Payment status: paid (totalPaid >= totalOwed), partial (totalPaid > 0), unpaid (totalPaid === 0)
+---
+
+## 2026-01-29 - US-050
+- Added Stripe online payment integration: checkout session creation, webhook processing, payment page
+- Backend: `convex/stripe.ts` with pure functions (buildCheckoutMetadata, validateWebhookPayload, processStripePayment) + Convex action/mutations/queries
+- Stripe Checkout Session created via Convex `action` (dynamic import of stripe SDK), redirects user to Stripe hosted checkout
+- Webhook endpoint at `/stripe/webhook` in `convex/http.ts` handles `checkout.session.completed` events
+- Frontend: `src/StripePaymentPage.tsx` shows unpaid players with pay buttons, success/canceled messages via URL params
+- Added "Pay Online" link to PaymentTrackingPage
+- Route: `/leagues/:leagueId/pay` as child of LeagueLayout
+- **Tests added:** 13 new tests in `convex/stripe.test.ts` (6) and `src/StripePaymentPage.test.tsx` (7)
+- **Files changed:** convex/stripe.ts (new), convex/stripe.test.ts (new), convex/http.ts, convex/_generated/api.d.ts, package.json, src/StripePaymentPage.tsx (new), src/StripePaymentPage.test.tsx (new), src/App.tsx, src/PaymentTrackingPage.tsx
+- **Learnings for future iterations:**
+  - Stripe SDK must run in Convex `action` (not `mutation`/`query`) — use dynamic import `await import("stripe")`
+  - `internalQuery` for read-only helpers called via `ctx.runQuery`, `internalMutation` for writes called via `ctx.runMutation`
+  - Stripe webhook signature verification uses `stripe.webhooks.constructEvent(body, signature, secret)`
+  - Checkout metadata (leagueId, playerId) is passed through Stripe and returned in webhook — use string values only
+  - `useAction` from `convex/react` for calling Convex actions (not `useMutation`)
+  - `useSearchParams` from react-router-dom for reading `?success=true` / `?canceled=true` query params
+  - Stripe API version must match installed package — check `node_modules/stripe/types/apiVersion.d.ts`
 ---
