@@ -289,7 +289,7 @@
       ],
       "epic": "League Management",
       "priority": 16,
-      "passes": false,
+      "passes": true,
       "notes": ""
     },
     {

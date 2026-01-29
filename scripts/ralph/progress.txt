@@ -34,6 +34,7 @@
 - Use `LeagueLayout` with `<Outlet>` for league-scoped pages — provides header with switcher and breadcrumb
 - League-scoped routes nest under `/leagues/:leagueId` as children of `LeagueLayout` in App.tsx
 - When a component calls `useMutation` multiple times, use `mockUseMutation.mockImplementation((ref) => { ... })` dispatching on API reference string instead of `mockReturnValueOnce` chains (re-renders consume mocked values)
+- When deleting a parent entity (e.g., division), unassign child references first (e.g., clear team.divisionId) to avoid orphaned foreign keys
 
 ## 2026-01-28 - US-001
 - Scaffolded Vite + React + TypeScript project
@@ -254,4 +255,20 @@
   - When using `mockReturnValueOnce` for `useMutation` with multiple mutations in one component, prefer `mockImplementation` that dispatches on the API reference string — avoids issues with React re-renders consuming mock values
   - `getByText(/active/i)` can match button text like "Set Active" — use `getByText(/^active$/i)` with anchors for exact badge text matching
   - Seasons table needs `by_league` index for efficient league-scoped queries
+---
+
+## 2026-01-29 - US-016
+- Added division management: create, edit, delete divisions within a league
+- Added team-to-division assignment UI with dropdown selectors
+- Added `by_league` index on divisions table in schema
+- Backend: `convex/divisions.ts` with exported handler functions (getDivisionsHandler, createDivisionHandler, editDivisionHandler, deleteDivisionHandler, assignTeamDivisionHandler, getTeamsForLeagueHandler)
+- Frontend: `src/DivisionsPage.tsx` with full CRUD UI, inline editing, and team assignment
+- Route: `/leagues/:leagueId/divisions` as child of LeagueLayout
+- **Tests added:** 16 new tests in `convex/divisions.test.ts` (8) and `src/DivisionsPage.test.tsx` (8)
+- **Files changed:** convex/schema.ts, convex/divisions.ts (new), convex/divisions.test.ts (new), convex/_generated/api.d.ts, src/DivisionsPage.tsx (new), src/DivisionsPage.test.tsx (new), src/App.tsx
+- **Learnings for future iterations:**
+  - Division names appear in both list items and `<option>` elements — use `getAllByText` instead of `getByText` when testing
+  - `deleteDivision` should unassign teams (clear `divisionId`) before deleting the division to avoid orphaned references
+  - `getTeamsForLeague` query added to divisions module since it's needed for the assignment UI — can be shared by future team management pages
+  - `filter((q) => q.eq(q.field("leagueId"), ...))` used for teams query since teams table has no `by_league` index yet
 ---
