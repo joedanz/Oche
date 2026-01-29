@@ -212,3 +212,17 @@
   - When testing layout components with nested routes, use `<Routes><Route element={<Layout />}><Route index ... /></Route></Routes>` in MemoryRouter
   - `getByRole("banner")` selects the `<header>` element — useful when text appears in both header and dropdown options
 ---
+
+## 2026-01-29 - US-013
+- Added CreateLeaguePage with name and description form fields
+- Added `description` (optional) field to leagues schema
+- Updated `createLeague` mutation to accept description
+- Dashboard "Create New League" links to dedicated `/create-league` route instead of `/onboarding`
+- Fixed pre-existing type-only import errors in `convex/authorization.ts`
+- **Tests added:** 6 new tests in `src/CreateLeaguePage.test.tsx` (5) and `convex/onboarding.test.ts` (1)
+- **Files changed:** convex/schema.ts, convex/onboarding.ts, convex/onboarding.test.ts, convex/authorization.ts, src/CreateLeaguePage.tsx (new), src/CreateLeaguePage.test.tsx (new), src/App.tsx, src/Dashboard.tsx
+- **Learnings for future iterations:**
+  - Reuse existing mutations (e.g., `onboarding.createLeague`) rather than creating duplicates — just extend args
+  - Dashboard action links should go to dedicated pages (`/create-league`) not onboarding flow
+  - Without `npx convex dev` running, auth-gated pages show empty (isLoading stays true) — browser verification of auth flows requires the Convex backend
+---
