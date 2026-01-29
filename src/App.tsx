@@ -36,6 +36,7 @@ import { PlayerStatsExportPage } from "./PlayerStatsExportPage";
 import { HandicapConfigPage } from "./HandicapConfigPage";
 import { PaymentConfigPage } from "./PaymentConfigPage";
 import { PaymentTrackingPage } from "./PaymentTrackingPage";
+import { StripePaymentPage } from "./StripePaymentPage";
 import { useAuth } from "./useAuth";
 
 function AuthenticatedRedirect() {
@@ -124,6 +125,7 @@ function AppRoutes() {
         <Route path="handicap" element={<HandicapConfigRoute />} />
         <Route path="payments" element={<PaymentConfigRoute />} />
         <Route path="payment-tracking" element={<PaymentTrackingRoute />} />
+        <Route path="pay" element={<StripePaymentRoute />} />
       </Route>
     </Routes>
   );
@@ -285,6 +287,12 @@ function PaymentTrackingRoute() {
   const { leagueId } = useParams<{ leagueId: string }>();
   if (!leagueId) return null;
   return <PaymentTrackingPage leagueId={leagueId as any} />;
+}
+
+function StripePaymentRoute() {
+  const { leagueId } = useParams<{ leagueId: string }>();
+  if (!leagueId) return null;
+  return <StripePaymentPage leagueId={leagueId as any} />;
 }
 
 function PaymentConfigRoute() {

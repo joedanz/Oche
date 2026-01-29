@@ -3,6 +3,7 @@
 
 import { useState } from "react";
 import { useQuery, useMutation } from "convex/react";
+import { Link } from "react-router-dom";
 import { api } from "../convex/_generated/api";
 import type { Id } from "../convex/_generated/dataModel";
 
@@ -64,9 +65,15 @@ export function PaymentTrackingPage({ leagueId }: PaymentTrackingPageProps) {
 
   return (
     <div>
-      <h2 className="mb-6 text-2xl font-bold text-oche-100">
-        Payment Tracking
-      </h2>
+      <div className="mb-6 flex items-center justify-between">
+        <h2 className="text-2xl font-bold text-oche-100">Payment Tracking</h2>
+        <Link
+          to={`/leagues/${leagueId}/pay`}
+          className="rounded-md bg-amber-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-amber-500"
+        >
+          Pay Online
+        </Link>
+      </div>
 
       {/* Player Balances */}
       <section className="mb-8">
