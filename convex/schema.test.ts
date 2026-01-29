@@ -24,6 +24,7 @@ describe("Core database schema", () => {
       "tournaments",
       "notifications",
       "notificationPreferences",
+      "auditLog",
     ];
 
     for (const table of requiredTables) {
@@ -57,6 +58,7 @@ describe("Core database schema", () => {
       "tournaments",
       "notifications",
       "notificationPreferences",
+      "auditLog",
     ];
 
     for (const table of tableNames) {

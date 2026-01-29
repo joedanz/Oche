@@ -233,6 +233,21 @@ export default defineSchema({
     rosterChange: v.boolean(),
   }).index("by_user_league", ["userId", "leagueId"]),
 
+  auditLog: defineTable({
+    leagueId: v.id("leagues"),
+    userId: v.id("users"),
+    action: v.union(
+      v.literal("score_entry"),
+      v.literal("score_edit"),
+      v.literal("score_import"),
+      v.literal("role_change"),
+    ),
+    details: v.string(),
+    oldValue: v.optional(v.string()),
+    newValue: v.optional(v.string()),
+    createdAt: v.number(),
+  }).index("by_league", ["leagueId"]),
+
   playerStats: defineTable({
     playerId: v.id("players"),
     seasonId: v.id("seasons"),
