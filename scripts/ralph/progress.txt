@@ -665,3 +665,19 @@
   - Roster stats come from `playerStats` table (pre-computed per player/season) — no need to re-aggregate from innings
   - `getAllByText` needed when stat values appear in both team stat cards and per-player roster table
 ---
+
+## 2026-01-29 - US-042
+- Added league standings page: standings table sorted by match points with tiebreakers
+- Backend: `convex/standings.ts` with `getStandingsHandler` aggregating all teams in a league
+- Tiebreaker order: match points → total runs scored → plus/minus (head-to-head omitted for simplicity)
+- Division and season filtering via query args
+- Frontend: `src/StandingsPage.tsx` with standings table, season selector, division filter
+- Route: `/leagues/:leagueId/standings` as child of LeagueLayout
+- **Tests added:** 11 new tests in `convex/standings.test.ts` (5) and `src/StandingsPage.test.tsx` (6)
+- **Files changed:** convex/standings.ts (new), convex/standings.test.ts (new), src/StandingsPage.tsx (new), src/StandingsPage.test.tsx (new), src/App.tsx, convex/_generated/api.d.ts
+- **Learnings for future iterations:**
+  - Standings query reuses same aggregation pattern as `getTeamStatsHandler` but for all teams at once
+  - Pre-fetch all games and innings for season matches to avoid N+1 queries per team
+  - Head-to-head tiebreaker would require per-pair aggregation — skipped in favor of runs scored and plus/minus
+  - `font-variant-numeric: tabular-nums` ensures columns of numbers align properly in standings table
+---
