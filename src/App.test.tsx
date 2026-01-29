@@ -9,10 +9,6 @@ vi.mock("convex/react", () => ({
     <>{children}</>
   ),
   ConvexReactClient: vi.fn(),
-  useConvexAuth: vi.fn(() => ({
-    isAuthenticated: false,
-    isLoading: false,
-  })),
 }));
 
 import App from "./App";

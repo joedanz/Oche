@@ -3,18 +3,22 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, it, expect, vi } from "vitest";
 import { MemoryRouter } from "react-router-dom";
-import App from "./App";
 
 vi.mock("convex/react", () => ({
   ConvexProvider: ({ children }: { children: React.ReactNode }) => (
     <>{children}</>
   ),
   ConvexReactClient: vi.fn(),
-  useConvexAuth: vi.fn(() => ({
+}));
+
+vi.mock("./useAuth", () => ({
+  useAuth: vi.fn(() => ({
     isAuthenticated: false,
     isLoading: false,
   })),
 }));
+
+import App from "./App";
 
 afterEach(() => {
   cleanup();
@@ -62,8 +66,8 @@ describe("Navigation", () => {
   });
 
   it("redirects authenticated users from landing to dashboard", async () => {
-    const { useConvexAuth } = await import("convex/react");
-    vi.mocked(useConvexAuth).mockReturnValue({
+    const { useAuth } = await import("./useAuth");
+    vi.mocked(useAuth).mockReturnValue({
       isAuthenticated: true,
       isLoading: false,
     });
