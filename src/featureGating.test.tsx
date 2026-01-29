@@ -77,50 +77,50 @@ describe("feature gating", () => {
     it("HistoricalTrendsPage", () => {
       starterPlan();
       wrap(<HistoricalTrendsPage leagueId={leagueId} />);
-      expect(screen.getByText(/Historical trends require/)).toBeDefined();
-      expect(screen.getByText("View Plans")).toBeDefined();
+      expect(screen.getByText("Unlock Historical Trends")).toBeDefined();
+      expect(screen.getByText("Upgrade to League")).toBeDefined();
     });
 
     it("PlayerStatsExportPage", () => {
       starterPlan();
       wrap(<PlayerStatsExportPage leagueId={leagueId} />);
-      expect(screen.getByText(/CSV and PDF export require/)).toBeDefined();
+      expect(screen.getByText("Unlock Stats Export")).toBeDefined();
     });
 
     it("CsvUploadPage", () => {
       starterPlan();
       wrap(<CsvUploadPage leagueId="league1" matchId="match1" />);
-      expect(screen.getByText(/Score import requires/)).toBeDefined();
+      expect(screen.getByText("Unlock Score Import")).toBeDefined();
     });
 
     it("ExcelUploadPage", () => {
       starterPlan();
       wrap(<ExcelUploadPage leagueId="league1" matchId="match1" />);
-      expect(screen.getByText(/Score import requires/)).toBeDefined();
+      expect(screen.getByText("Unlock Score Import")).toBeDefined();
     });
 
     it("TournamentPage", () => {
       starterPlan();
       wrap(<TournamentPage leagueId={leagueId} />);
-      expect(screen.getByText(/Tournaments require/)).toBeDefined();
+      expect(screen.getByText("Unlock Tournaments")).toBeDefined();
     });
 
     it("AuditLogPage", () => {
       starterPlan();
       wrap(<AuditLogPage leagueId={leagueId} />);
-      expect(screen.getByText(/Audit log requires/)).toBeDefined();
+      expect(screen.getByText("Unlock Audit Log")).toBeDefined();
     });
 
     it("HandicapConfigPage", () => {
       starterPlan();
       wrap(<HandicapConfigPage leagueId={leagueId} />);
-      expect(screen.getByText(/Full handicap configuration requires/)).toBeDefined();
+      expect(screen.getByText("Unlock Full Handicapping")).toBeDefined();
     });
 
     it("LeagueVisibilityToggle", () => {
       starterPlan();
       wrap(<LeagueVisibilityToggle leagueId={leagueId} />);
-      expect(screen.getByText(/Public league pages require/)).toBeDefined();
+      expect(screen.getByText("Unlock Public League Pages")).toBeDefined();
     });
   });
 

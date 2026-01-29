@@ -97,7 +97,7 @@ export function TournamentPage({ leagueId }: TournamentPageProps) {
 
   if (isLoading) return null;
   if (!canUse("tournaments")) {
-    return <UpgradePrompt message="Tournaments require a League plan or higher." />;
+    return <UpgradePrompt feature="Tournaments" description="Create and manage single-elimination tournaments with seeded brackets." />;
   }
 
   const viewing = viewingTournament

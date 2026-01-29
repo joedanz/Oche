@@ -42,7 +42,7 @@ export function AuditLogPage({ leagueId }: { leagueId: Id<"leagues"> }) {
 
   if (isLoading) return null;
   if (!canUse("audit_log")) {
-    return <UpgradePrompt message="Audit log requires a League plan or higher." />;
+    return <UpgradePrompt feature="Audit Log" description="Track every score entry, edit, and role change with a complete activity history." />;
   }
 
   return (

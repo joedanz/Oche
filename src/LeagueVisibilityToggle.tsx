@@ -18,7 +18,7 @@ export function LeagueVisibilityToggle({ leagueId }: Props) {
 
   if (isLoading) return null;
   if (!canUse("public_pages")) {
-    return <UpgradePrompt message="Public league pages require a League plan or higher." />;
+    return <UpgradePrompt feature="Public League Pages" description="Share your league standings and stats with a public URL anyone can view." />;
   }
 
   if (!league) return null;

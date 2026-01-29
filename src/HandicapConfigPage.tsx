@@ -37,7 +37,7 @@ export function HandicapConfigPage({ leagueId }: HandicapConfigPageProps) {
 
   if (isLoading) return null;
   if (!canUse("full_handicapping")) {
-    return <UpgradePrompt message="Full handicap configuration requires a League plan or higher." />;
+    return <UpgradePrompt feature="Full Handicapping" description="Configure handicap percentage, recalculation frequency, and per-match overrides." />;
   }
 
   if (!league) {

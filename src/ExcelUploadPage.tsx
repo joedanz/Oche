@@ -72,7 +72,7 @@ export function ExcelUploadPage({ leagueId, matchId }: ExcelUploadPageProps) {
 
   if (isLoading) return null;
   if (!canUse("score_import")) {
-    return <UpgradePrompt message="Score import requires a League plan or higher." />;
+    return <UpgradePrompt feature="Score Import" description="Import scores from Excel spreadsheets to quickly enter match results in bulk." />;
   }
 
   return (

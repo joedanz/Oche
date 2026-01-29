@@ -21,7 +21,7 @@ export function PlayerStatsExportPage({ leagueId }: { leagueId: Id<"leagues"> })
 
   if (isLoading) return null;
   if (!canUse("csv_pdf_export")) {
-    return <UpgradePrompt message="CSV and PDF export require a League plan or higher." />;
+    return <UpgradePrompt feature="Stats Export" description="Export player statistics to CSV and PDF for record-keeping and league communications." />;
   }
 
   if (!data) {

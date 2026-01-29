@@ -67,7 +67,7 @@ export function HistoricalTrendsPage({ leagueId }: { leagueId: Id<"leagues"> }) 
 
   if (isLoading) return null;
   if (!canUse("historical_trends")) {
-    return <UpgradePrompt message="Historical trends require a League plan or higher." />;
+    return <UpgradePrompt feature="Historical Trends" description="Track player averages and team points over time with interactive comparison charts." />;
   }
 
   if (!metadata) {
