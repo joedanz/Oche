@@ -855,3 +855,18 @@
   - `data-winner` attribute on participant rows enables test assertions for visual winner highlighting
   - When `getAllByText` matches too many, use `getAllByText(/pattern/).length` assertion instead of `getByText`
 ---
+
+## 2026-01-29 - US-053
+- Added public league page: unauthenticated access to standings, schedule, and recent results
+- Added `isPublic` optional boolean field to leagues schema
+- Backend: `convex/publicLeague.ts` with `getPublicLeagueDataHandler` (no auth required, checks `isPublic` flag) and `toggleVisibilityHandler` (admin-only)
+- Frontend: `src/PublicLeaguePage.tsx` at `/public/:leagueId` (outside auth guard), `src/LeagueVisibilityToggle.tsx` admin component at `/leagues/:leagueId/visibility`
+- Public query reuses same standings aggregation logic as `standings.ts` but without `requireLeagueMember`
+- **Tests added:** 16 new tests in `convex/publicLeague.test.ts` (6), `src/PublicLeaguePage.test.tsx` (6), `src/LeagueVisibilityToggle.test.tsx` (4)
+- **Files changed:** convex/schema.ts, convex/publicLeague.ts (new), convex/publicLeague.test.ts (new), convex/_generated/api.d.ts, src/PublicLeaguePage.tsx (new), src/PublicLeaguePage.test.tsx (new), src/LeagueVisibilityToggle.tsx (new), src/LeagueVisibilityToggle.test.tsx (new), src/App.tsx
+- **Learnings for future iterations:**
+  - Public routes go outside the `isAuthenticated` guard in App.tsx — use a separate `<Route>` before the auth-gated routes
+  - `isPublic` is `v.optional(v.boolean())` — existing leagues default to private (falsy)
+  - Public queries skip `requireLeagueMember` and instead check `league.isPublic === true`
+  - "Public" text appears in both status label and toggle button — use `getAllByText` not `getByText` in tests
+---
