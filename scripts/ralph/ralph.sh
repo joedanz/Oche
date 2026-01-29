@@ -91,6 +91,14 @@ prd_status() {
   fi
 }
 
+prd_remaining() {
+  if [[ "$HAS_JQ" == "true" && -f "$PRD_FILE" ]]; then
+    jq '[.userStories[] | select(.passes == false)] | length' "$PRD_FILE"
+  else
+    echo "?"
+  fi
+}
+
 next_story() {
   if [[ "$HAS_JQ" == "true" && -f "$PRD_FILE" ]]; then
     jq -r '[.userStories[] | select(.passes == false)] | sort_by(.priority) | .[0] | "\(.id): \(.title)"' "$PRD_FILE"
@@ -220,9 +228,9 @@ for i in $(seq 1 $MAX_ITERATIONS); do
       --border rounded \
       --border-foreground 245 \
       --padding "0 2" \
-      "Iteration $i/$MAX_ITERATIONS  ·  Stories: $(prd_status)  ·  Next: $(next_story)"
+      "Iteration $i/$MAX_ITERATIONS  ·  Remaining: $(prd_remaining)  ·  Next: $(next_story)"
   else
-    echo "═══ Iteration $i/$MAX_ITERATIONS ═══ Stories: $(prd_status) ═══ Next: $(next_story) ═══"
+    echo "═══ Iteration $i/$MAX_ITERATIONS ═══ Remaining: $(prd_remaining) ═══ Next: $(next_story) ═══"
   fi
 
   # Clear output file for this iteration
