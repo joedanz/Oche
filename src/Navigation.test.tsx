@@ -17,6 +17,9 @@ vi.mock("../convex/_generated/api", () => ({
       getUserLeagues: "onboarding:getUserLeagues",
       createLeague: "onboarding:createLeague",
     },
+    dashboard: {
+      getUserLeaguesWithDetails: "dashboard:getUserLeaguesWithDetails",
+    },
   },
 }));
 
@@ -93,7 +96,7 @@ describe("Navigation", () => {
     );
 
     expect(
-      screen.getByRole("heading", { name: /dashboard/i }),
+      screen.getByRole("heading", { name: /my leagues/i }),
     ).toBeInTheDocument();
   });
 
