@@ -26,6 +26,8 @@ import type * as matches from "../matches.js";
 import type * as members from "../members.js";
 import type * as onboarding from "../onboarding.js";
 import type * as pairings from "../pairings.js";
+import type * as playerStats from "../playerStats.js";
+import type * as playerStatsPage from "../playerStatsPage.js";
 import type * as roster from "../roster.js";
 import type * as scheduleGenerator from "../scheduleGenerator.js";
 import type * as scoring from "../scoring.js";
@@ -57,6 +59,8 @@ declare const fullApi: ApiFromModules<{
   members: typeof members;
   onboarding: typeof onboarding;
   pairings: typeof pairings;
+  playerStats: typeof playerStats;
+  playerStatsPage: typeof playerStatsPage;
   roster: typeof roster;
   scheduleGenerator: typeof scheduleGenerator;
   scoring: typeof scoring;
