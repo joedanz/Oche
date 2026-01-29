@@ -1,10 +1,11 @@
 // ABOUTME: Root application component
 // ABOUTME: Renders the main app shell with routing and auth-aware redirects
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate, useParams } from "react-router-dom";
 import { LandingPage } from "./LandingPage";
 import { LoginPage } from "./LoginPage";
 import { SignupPage } from "./SignupPage";
 import { Dashboard } from "./Dashboard";
+import { MembersPage } from "./MembersPage";
 import { useAuth } from "./useAuth";
 
 function AppRoutes() {
@@ -30,8 +31,20 @@ function AppRoutes() {
           isAuthenticated ? <Dashboard /> : <Navigate to="/login" replace />
         }
       />
+      <Route
+        path="/leagues/:leagueId/members"
+        element={
+          isAuthenticated ? <MembersRoute /> : <Navigate to="/login" replace />
+        }
+      />
     </Routes>
   );
+}
+
+function MembersRoute() {
+  const { leagueId } = useParams<{ leagueId: string }>();
+  if (!leagueId) return null;
+  return <MembersPage leagueId={leagueId as any} />;
 }
 
 function App() {
