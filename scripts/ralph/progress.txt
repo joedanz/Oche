@@ -398,3 +398,19 @@
   - `type="number"` inputs use `spinbutton` role in testing-library — use `getAllByRole("spinbutton")`
   - Auto-advance: after entering a digit, focus moves to next cell; wraps from end of row to start of next row
 ---
+
+## 2026-01-29 - US-025
+- Added extra innings entry support to ScoringGrid component
+- "Add Extra Inning" button appears when regulation innings (1-9) result in a tie
+- Extra inning columns render with amber background/border styling and E1/E2/etc headers
+- Extra innings saved with `isExtra: true` flag in database
+- No limit on number of extra innings; loads existing extras from data
+- **Tests added:** 6 new tests in `convex/scoring.test.ts` (1) and `src/ScoringGrid.test.tsx` (5)
+- **Files changed:** src/ScoringGrid.tsx, src/ScoringGrid.test.tsx, convex/scoring.test.ts
+- **Learnings for future iterations:**
+  - ScoringGrid uses `extraCount` state to track number of extra columns — grid array is dynamically resized
+  - Tie detection: sum all 9 regulation innings for each side, compare totals (all must be filled)
+  - Extra inning headers use "E1", "E2" etc. format to distinguish from regulation innings
+  - Input refs array must be resized when extra innings are added for keyboard navigation to work
+  - Existing extra innings loaded by checking `isExtra` flag and computing column offset from `inningNumber - REGULATION_INNINGS`
+---
