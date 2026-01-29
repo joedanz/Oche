@@ -16,6 +16,7 @@ import { MatchConfigPage } from "./MatchConfigPage";
 import { SeasonsPage } from "./SeasonsPage";
 import { DivisionsPage } from "./DivisionsPage";
 import { TeamsPage } from "./TeamsPage";
+import { RosterPage } from "./RosterPage";
 import { useAuth } from "./useAuth";
 
 function AuthenticatedRedirect() {
@@ -84,6 +85,7 @@ function AppRoutes() {
         <Route path="seasons" element={<SeasonsRoute />} />
         <Route path="divisions" element={<DivisionsRoute />} />
         <Route path="teams" element={<TeamsRoute />} />
+        <Route path="teams/:teamId/roster" element={<RosterRoute />} />
       </Route>
     </Routes>
   );
@@ -131,6 +133,12 @@ function TeamsRoute() {
   const { leagueId } = useParams<{ leagueId: string }>();
   if (!leagueId) return null;
   return <TeamsPage leagueId={leagueId as any} />;
+}
+
+function RosterRoute() {
+  const { leagueId, teamId } = useParams<{ leagueId: string; teamId: string }>();
+  if (!leagueId || !teamId) return null;
+  return <RosterPage leagueId={leagueId as any} teamId={teamId as any} />;
 }
 
 function App() {
