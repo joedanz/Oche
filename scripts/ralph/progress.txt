@@ -635,3 +635,18 @@
   - DNP games are skipped entirely in stat calculations
   - Upsert pattern: query for existing playerStats record by playerId+seasonId, patch if found, insert if not
 ---
+
+## 2026-01-29 - US-040
+- Added player stats page with summary stats, season selector, and game-by-game history table
+- Backend: `convex/playerStatsPage.ts` with `getPlayerPageDataHandler` computing stats + game history
+- Frontend: `src/PlayerStatsPage.tsx` with stat cards, season dropdown, and history table with result badges
+- Route: `/leagues/:leagueId/players/:playerId/stats` as child of LeagueLayout
+- Season ID is optional in query — defaults to active season when not specified
+- **Tests added:** 12 new tests in `convex/playerStatsPage.test.ts` (5) and `src/PlayerStatsPage.test.tsx` (7)
+- **Files changed:** convex/playerStatsPage.ts (new), convex/playerStatsPage.test.ts (new), src/PlayerStatsPage.tsx (new), src/PlayerStatsPage.test.tsx (new), src/App.tsx
+- **Learnings for future iterations:**
+  - Make seasonId optional in queries that need a season selector — default to active season server-side
+  - Game history requires traversing matches → games → innings per player — consider adding indexes if performance becomes an issue
+  - `average` is a derived stat (totalPlus / gamesPlayed) — compute it in the query rather than storing it
+  - Use `vi.fn()` directly in `vi.mock("convex/react", ...)` and import+cast after for TypeScript compatibility
+---
