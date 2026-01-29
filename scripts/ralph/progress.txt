@@ -49,6 +49,8 @@
 - Convex `useQuery(ref, "skip")` skips the query — use for conditional fetching based on user selection
 - Stripe SDK runs in Convex `action` (dynamic import), not mutation/query — use `internalQuery` for reads, `internalMutation` for writes from actions
 - `useAction` from `convex/react` for Convex actions in frontend (not `useMutation`)
+- `v.union(v.string(), v.null())` for nullable fields inside `v.array()` objects — `v.optional` not allowed in array elements
+- Bracket state stored as flat array on tournament document — use `matchIndex` to identify matches and `round` to group by round
 
 ## 2026-01-28 - US-001
 - Scaffolded Vite + React + TypeScript project
@@ -815,4 +817,24 @@
   - `useAction` from `convex/react` for calling Convex actions (not `useMutation`)
   - `useSearchParams` from react-router-dom for reading `?success=true` / `?canceled=true` query params
   - Stripe API version must match installed package — check `node_modules/stripe/types/apiVersion.d.ts`
+---
+
+## 2026-01-29 - US-051
+- Added single-elimination tournament bracket creation with seeded matchups
+- Pure `bracketGenerator.ts` with `generateBracket()` and `nextPowerOf2()` functions
+- Backend: `convex/tournaments.ts` with `createTournamentHandler`, `getTournamentsHandler`, `getTournamentDetailHandler`
+- Added `tournaments` table to schema with `by_league` index and bracket state stored as array of match objects
+- Frontend: `src/TournamentPage.tsx` with create form (name, date, participant type, team checkboxes), tournament list, and bracket tree visualization
+- Bracket visualization: column-per-round layout with seeded matchups and BYE handling
+- Route: `/leagues/:leagueId/tournaments` as child of LeagueLayout
+- **Tests added:** 22 new tests in `src/bracketGenerator.test.ts` (8), `convex/tournaments.test.ts` (6), `src/TournamentPage.test.tsx` (8)
+- **Files changed:** convex/schema.ts, convex/schema.test.ts, convex/tournaments.ts (new), convex/tournaments.test.ts (new), src/bracketGenerator.ts (new), src/bracketGenerator.test.ts (new), src/TournamentPage.tsx (new), src/TournamentPage.test.tsx (new), src/App.tsx, convex/_generated/api.d.ts
+- **Learnings for future iterations:**
+  - Standard bracket seeding uses recursive position doubling: [1,2] → [1,4,2,3] → [1,8,4,5,2,7,3,6] — ensures top seeds meet latest
+  - Byes auto-advance: when a participant has no opponent, `winnerId` is set immediately in the bracket match
+  - Bracket state stored as flat array of match objects on the tournament document — no separate table needed
+  - `v.union(v.string(), v.null())` for nullable bracket fields (Convex doesn't support `v.optional` in array elements)
+  - Bracket generation logic duplicated between `bracketGenerator.ts` (client) and `tournaments.ts` (server) since Convex can't import from `src/`
+  - `afterEach(cleanup)` required in component tests to avoid duplicate DOM elements across tests
+  - `getByLabelText` requires label to wrap input or use `htmlFor` — nesting `<input>` inside `<label>` is simplest
 ---
