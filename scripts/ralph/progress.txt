@@ -619,3 +619,19 @@
   - FileReader mock in tests: use `vi.spyOn(FileReader.prototype, "readAsText")` with `setTimeout` to simulate async read
   - Reset file input with `e.target.value = ""` after reading to allow re-adding the same file
 ---
+
+## 2026-01-29 - US-039
+- Added player statistics calculation: pure function + Convex mutation/query
+- Pure `calculatePlayerStats()` computes: gamesPlayed, wins, losses, totalPlus, totalMinus, highInnings
+- Extra innings excluded from all calculations (plus, minus, high innings)
+- `recalculatePlayerStatsHandler` reads all games/innings for a player in a season, computes stats, upserts to playerStats table
+- `getPlayerStatsHandler` retrieves stored stats for a player/season
+- **Tests added:** 9 new tests in `convex/playerStats.test.ts`
+- **Files changed:** convex/playerStats.ts (new), convex/playerStats.test.ts (new)
+- **Learnings for future iterations:**
+  - Player stats are derived data — pure calculation function takes `GameData[]` and returns stats, no DB needed for computation
+  - "Plus" = own regular batting runs, "Minus" = opponent's regular batting runs — both exclude extra innings
+  - High innings count only includes 9-run regular (non-extra) innings
+  - DNP games are skipped entirely in stat calculations
+  - Upsert pattern: query for existing playerStats record by playerId+seasonId, patch if found, insert if not
+---
