@@ -17,7 +17,7 @@ const defaultMatchConfig = {
 
 export async function createLeagueHandler(
   ctx: { db: DatabaseWriter },
-  args: { name: string; userId: Id<"users"> },
+  args: { name: string; description?: string; userId: Id<"users"> },
 ) {
   if (!args.name.trim()) {
     throw new Error("League name is required");
@@ -25,6 +25,7 @@ export async function createLeagueHandler(
 
   const leagueId = await ctx.db.insert("leagues", {
     name: args.name.trim(),
+    description: args.description?.trim() || undefined,
     matchConfig: defaultMatchConfig,
     handicapEnabled: false,
   });
@@ -49,12 +50,13 @@ export async function getUserLeaguesHandler(
 }
 
 export const createLeague = mutation({
-  args: { name: v.string() },
+  args: { name: v.string(), description: v.optional(v.string()) },
   handler: async (ctx, args) => {
     const userId = await auth.getUserId(ctx);
     if (!userId) throw new Error("Not authenticated");
     return await createLeagueHandler(ctx, {
       name: args.name,
+      description: args.description,
       userId: userId as Id<"users">,
     });
   },

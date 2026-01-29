@@ -39,13 +39,13 @@ export function Dashboard() {
             </p>
             <div className="mt-6 flex justify-center gap-4">
               <Link
-                to="/onboarding"
+                to="/create-league"
                 className="rounded-md bg-amber-500 px-4 py-2 font-semibold text-oche-950 transition hover:bg-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 focus:ring-offset-oche-900"
               >
                 Create a League
               </Link>
               <Link
-                to="/onboarding"
+                to="/create-league"
                 className="rounded-md border border-oche-700 px-4 py-2 font-semibold text-oche-300 transition hover:bg-oche-800 hover:text-oche-100 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 focus:ring-offset-oche-900"
               >
                 Join a League
@@ -56,7 +56,7 @@ export function Dashboard() {
           <>
             <div className="mt-6 flex justify-end">
               <Link
-                to="/onboarding"
+                to="/create-league"
                 className="rounded-md bg-amber-500 px-4 py-2 text-sm font-semibold text-oche-950 transition hover:bg-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 focus:ring-offset-oche-900"
               >
                 Create New League

@@ -1,8 +1,8 @@
 // ABOUTME: Role-based authorization helpers for league-scoped permissions.
 // ABOUTME: Enforces Admin/Captain/Player roles via leagueMemberships table lookups.
 
-import { DatabaseReader } from "./_generated/server";
-import { Id } from "./_generated/dataModel";
+import type { DatabaseReader } from "./_generated/server";
+import type { Id } from "./_generated/dataModel";
 
 export type Role = "admin" | "captain" | "player";
 

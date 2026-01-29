@@ -32,6 +32,28 @@ describe("onboarding", () => {
       expect(insertedRecords[1].doc.leagueId).toBe("league-1");
     });
 
+    it("stores description when provided", async () => {
+      const insertedRecords: { table: string; doc: any }[] = [];
+      const mockCtx = {
+        db: {
+          insert: vi.fn(async (table: string, doc: any) => {
+            insertedRecords.push({ table, doc });
+            if (table === "leagues") return "league-1";
+            return "membership-1";
+          }),
+        },
+      };
+
+      const { createLeagueHandler } = await import("./onboarding");
+      await createLeagueHandler(mockCtx as any, {
+        name: "Test League",
+        description: "A fun dart league",
+        userId: "user-1" as any,
+      });
+
+      expect(insertedRecords[0].doc.description).toBe("A fun dart league");
+    });
+
     it("throws if name is empty", async () => {
       const { createLeagueHandler } = await import("./onboarding");
       const mockCtx = { db: { insert: vi.fn() } };
