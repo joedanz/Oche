@@ -185,6 +185,12 @@ export function SchedulePage({ leagueId }: SchedulePageProps) {
                 >
                   Import Google Sheets
                 </Link>
+                <Link
+                  to={`/leagues/${leagueId}/matches/${m._id}/import-merge`}
+                  className="text-blue-400 hover:text-blue-300 text-sm"
+                >
+                  Merge Files
+                </Link>
                 <span className="text-sm text-gray-500">{m.date}</span>
               </div>
             </li>

@@ -26,6 +26,7 @@ import { DiscrepancyReviewPage } from "./DiscrepancyReviewPage";
 import { CsvUploadPage } from "./CsvUploadPage";
 import { ExcelUploadPage } from "./ExcelUploadPage";
 import { GoogleSheetsImportPage } from "./GoogleSheetsImportPage";
+import { MultiFileMergePage } from "./MultiFileMergePage";
 import { useAuth } from "./useAuth";
 
 function AuthenticatedRedirect() {
@@ -104,6 +105,7 @@ function AppRoutes() {
         <Route path="matches/:matchId/import-csv" element={<CsvUploadRoute />} />
         <Route path="matches/:matchId/import-excel" element={<ExcelUploadRoute />} />
         <Route path="matches/:matchId/import-gsheets" element={<GoogleSheetsRoute />} />
+        <Route path="matches/:matchId/import-merge" element={<MultiFileMergeRoute />} />
       </Route>
     </Routes>
   );
@@ -205,6 +207,12 @@ function GoogleSheetsRoute() {
   const { leagueId, matchId } = useParams<{ leagueId: string; matchId: string }>();
   if (!leagueId || !matchId) return null;
   return <GoogleSheetsImportPage leagueId={leagueId as any} matchId={matchId as any} />;
+}
+
+function MultiFileMergeRoute() {
+  const { leagueId, matchId } = useParams<{ leagueId: string; matchId: string }>();
+  if (!leagueId || !matchId) return null;
+  return <MultiFileMergePage leagueId={leagueId as any} matchId={matchId as any} />;
 }
 
 function PairingsRoute() {
