@@ -1,24 +1,87 @@
-// ABOUTME: Login page placeholder
-// ABOUTME: Will be fully implemented in US-005 (email/password authentication)
-
+// ABOUTME: Login page with email/password form
+// ABOUTME: Uses Convex auth signIn action to authenticate users
+import { useState } from "react";
 import { Link } from "react-router-dom";
+import { useAuthActions } from "@convex-dev/auth/react";
 
 export function LoginPage() {
+  const { signIn } = useAuthActions();
+  const [error, setError] = useState("");
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setError("");
+    const formData = new FormData(e.currentTarget);
+    formData.set("flow", "signIn");
+    try {
+      await signIn("password", formData);
+    } catch {
+      setError("Invalid email or password. Please try again.");
+    }
+  }
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-oche-900 px-6">
       <div className="w-full max-w-sm">
         <h1 className="font-display text-3xl tracking-tight text-oche-100">
           Log In
         </h1>
-        <p className="mt-2 text-sm text-oche-400">
-          Authentication coming soon.
+        <form onSubmit={handleSubmit} className="mt-6 space-y-4" noValidate>
+          <div>
+            <label
+              htmlFor="login-email"
+              className="block text-sm font-medium text-oche-300"
+            >
+              Email
+            </label>
+            <input
+              id="login-email"
+              name="email"
+              type="email"
+              autoComplete="email"
+              required
+              spellCheck={false}
+              className="mt-1 block w-full rounded-md border border-oche-700 bg-oche-800 px-3 py-2 text-oche-100 placeholder:text-oche-500 focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500"
+              placeholder="you@example.com"
+            />
+          </div>
+          <div>
+            <label
+              htmlFor="login-password"
+              className="block text-sm font-medium text-oche-300"
+            >
+              Password
+            </label>
+            <input
+              id="login-password"
+              name="password"
+              type="password"
+              autoComplete="current-password"
+              required
+              className="mt-1 block w-full rounded-md border border-oche-700 bg-oche-800 px-3 py-2 text-oche-100 placeholder:text-oche-500 focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500"
+            />
+          </div>
+          {error && (
+            <p className="text-sm text-red-400" role="alert">
+              {error}
+            </p>
+          )}
+          <button
+            type="submit"
+            className="w-full rounded-md bg-amber-500 px-4 py-2 font-semibold text-oche-950 transition hover:bg-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 focus:ring-offset-oche-900"
+          >
+            Log In
+          </button>
+        </form>
+        <p className="mt-4 text-center text-sm text-oche-400">
+          Don&rsquo;t have an account?{" "}
+          <Link
+            to="/signup"
+            className="text-amber-400 transition hover:text-amber-300"
+          >
+            Sign up
+          </Link>
         </p>
-        <Link
-          to="/"
-          className="mt-6 inline-block text-sm text-amber-400 transition hover:text-amber-300"
-        >
-          &larr; Back to home
-        </Link>
       </div>
     </div>
   );

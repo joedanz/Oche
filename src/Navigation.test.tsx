@@ -4,18 +4,15 @@ import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, it, expect, vi } from "vitest";
 import { MemoryRouter } from "react-router-dom";
 
-vi.mock("convex/react", () => ({
-  ConvexProvider: ({ children }: { children: React.ReactNode }) => (
-    <>{children}</>
-  ),
-  ConvexReactClient: vi.fn(),
-}));
-
 vi.mock("./useAuth", () => ({
   useAuth: vi.fn(() => ({
     isAuthenticated: false,
     isLoading: false,
   })),
+}));
+
+vi.mock("@convex-dev/auth/react", () => ({
+  useAuthActions: () => ({ signIn: vi.fn(), signOut: vi.fn() }),
 }));
 
 import App from "./App";
@@ -78,11 +75,9 @@ describe("Navigation", () => {
       </MemoryRouter>,
     );
 
-    // Should not show landing page hero
     expect(
       screen.queryByRole("heading", { name: /your league/i }),
     ).not.toBeInTheDocument();
-    // Should show dashboard heading
     expect(
       screen.getByRole("heading", { name: /dashboard/i }),
     ).toBeInTheDocument();

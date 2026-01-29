@@ -3,6 +3,7 @@
 
 import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
+import { authTables } from "@convex-dev/auth/server";
 
 const role = v.union(v.literal("admin"), v.literal("captain"), v.literal("player"));
 const matchStatus = v.union(
@@ -25,6 +26,8 @@ const matchConfig = v.object({
 });
 
 export default defineSchema({
+  ...authTables,
+
   users: defineTable({
     email: v.string(),
     name: v.string(),
