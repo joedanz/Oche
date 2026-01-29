@@ -427,3 +427,19 @@
   - Use `data-testid` attributes for totals cells since text content (numbers) is ambiguous with inning headers
   - Plus/Minus/Total columns are read-only `<td>` elements, not inputs — they follow the inning input columns
 ---
+
+## 2026-01-29 - US-027
+- Added multi-game match score entry page at `/leagues/:leagueId/matches/:matchId/score`
+- MatchScoreEntryPage composes multiple ScoringGrid instances — one per game in the match
+- Games displayed with slot numbers and player names, collapse/expand toggle per game
+- Overall match totals section at bottom (reads from match.totals if available)
+- Added "Scores" link on SchedulePage for each match
+- Reuses existing `matchDetail.getMatchDetail` query — no new backend code needed
+- **Tests added:** 8 new tests in `src/MatchScoreEntryPage.test.tsx`
+- **Files changed:** src/MatchScoreEntryPage.tsx (new), src/MatchScoreEntryPage.test.tsx (new), src/App.tsx, src/SchedulePage.tsx
+- **Learnings for future iterations:**
+  - MatchScoreEntryPage is a pure composition layer — each ScoringGrid handles its own data fetching, so no aggregate query was needed
+  - Player names appear in both the collapsible header button and the ScoringGrid row — use `getAllByText` in tests
+  - Pairing data is mapped by slot number for O(1) lookup when rendering game headers
+  - Collapse state uses a `Set<string>` of game IDs — toggling creates a new Set for immutable state updates
+---
