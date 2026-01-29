@@ -30,7 +30,7 @@ export default defineSchema({
 
   users: defineTable({
     email: v.string(),
-    name: v.string(),
+    name: v.optional(v.string()),
     avatarUrl: v.optional(v.string()),
   }),
 

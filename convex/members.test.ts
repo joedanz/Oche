@@ -46,8 +46,8 @@ describe("Last admin protection contract", () => {
   });
 
   it("does not trigger for non-admin role changes", () => {
-    const currentRole = "player";
-    const newRole = "captain";
+    const currentRole: string = "player";
+    const newRole: string = "captain";
     const isDowngradingAdmin = currentRole === "admin" && newRole !== "admin";
     expect(isDowngradingAdmin).toBe(false);
   });
