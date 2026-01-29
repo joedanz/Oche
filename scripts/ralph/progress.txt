@@ -39,6 +39,7 @@
 - Export pure algorithm functions separately from Convex mutations for direct unit testing without mocking
 - Dual entry uses `scoreEntries` table with status state machine: pending → confirmed/discrepancy → resolved
 - When adding child components with `useQuery`, update ALL parent test files' API mocks to include the new module
+- Excel/CSV parsers share `ParsedScoreRow` type from `csvParser.ts` — reuse for consistent import data shape
 
 ## 2026-01-28 - US-001
 - Scaffolded Vite + React + TypeScript project
@@ -531,4 +532,21 @@
   - `getByText(/csv/i)` matches multiple elements (heading + label) — use `getByRole("heading", { name: /csv/i })` for specificity
   - `FileReader.readAsText()` in `fireEvent.change` tests requires `waitFor` since reading is async
   - CSV parser is a pure function with no Convex dependencies — easy to test without DB mocking
+---
+
+## 2026-01-29 - US-034
+- Added Excel file upload page with SheetJS parsing (.xlsx/.xls)
+- Pure `parseExcelScores()` utility validates runs 0-9, requires 9 innings, returns sheet names
+- Sheet selector dropdown for multi-sheet workbooks
+- Frontend: `ExcelUploadPage` with file input, sheet selector, error display, preview table, import button
+- Route: `/leagues/:leagueId/matches/:matchId/import-excel` as child of LeagueLayout
+- Added "Import Excel" link on SchedulePage per match
+- **Tests added:** 11 new tests in `src/excelParser.test.ts` (5) and `src/ExcelUploadPage.test.tsx` (6)
+- **Files changed:** package.json, src/excelParser.ts (new), src/excelParser.test.ts (new), src/ExcelUploadPage.tsx (new), src/ExcelUploadPage.test.tsx (new), src/App.tsx, src/SchedulePage.tsx
+- **Learnings for future iterations:**
+  - SheetJS `XLSX.read(data, { type: "array" })` parses ArrayBuffer from `FileReader.readAsArrayBuffer()`
+  - `XLSX.utils.sheet_to_json(ws, { header: 1 })` returns raw 2D array (no header mapping) — matches CSV parser pattern
+  - Excel parser reuses `ParsedScoreRow` type from csvParser for consistent data shape across import formats
+  - Mock `xlsx` module and `./excelParser` separately in component tests — avoids needing real binary parsing in jsdom
+  - `FileReader.readAsArrayBuffer()` (not `readAsText`) for Excel binary files
 ---
