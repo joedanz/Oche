@@ -286,3 +286,18 @@
   - TeamsPage reuses `api.divisions.getDivisions` query to populate the division dropdown
   - Edit form uses `startEdit(team)` pattern to pre-populate edit state from team data
 ---
+
+## 2026-01-29 - US-018
+- Added captain assignment: select player from roster, set as team captain
+- Backend: `convex/captains.ts` with `assignCaptainHandler` and `getTeamPlayersHandler`
+- Enriched `getTeamsHandler` to include `captainName` from player→user lookup
+- Frontend: TeamsPage shows captain name per team, "Set Captain" button opens player picker
+- Changing captain demotes old captain's membership role to "player" and promotes new one to "captain"
+- **Tests added:** 8 new tests in `convex/captains.test.ts` (4) and `src/TeamsPage.test.tsx` (4)
+- **Files changed:** convex/captains.ts (new), convex/captains.test.ts (new), convex/teams.ts, src/TeamsPage.tsx, src/TeamsPage.test.tsx
+- **Learnings for future iterations:**
+  - `captainId` is `v.id("players")` not `v.id("users")` — a player is a user on a specific team
+  - When changing captains, demote old captain's `leagueMemberships` role before promoting new one
+  - Enrich queries (e.g., `getTeamsHandler`) to join related data (player→user) rather than forcing multiple queries from the frontend
+  - `players` table has no `by_team` index — uses `filter()` for team-scoped queries
+---
