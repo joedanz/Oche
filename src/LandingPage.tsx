@@ -399,29 +399,25 @@ export function LandingPage() {
               Pricing
             </p>
             <h2 className="mt-3 font-display text-3xl tracking-tight sm:text-4xl">
-              Free to start. No strings attached.
+              Free to start. Upgrade when you're ready.
             </h2>
             <p className="mx-auto mt-4 max-w-lg text-oche-400">
-              Create your league, invite your teams, and start scoring. Upgrade
+              Create your league, invite your teams, and start scoring. Pay only
               when you need more.
             </p>
-            <div className="relative mx-auto mt-12 max-w-sm">
-              {/* Animated shimmer border */}
-              <div className="pricing-glow absolute -inset-[1px] rounded-2xl opacity-60" />
-              {/* Soft outer glow */}
-              <div className="absolute -inset-4 rounded-3xl bg-amber-500/5 blur-xl" />
-
-              <div className="relative rounded-2xl border border-oche-700/40 bg-oche-850 p-10">
-                <p className="text-sm font-semibold uppercase tracking-wider text-amber-400">
+            <div className="mx-auto mt-12 grid max-w-5xl gap-6 lg:grid-cols-3">
+              {/* Starter */}
+              <div className="rounded-2xl border border-oche-700/40 bg-oche-850 p-8">
+                <p className="text-sm font-semibold uppercase tracking-wider text-oche-400">
                   Starter
                 </p>
-                <p className="mt-4 font-display text-6xl text-oche-100">$0</p>
-                <p className="mt-1 text-sm text-oche-500">per month, forever</p>
+                <p className="mt-4 font-display text-5xl text-oche-100">$0</p>
+                <p className="mt-1 text-sm text-oche-500">free forever</p>
                 <ul className="mt-8 space-y-3 text-left text-sm text-oche-300">
                   {[
-                    "Unlimited leagues",
+                    "1 league, 6 teams",
                     "Full score entry grid",
-                    "Real-time stats & standings",
+                    "Basic stats & standings",
                     "Schedule & pairings",
                   ].map((item) => (
                     <li key={item} className="flex items-center gap-3">
@@ -432,9 +428,76 @@ export function LandingPage() {
                 </ul>
                 <Link
                   to="/signup"
-                  className="mt-10 block rounded-xl bg-amber-500 px-6 py-3 text-center font-semibold text-oche-900 shadow-md shadow-amber-500/20 transition-all duration-300 hover:bg-amber-400 hover:shadow-lg hover:shadow-amber-400/25"
+                  className="mt-10 block rounded-xl border border-oche-600 px-6 py-3 text-center font-semibold text-oche-300 transition-all duration-300 hover:border-oche-400 hover:text-oche-100"
                 >
                   Get Started
+                </Link>
+              </div>
+
+              {/* League (Pro) — highlighted */}
+              <div className="relative rounded-2xl border border-amber-500/50 bg-oche-850 p-8">
+                <div className="pricing-glow absolute -inset-[1px] rounded-2xl opacity-40" />
+                <div className="absolute -inset-4 rounded-3xl bg-amber-500/5 blur-xl" />
+                <div className="relative">
+                  <div className="mb-2 inline-block rounded-full bg-amber-500/10 px-3 py-1 text-xs font-semibold text-amber-400">
+                    Most Popular
+                  </div>
+                  <p className="text-sm font-semibold uppercase tracking-wider text-amber-400">
+                    League
+                  </p>
+                  <p className="mt-4 font-display text-5xl text-oche-100">$12</p>
+                  <p className="mt-1 text-sm text-oche-500">per month · $99/year</p>
+                  <ul className="mt-8 space-y-3 text-left text-sm text-oche-300">
+                    {[
+                      "Unlimited leagues & teams",
+                      "Historical trends & export",
+                      "Score import (CSV, Excel)",
+                      "Tournaments",
+                      "Public league pages",
+                      "Audit log",
+                      "Full handicapping",
+                    ].map((item) => (
+                      <li key={item} className="flex items-center gap-3">
+                        {checkIcon}
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                  <Link
+                    to="/signup"
+                    className="mt-10 block rounded-xl bg-amber-500 px-6 py-3 text-center font-semibold text-oche-900 shadow-md shadow-amber-500/20 transition-all duration-300 hover:bg-amber-400 hover:shadow-lg hover:shadow-amber-400/25"
+                  >
+                    Start Free Trial
+                  </Link>
+                </div>
+              </div>
+
+              {/* Association */}
+              <div className="rounded-2xl border border-oche-700/40 bg-oche-850 p-8">
+                <p className="text-sm font-semibold uppercase tracking-wider text-oche-400">
+                  Association
+                </p>
+                <p className="mt-4 font-display text-5xl text-oche-100">$29</p>
+                <p className="mt-1 text-sm text-oche-500">per month · $249/year</p>
+                <ul className="mt-8 space-y-3 text-left text-sm text-oche-300">
+                  {[
+                    "Up to 10 leagues",
+                    "Everything in League",
+                    "Cross-league stats",
+                    "Custom branding",
+                    "Priority support",
+                  ].map((item) => (
+                    <li key={item} className="flex items-center gap-3">
+                      {checkIcon}
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+                <Link
+                  to="/signup"
+                  className="mt-10 block rounded-xl border border-oche-600 px-6 py-3 text-center font-semibold text-oche-300 transition-all duration-300 hover:border-oche-400 hover:text-oche-100"
+                >
+                  Contact Us
                 </Link>
               </div>
             </div>
