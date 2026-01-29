@@ -13,10 +13,25 @@ export async function getTeamsHandler(
   args: { leagueId: Id<"leagues">; userId: Id<"users"> },
 ) {
   await requireLeagueMember(ctx.db, args.userId, args.leagueId);
-  return await ctx.db
+  const teams = await ctx.db
     .query("teams")
     .filter((q: any) => q.eq(q.field("leagueId"), args.leagueId))
     .collect();
+
+  // Enrich with captain name
+  const result = [];
+  for (const team of teams) {
+    let captainName: string | undefined;
+    if (team.captainId) {
+      const player = await ctx.db.get(team.captainId);
+      if (player) {
+        const user = await ctx.db.get(player.userId);
+        captainName = user?.name ?? user?.email ?? "Unknown";
+      }
+    }
+    result.push({ ...team, captainName });
+  }
+  return result;
 }
 
 export async function createTeamHandler(
