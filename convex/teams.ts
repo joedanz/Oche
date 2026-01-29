@@ -5,6 +5,7 @@ import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
 import { requireRole, requireLeagueMember } from "./authorization";
 import { auth } from "./auth";
+import { requireLimit } from "./planGating";
 import type { Id } from "./_generated/dataModel";
 import type { DatabaseReader, DatabaseWriter } from "./_generated/server";
 
@@ -98,6 +99,19 @@ export const createTeam = mutation({
   handler: async (ctx, args) => {
     const userId = await auth.getUserId(ctx);
     if (!userId) throw new Error("Not authenticated");
+
+    // Check team count limit for the league admin's plan
+    const existingTeams = await ctx.db
+      .query("teams")
+      .filter((q: any) => q.eq(q.field("leagueId"), args.leagueId))
+      .collect();
+    await requireLimit(
+      ctx.db,
+      userId as Id<"users">,
+      "maxTeamsPerLeague",
+      existingTeams.length,
+    );
+
     return await createTeamHandler(ctx, {
       ...args,
       userId: userId as Id<"users">,
