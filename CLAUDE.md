@@ -1,13 +1,11 @@
-# PicSpot Development Guide
+# Oche Development Guide
 
 ## Project Overview
-Darts is a SaaS family photo sharing app with subscription billing, manual face tagging, EXIF metadata extraction, and album sharing.
+Oche is a SaaS platform for managing American Baseball Darts leagues. It handles scoring, stats, scheduling, standings, and handicapping.
 
 ## Tech Stack
-- **Frontend**: Vite + React + TypeScript + Tailwind CSS
+- **Frontend**: Vite + React + TypeScript + Tailwind CSS v4
 - **Backend**: Convex (serverless database and functions)
-- **File Upload**: UploadThing
-- **Payments**: Stripe
 
 ## Development Workflow
 
@@ -44,37 +42,32 @@ git checkout master && git pull
 ### Quality Checks
 ```bash
 npm run typecheck  # TypeScript validation
+npm run test       # Vitest tests
+npm run check      # Both typecheck + tests
 npm run dev        # Start dev server at localhost:5173
 npx convex dev     # Start Convex backend (required for full functionality)
 ```
 
-### Browser Testing
-Use these standard test credentials for browser verification:
-- **Email**: `test@picspot.dev`
-- **Password**: `testpass123`
-
-If the account doesn't exist, create it via the signup form. This ensures consistent testing across sessions.
-
 ## Key Files
-- `scripts/ralph/prd.json` - Product requirements (user stories, plan tiers)
+- `scripts/ralph/prd.json` - Product requirements (user stories)
 - `scripts/ralph/progress.txt` - Implementation log with learnings
 - `scripts/ralph/CLAUDE.md` - Ralph agent instructions
 - `convex/schema.ts` - Database schema
-- `tasks/prd-picspot-photo-app.md` - Human-readable PRD
+- `tasks/prd-oche-darts-league.md` - Human-readable PRD
+- `OCHE.md` - Product spec and scoring rules
 
 ## Codebase Patterns
 - ABOUTME comments at the start of each file explain its purpose
 - Convex schema uses `v.id("tableName")` for foreign key references
 - Union types for enums: `v.union(v.literal("a"), v.literal("b"))`
 - Environment variables prefixed with VITE_ are exposed to client-side code
-- **Storage URLs**: Use `ctx.storage.getUrl(storageId)` in queries to generate CDN-backed URLs. Don't construct URLs manually. Store only the `storageId`, generate URLs on-the-fly.
 
 ## Design Standards
-See @DESIGN.md for CSS styling details and best practices.  Use /frontend-design skill to create great designs that are WCAG 2.1 compliant.
+See @DESIGN.md for CSS styling details and best practices. Use /frontend-design skill to create great designs that are WCAG 2.1 compliant.
 
-## Human_Overview
-Maintain a detailed HUMAN.md file that explains the whole project in plain language. 
+## Human Overview
+Maintain a detailed HUMAN.md file that explains the whole project in plain language.
 
-Explain the technical architecture, the structure of the codebase and how the various parts are connected, the technologies used, why we made these technical decisions, and lessons I can learn from it (this should include the bugs we ran into and how we fixed them, potential pitfalls and how to avoid them in the future, new technologies used, how good engineers think and work, best practices, etc). 
+Explain the technical architecture, the structure of the codebase and how the various parts are connected, the technologies used, why we made these technical decisions, and lessons I can learn from it (this should include the bugs we ran into and how we fixed them, potential pitfalls and how to avoid them in the future, new technologies used, how good engineers think and work, best practices, etc).
 
 It should be very engaging to read; don't make it sound like boring technical documentation/textbook. Where appropriate, use analogies and anecdotes to make it more understandable and memorable.
