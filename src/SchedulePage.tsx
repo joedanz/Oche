@@ -2,6 +2,7 @@
 // ABOUTME: Admin-only form to schedule matches with double-booking prevention.
 
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "../convex/_generated/api";
 import type { Id } from "../convex/_generated/dataModel";
@@ -59,7 +60,15 @@ export function SchedulePage({ leagueId }: SchedulePageProps) {
 
   return (
     <div>
-      <h2 className="text-xl font-bold mb-4">Schedule</h2>
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-xl font-bold">Schedule</h2>
+        <Link
+          to={`/leagues/${leagueId}/schedule/generate`}
+          className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 text-sm"
+        >
+          Auto-Generate
+        </Link>
+      </div>
 
       <form onSubmit={handleCreate} className="mb-6 space-y-3 max-w-md">
         <div>
