@@ -22,6 +22,8 @@ describe("Core database schema", () => {
       "innings",
       "playerStats",
       "tournaments",
+      "notifications",
+      "notificationPreferences",
     ];
 
     for (const table of requiredTables) {
@@ -53,6 +55,8 @@ describe("Core database schema", () => {
       "importTemplates",
       "payments",
       "tournaments",
+      "notifications",
+      "notificationPreferences",
     ];
 
     for (const table of tableNames) {

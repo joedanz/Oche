@@ -211,6 +211,28 @@ export default defineSchema({
     ),
   }).index("by_league", ["leagueId"]),
 
+  notifications: defineTable({
+    leagueId: v.id("leagues"),
+    userId: v.id("users"),
+    category: v.union(
+      v.literal("match_schedule"),
+      v.literal("score_deadline"),
+      v.literal("roster_change"),
+    ),
+    title: v.string(),
+    message: v.string(),
+    isRead: v.boolean(),
+    createdAt: v.number(),
+  }).index("by_user_league", ["userId", "leagueId"]),
+
+  notificationPreferences: defineTable({
+    userId: v.id("users"),
+    leagueId: v.id("leagues"),
+    matchSchedule: v.boolean(),
+    scoreDeadline: v.boolean(),
+    rosterChange: v.boolean(),
+  }).index("by_user_league", ["userId", "leagueId"]),
+
   playerStats: defineTable({
     playerId: v.id("players"),
     seasonId: v.id("seasons"),

@@ -27,6 +27,7 @@ import type * as matchConfig from "../matchConfig.js";
 import type * as matchDetail from "../matchDetail.js";
 import type * as matches from "../matches.js";
 import type * as members from "../members.js";
+import type * as notifications from "../notifications.js";
 import type * as onboarding from "../onboarding.js";
 import type * as pairings from "../pairings.js";
 import type * as paymentConfig from "../paymentConfig.js";
@@ -73,6 +74,7 @@ declare const fullApi: ApiFromModules<{
   matchDetail: typeof matchDetail;
   matches: typeof matches;
   members: typeof members;
+  notifications: typeof notifications;
   onboarding: typeof onboarding;
   pairings: typeof pairings;
   paymentConfig: typeof paymentConfig;
