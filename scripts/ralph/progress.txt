@@ -45,6 +45,8 @@
 - `ImportValidationPanel` component: embed after validation — takes `ValidationResult`, `onImport`, `onCancel`; shows errors, preview, summary
 - `validateImportData(parseResult, rosterNames)` validates parsed data against roster — returns `ValidationResult` with validRows, errors, counts
 - `mergeParseResults(files)` merges multiple `ParseResult` arrays by player name — returns `MergeResult` with mergedRows, conflicts, errors
+- Recharts for charts: mock entire module in tests with `vi.mock("recharts", ...)` returning simple divs — jsdom can't render SVG
+- Convex `useQuery(ref, "skip")` skips the query — use for conditional fetching based on user selection
 
 ## 2026-01-28 - US-001
 - Scaffolded Vite + React + TypeScript project
@@ -695,4 +697,21 @@
   - Filter league players by checking if their team exists in the league's teams (via teamMap)
   - Average is computed as `totalPlus / gamesPlayed` with rounding to 1 decimal place
   - Player names appear in multiple categories — use `getAllByText` in frontend tests
+---
+
+## 2026-01-29 - US-044
+- Added historical trends page with Recharts line charts for player averages and team points over time
+- Backend: `convex/trends.ts` with `getTrendsMetadataHandler`, `getPlayerTrendHandler`, `getTeamTrendHandler`
+- Frontend: `src/HistoricalTrendsPage.tsx` with mode toggle (players/teams), up to 3 entity comparison, season selector
+- Player trends show cumulative average per match date; team trends show cumulative match points
+- Installed `recharts` library for chart rendering
+- Route: `/leagues/:leagueId/trends` as child of LeagueLayout
+- **Tests added:** 14 new tests in `convex/trends.test.ts` (6) and `src/HistoricalTrendsPage.test.tsx` (8)
+- **Files changed:** convex/trends.ts (new), convex/trends.test.ts (new), src/HistoricalTrendsPage.tsx (new), src/HistoricalTrendsPage.test.tsx (new), src/App.tsx, package.json
+- **Learnings for future iterations:**
+  - Mock `recharts` in frontend tests to avoid SVG rendering issues in jsdom — replace with simple divs using `data-testid`
+  - Recharts `ResponsiveContainer` needs a parent with explicit height (`h-80`) to render
+  - Use `Record<string, string | number>` for chart data objects that have a string `date` field plus numeric data fields
+  - Convex `useQuery` with `"skip"` argument skips the query entirely — use for conditional fetching based on selection state
+  - Limit comparison to 3 entities to keep charts readable and avoid excessive queries
 ---
