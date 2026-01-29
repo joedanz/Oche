@@ -10,6 +10,7 @@ import { Dashboard } from "./Dashboard";
 import { OnboardingPage } from "./OnboardingPage";
 import { MembersPage } from "./MembersPage";
 import { InvitationsPage } from "./InvitationsPage";
+import { LeagueLayout } from "./LeagueLayout";
 import { useAuth } from "./useAuth";
 
 function AuthenticatedRedirect() {
@@ -50,18 +51,24 @@ function AppRoutes() {
         }
       />
       <Route
-        path="/leagues/:leagueId/members"
+        path="/leagues/:leagueId"
         element={
-          isAuthenticated ? <MembersRoute /> : <Navigate to="/login" replace />
+          isAuthenticated ? <LeagueLayout /> : <Navigate to="/login" replace />
         }
-      />
-      <Route
-        path="/leagues/:leagueId/invitations"
-        element={
-          isAuthenticated ? <InvitationsRoute /> : <Navigate to="/login" replace />
-        }
-      />
+      >
+        <Route index element={<LeagueHome />} />
+        <Route path="members" element={<MembersRoute />} />
+        <Route path="invitations" element={<InvitationsRoute />} />
+      </Route>
     </Routes>
+  );
+}
+
+function LeagueHome() {
+  return (
+    <div className="text-oche-300">
+      <p>Select a section from the menu to get started.</p>
+    </div>
   );
 }
 
