@@ -30,6 +30,7 @@ import { MultiFileMergePage } from "./MultiFileMergePage";
 import { PlayerStatsPage } from "./PlayerStatsPage";
 import { TeamStatsPage } from "./TeamStatsPage";
 import { StandingsPage } from "./StandingsPage";
+import { LeaderboardsPage } from "./LeaderboardsPage";
 import { useAuth } from "./useAuth";
 
 function AuthenticatedRedirect() {
@@ -112,6 +113,7 @@ function AppRoutes() {
         <Route path="players/:playerId/stats" element={<PlayerStatsRoute />} />
         <Route path="teams/:teamId/stats" element={<TeamStatsRoute />} />
         <Route path="standings" element={<StandingsRoute />} />
+        <Route path="leaderboards" element={<LeaderboardsRoute />} />
       </Route>
     </Routes>
   );
@@ -237,6 +239,12 @@ function StandingsRoute() {
   const { leagueId } = useParams<{ leagueId: string }>();
   if (!leagueId) return null;
   return <StandingsPage leagueId={leagueId as any} />;
+}
+
+function LeaderboardsRoute() {
+  const { leagueId } = useParams<{ leagueId: string }>();
+  if (!leagueId) return null;
+  return <LeaderboardsPage leagueId={leagueId as any} />;
 }
 
 function PairingsRoute() {
