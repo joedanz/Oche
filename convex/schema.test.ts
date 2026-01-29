@@ -50,6 +50,7 @@ describe("Core database schema", () => {
       "authRateLimits",
       "scoreEntries",
       "importTemplates",
+      "payments",
     ];
 
     for (const table of tableNames) {
