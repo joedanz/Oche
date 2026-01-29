@@ -125,7 +125,7 @@ echo ""
 if [[ "$HAS_GUM" == "true" ]]; then
   gum style \
     --border double \
-    --border-foreground 212 \
+    --border-foreground 33 \
     --padding "1 3" \
     --margin "0 0" \
     --bold \
@@ -222,7 +222,7 @@ for i in $(seq 1 $MAX_ITERATIONS); do
   if [[ "$HAS_GUM" == "true" ]]; then
     gum style \
       --border rounded \
-      --border-foreground 63 \
+      --border-foreground 245 \
       --padding "0 2" \
       "Iteration $i/$MAX_ITERATIONS  ·  Stories: $(prd_status)  ·  Next: $(next_story)"
   else
