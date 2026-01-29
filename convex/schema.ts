@@ -46,6 +46,15 @@ export default defineSchema({
     handicapEnabled: v.boolean(),
     handicapPercent: v.optional(v.number()),
     handicapRecalcFrequency: v.optional(handicapRecalcFrequency),
+    leagueFee: v.optional(v.number()),
+    weeklyFee: v.optional(v.number()),
+    feeSchedule: v.optional(
+      v.union(
+        v.literal("one-time"),
+        v.literal("weekly"),
+        v.literal("per-match"),
+      ),
+    ),
   }),
 
   leagueMemberships: defineTable({
