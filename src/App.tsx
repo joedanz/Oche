@@ -31,6 +31,7 @@ import { PlayerStatsPage } from "./PlayerStatsPage";
 import { TeamStatsPage } from "./TeamStatsPage";
 import { StandingsPage } from "./StandingsPage";
 import { LeaderboardsPage } from "./LeaderboardsPage";
+import { HistoricalTrendsPage } from "./HistoricalTrendsPage";
 import { useAuth } from "./useAuth";
 
 function AuthenticatedRedirect() {
@@ -114,6 +115,7 @@ function AppRoutes() {
         <Route path="teams/:teamId/stats" element={<TeamStatsRoute />} />
         <Route path="standings" element={<StandingsRoute />} />
         <Route path="leaderboards" element={<LeaderboardsRoute />} />
+        <Route path="trends" element={<TrendsRoute />} />
       </Route>
     </Routes>
   );
@@ -245,6 +247,12 @@ function LeaderboardsRoute() {
   const { leagueId } = useParams<{ leagueId: string }>();
   if (!leagueId) return null;
   return <LeaderboardsPage leagueId={leagueId as any} />;
+}
+
+function TrendsRoute() {
+  const { leagueId } = useParams<{ leagueId: string }>();
+  if (!leagueId) return null;
+  return <HistoricalTrendsPage leagueId={leagueId as any} />;
 }
 
 function PairingsRoute() {
