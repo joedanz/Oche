@@ -1,12 +1,23 @@
 // ABOUTME: Root application component
 // ABOUTME: Renders the main app shell with routing and auth-aware redirects
 import { Routes, Route, Navigate, useParams } from "react-router-dom";
+import { useQuery } from "convex/react";
+import { api } from "../convex/_generated/api";
 import { LandingPage } from "./LandingPage";
 import { LoginPage } from "./LoginPage";
 import { SignupPage } from "./SignupPage";
 import { Dashboard } from "./Dashboard";
+import { OnboardingPage } from "./OnboardingPage";
 import { MembersPage } from "./MembersPage";
 import { useAuth } from "./useAuth";
+
+function AuthenticatedRedirect() {
+  const leagues = useQuery(api.onboarding.getUserLeagues);
+
+  if (leagues === undefined) return null;
+  if (leagues.length === 0) return <Navigate to="/onboarding" replace />;
+  return <Navigate to="/dashboard" replace />;
+}
 
 function AppRoutes() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -20,11 +31,17 @@ function AppRoutes() {
       <Route
         path="/"
         element={
-          isAuthenticated ? <Navigate to="/dashboard" replace /> : <LandingPage />
+          isAuthenticated ? <AuthenticatedRedirect /> : <LandingPage />
         }
       />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/signup" element={<SignupPage />} />
+      <Route
+        path="/onboarding"
+        element={
+          isAuthenticated ? <OnboardingPage /> : <Navigate to="/login" replace />
+        }
+      />
       <Route
         path="/dashboard"
         element={
