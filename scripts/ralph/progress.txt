@@ -870,3 +870,19 @@
   - Public queries skip `requireLeagueMember` and instead check `league.isPublic === true`
   - "Public" text appears in both status label and toggle button — use `getAllByText` not `getByText` in tests
 ---
+
+## 2026-01-29 - US-054
+- Added in-app notification center with read/unread management and per-category preferences
+- Backend: `convex/notifications.ts` with `createNotificationHandler`, `getNotificationsHandler`, `markReadHandler`, `getPreferencesHandler`, `updatePreferencesHandler`
+- Schema: `notifications` table with `by_user_league` index, `notificationPreferences` table with `by_user_league` index
+- Frontend: `src/NotificationsPage.tsx` with notification list, read/unread toggle, preference checkboxes
+- Categories: match_schedule, score_deadline, roster_change
+- Route: `/leagues/:leagueId/notifications` as child of LeagueLayout
+- **Tests added:** 17 new tests in `convex/notifications.test.ts` (9) and `src/NotificationsPage.test.tsx` (8)
+- **Files changed:** convex/schema.ts, convex/schema.test.ts, convex/notifications.ts (new), convex/notifications.test.ts (new), convex/_generated/api.d.ts, src/NotificationsPage.tsx (new), src/NotificationsPage.test.tsx (new), src/App.tsx
+- **Learnings for future iterations:**
+  - Notification preferences use upsert pattern: query for existing by user+league, patch if found, insert if not
+  - `markRead` checks `notification.userId === args.userId` to prevent users modifying others' notifications
+  - Default preferences (all enabled) returned when no preference record exists — no need to create records upfront
+  - `data-unread` attribute for visual distinction testing — avoids relying on CSS class assertions
+---

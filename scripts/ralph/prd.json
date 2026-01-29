@@ -941,7 +941,7 @@
       ],
       "epic": "Public & Social",
       "priority": 54,
-      "passes": false,
+      "passes": true,
       "notes": ""
     },
     {
