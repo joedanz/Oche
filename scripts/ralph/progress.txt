@@ -41,6 +41,7 @@
 - When adding child components with `useQuery`, update ALL parent test files' API mocks to include the new module
 - Excel/CSV parsers share `ParsedScoreRow` type from `csvParser.ts` — reuse for consistent import data shape
 - Google Sheets public CSV export: `https://docs.google.com/spreadsheets/d/{ID}/gviz/tq?tqx=out:csv` — reuse `parseCsvScores()` for parsing
+- `ColumnMappingWizard` component: embed in any import page after file parsing — takes `headers`, `rawData`, `leagueId`, calls `onMappingComplete` with `ParseResult`
 
 ## 2026-01-28 - US-001
 - Scaffolded Vite + React + TypeScript project
@@ -566,4 +567,20 @@
   - Reusing `parseCsvScores()` for Google Sheets avoids duplicating parsing logic — the CSV export format is standard
   - `global.fetch = vi.fn()` in tests to mock fetch for URL-based data fetching
   - Sheet ID regex: `/docs\.google\.com\/spreadsheets\/d\/([a-zA-Z0-9_-]+)/` handles edit, view, and gid URL variants
+---
+
+## 2026-01-29 - US-036
+- Added column mapping wizard: auto-detect columns, manual mapping, preview, confirm, save/load templates
+- Pure logic: `src/columnMapper.ts` with `autoDetectMapping()` and `applyColumnMapping()` functions
+- Component: `src/ColumnMappingWizard.tsx` with step-by-step UI (map → preview → confirm)
+- Backend: `convex/importTemplates.ts` for saving/loading mapping templates per league
+- Added `importTemplates` table to schema
+- Auto-detection recognizes: Player/Name/Shooter, numbered innings (1-9, Inning 1-9), Plus, Minus
+- **Tests added:** 20 new tests in `src/columnMapper.test.ts` (10), `src/ColumnMappingWizard.test.tsx` (8), `convex/importTemplates.test.ts` (2)
+- **Files changed:** src/columnMapper.ts (new), src/columnMapper.test.ts (new), src/ColumnMappingWizard.tsx (new), src/ColumnMappingWizard.test.tsx (new), convex/importTemplates.ts (new), convex/importTemplates.test.ts (new), convex/schema.ts, convex/schema.test.ts
+- **Learnings for future iterations:**
+  - Column mapping is a pure data transformation — separate `autoDetectMapping` and `applyColumnMapping` from React/Convex for testability
+  - `ColumnMappingWizard` is a reusable component that any import page can embed after file parsing
+  - Use `mockUseQuery` / `mockUseMutation` pattern (not `require("convex/react")`) for component tests
+  - `importTemplates` table stores mappings per league — templates are league-scoped
 ---
