@@ -174,6 +174,83 @@ describe("ScoringGrid", () => {
     expect(screen.getByText(/e1/i)).toBeInTheDocument();
   });
 
+  it("displays Plus, Minus, and Total columns", () => {
+    mockUseQuery.mockReturnValue([]);
+    renderGrid();
+    expect(screen.getByText("Plus")).toBeInTheDocument();
+    expect(screen.getByText("Minus")).toBeInTheDocument();
+    expect(screen.getByText("Total")).toBeInTheDocument();
+  });
+
+  it("calculates Plus as sum of own regulation batting runs", () => {
+    const innings = [];
+    for (let i = 1; i <= 9; i++) {
+      innings.push({ inningNumber: i, batter: "home", runs: 5, isExtra: false });
+      innings.push({ inningNumber: i, batter: "visitor", runs: 3, isExtra: false });
+    }
+    mockUseQuery.mockReturnValue(innings);
+    renderGrid();
+    // Home plus = 9 * 5 = 45, Visitor plus = 9 * 3 = 27
+    expect(screen.getByTestId("home-plus")).toHaveTextContent("45");
+    expect(screen.getByTestId("visitor-plus")).toHaveTextContent("27");
+  });
+
+  it("calculates Minus as sum of opponent regulation batting runs", () => {
+    const innings = [];
+    for (let i = 1; i <= 9; i++) {
+      innings.push({ inningNumber: i, batter: "home", runs: 5, isExtra: false });
+      innings.push({ inningNumber: i, batter: "visitor", runs: 3, isExtra: false });
+    }
+    mockUseQuery.mockReturnValue(innings);
+    renderGrid();
+    // Home minus = visitor's runs = 27, Visitor minus = home's runs = 45
+    expect(screen.getByTestId("home-minus")).toHaveTextContent("27");
+    expect(screen.getByTestId("visitor-minus")).toHaveTextContent("45");
+  });
+
+  it("calculates Total as Plus minus Minus", () => {
+    const innings = [];
+    for (let i = 1; i <= 9; i++) {
+      innings.push({ inningNumber: i, batter: "home", runs: 5, isExtra: false });
+      innings.push({ inningNumber: i, batter: "visitor", runs: 3, isExtra: false });
+    }
+    mockUseQuery.mockReturnValue(innings);
+    renderGrid();
+    // Home total = 45 - 27 = 18, Visitor total = 27 - 45 = -18
+    expect(screen.getByTestId("home-total")).toHaveTextContent("18");
+    expect(screen.getByTestId("visitor-total")).toHaveTextContent("-18");
+  });
+
+  it("excludes extra innings from Plus/Minus/Total calculations", () => {
+    const innings = [];
+    for (let i = 1; i <= 9; i++) {
+      innings.push({ inningNumber: i, batter: "home", runs: 5, isExtra: false });
+      innings.push({ inningNumber: i, batter: "visitor", runs: 5, isExtra: false });
+    }
+    // Add extra innings that should NOT affect totals
+    innings.push({ inningNumber: 10, batter: "home", runs: 9, isExtra: true });
+    innings.push({ inningNumber: 10, batter: "visitor", runs: 2, isExtra: true });
+    mockUseQuery.mockReturnValue(innings);
+    renderGrid();
+    // Plus should still be 45 for both (extras excluded)
+    expect(screen.getByTestId("home-plus")).toHaveTextContent("45");
+    expect(screen.getByTestId("visitor-plus")).toHaveTextContent("45");
+    expect(screen.getByTestId("home-total")).toHaveTextContent("0");
+    expect(screen.getByTestId("visitor-total")).toHaveTextContent("0");
+  });
+
+  it("updates totals in real-time as runs are entered", async () => {
+    mockUseQuery.mockReturnValue([]);
+    renderGrid();
+    const inputs = screen.getAllByRole("spinbutton");
+    const user = userEvent.setup();
+    // Enter 5 in home inning 1
+    await user.click(inputs[0]);
+    await user.keyboard("5");
+    expect(screen.getByTestId("home-plus")).toHaveTextContent("5");
+    expect(screen.getByTestId("visitor-minus")).toHaveTextContent("5");
+  });
+
   it("loads existing extra innings from data", () => {
     const innings = [];
     for (let i = 1; i <= 9; i++) {

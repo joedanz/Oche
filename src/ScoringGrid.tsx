@@ -76,6 +76,24 @@ export function ScoringGrid({
     }
   }, [existingInnings, initialized]);
 
+  // Calculate Plus, Minus, Total from regulation innings only
+  const totals = useMemo(() => {
+    let homePlus = 0;
+    let visitorPlus = 0;
+    for (let col = 0; col < REGULATION_INNINGS; col++) {
+      homePlus += grid[0][col] ?? 0;
+      visitorPlus += grid[1][col] ?? 0;
+    }
+    return {
+      homePlus,
+      visitorPlus,
+      homeMinus: visitorPlus,
+      visitorMinus: homePlus,
+      homeTotal: homePlus - visitorPlus,
+      visitorTotal: visitorPlus - homePlus,
+    };
+  }, [grid]);
+
   // Check if regulation innings are tied
   const regulationTied = useMemo(() => {
     let homeTotal = 0;
@@ -225,6 +243,9 @@ export function ScoringGrid({
                 </th>
               );
             })}
+            <th className="border border-gray-600 px-2 py-1 text-center w-12">Plus</th>
+            <th className="border border-gray-600 px-2 py-1 text-center w-12">Minus</th>
+            <th className="border border-gray-600 px-2 py-1 text-center w-12">Total</th>
           </tr>
         </thead>
         <tbody>
@@ -264,6 +285,15 @@ export function ScoringGrid({
                   </td>
                 );
               })}
+              <td data-testid={`${row === 0 ? "home" : "visitor"}-plus`} className="border border-gray-600 px-2 py-1 text-center font-semibold">
+                {row === 0 ? totals.homePlus : totals.visitorPlus}
+              </td>
+              <td data-testid={`${row === 0 ? "home" : "visitor"}-minus`} className="border border-gray-600 px-2 py-1 text-center font-semibold">
+                {row === 0 ? totals.homeMinus : totals.visitorMinus}
+              </td>
+              <td data-testid={`${row === 0 ? "home" : "visitor"}-total`} className="border border-gray-600 px-2 py-1 text-center font-bold">
+                {row === 0 ? totals.homeTotal : totals.visitorTotal}
+              </td>
             </tr>
           ))}
         </tbody>
