@@ -28,6 +28,7 @@ import { ExcelUploadPage } from "./ExcelUploadPage";
 import { GoogleSheetsImportPage } from "./GoogleSheetsImportPage";
 import { MultiFileMergePage } from "./MultiFileMergePage";
 import { PlayerStatsPage } from "./PlayerStatsPage";
+import { TeamStatsPage } from "./TeamStatsPage";
 import { useAuth } from "./useAuth";
 
 function AuthenticatedRedirect() {
@@ -108,6 +109,7 @@ function AppRoutes() {
         <Route path="matches/:matchId/import-gsheets" element={<GoogleSheetsRoute />} />
         <Route path="matches/:matchId/import-merge" element={<MultiFileMergeRoute />} />
         <Route path="players/:playerId/stats" element={<PlayerStatsRoute />} />
+        <Route path="teams/:teamId/stats" element={<TeamStatsRoute />} />
       </Route>
     </Routes>
   );
@@ -221,6 +223,12 @@ function PlayerStatsRoute() {
   const { leagueId, playerId } = useParams<{ leagueId: string; playerId: string }>();
   if (!leagueId || !playerId) return null;
   return <PlayerStatsPage leagueId={leagueId as any} playerId={playerId as any} />;
+}
+
+function TeamStatsRoute() {
+  const { leagueId, teamId } = useParams<{ leagueId: string; teamId: string }>();
+  if (!leagueId || !teamId) return null;
+  return <TeamStatsPage leagueId={leagueId as any} teamId={teamId as any} />;
 }
 
 function PairingsRoute() {
