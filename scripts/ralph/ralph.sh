@@ -31,14 +31,23 @@ done
 
 # Validate tool choice
 if [[ "$TOOL" != "amp" && "$TOOL" != "claude" ]]; then
-  echo "Error: Invalid tool '$TOOL'. Must be 'amp' or 'claude'."
+  gum log --level error "Invalid tool '$TOOL'. Must be 'amp' or 'claude'."
   exit 1
 fi
 
-# Check for jq (required for Claude streaming)
-if [[ "$TOOL" == "claude" ]] && ! command -v jq &> /dev/null; then
-  echo "Warning: jq not found. Install with 'brew install jq' for better streaming output."
-  echo "Falling back to non-streaming mode."
+# Check for required tools
+HAS_GUM=false
+if command -v gum &> /dev/null; then
+  HAS_GUM=true
+fi
+
+HAS_JQ=false
+if command -v jq &> /dev/null; then
+  HAS_JQ=true
+fi
+
+if [[ "$TOOL" == "claude" && "$HAS_JQ" == "false" ]]; then
+  gum_log warn "jq not found. Install with 'brew install jq' for streaming output."
   USE_STREAMING=false
 else
   USE_STREAMING=true
@@ -49,13 +58,56 @@ PRD_FILE="$SCRIPT_DIR/prd.json"
 PROGRESS_FILE="$SCRIPT_DIR/progress.txt"
 OUTPUT_FILE="$SCRIPT_DIR/.ralph-output-$$.txt"
 
-# Cleanup on exit
+# ── Logging helpers ──────────────────────────────────────────────────────────
+
+gum_log() {
+  local level="$1"; shift
+  if [[ "$HAS_GUM" == "true" ]]; then
+    gum log --level "$level" -- "$@"
+  else
+    echo "[$level] $*"
+  fi
+}
+
+gum_style() {
+  if [[ "$HAS_GUM" == "true" ]]; then
+    gum style "$@"
+  else
+    # Fallback: print the last argument (the text)
+    echo "${@: -1}"
+  fi
+}
+
+# ── PRD status ───────────────────────────────────────────────────────────────
+
+prd_status() {
+  if [[ "$HAS_JQ" == "true" && -f "$PRD_FILE" ]]; then
+    local total passed
+    total=$(jq '.userStories | length' "$PRD_FILE")
+    passed=$(jq '[.userStories[] | select(.passes == true)] | length' "$PRD_FILE")
+    echo "${passed}/${total}"
+  else
+    echo "?"
+  fi
+}
+
+next_story() {
+  if [[ "$HAS_JQ" == "true" && -f "$PRD_FILE" ]]; then
+    jq -r '[.userStories[] | select(.passes == false)] | sort_by(.priority) | .[0] | "\(.id): \(.title)"' "$PRD_FILE"
+  else
+    echo "unknown"
+  fi
+}
+
+# ── Cleanup ──────────────────────────────────────────────────────────────────
+
 cleanup() {
   rm -f "$OUTPUT_FILE"
 }
 trap cleanup EXIT
 
-# Initialize progress file if it doesn't exist
+# ── Initialize ───────────────────────────────────────────────────────────────
+
 if [ ! -f "$PROGRESS_FILE" ]; then
   echo "# Ralph Progress Log" > "$PROGRESS_FILE"
   echo "Started: $(date)" >> "$PROGRESS_FILE"
@@ -63,15 +115,35 @@ if [ ! -f "$PROGRESS_FILE" ]; then
 fi
 
 # Ensure we start from master
-echo "Ensuring we're on master branch..."
+gum_log info "Checking out master branch…"
 git checkout master 2>/dev/null || true
 git pull origin master 2>/dev/null || true
 
-echo "Starting Ralph - Tool: $TOOL - Max iterations: $MAX_ITERATIONS"
-echo "Workflow: PR-per-story with browser verification and auto-merge"
+# ── Banner ───────────────────────────────────────────────────────────────────
 
-# Stream parser for Claude Code stream-json output
+echo ""
+if [[ "$HAS_GUM" == "true" ]]; then
+  gum style \
+    --border double \
+    --border-foreground 212 \
+    --padding "1 3" \
+    --margin "0 0" \
+    --bold \
+    "🎯 Ralph" \
+    "" \
+    "Tool: $TOOL  ·  Iterations: $MAX_ITERATIONS  ·  Stories: $(prd_status)" \
+    "Next: $(next_story)"
+else
+  echo "==============================================================="
+  echo "  🎯 Ralph — Tool: $TOOL — Iterations: $MAX_ITERATIONS"
+  echo "  Stories: $(prd_status) — Next: $(next_story)"
+  echo "==============================================================="
+fi
+echo ""
+
+# ── Stream parser ────────────────────────────────────────────────────────────
 # Extracts and displays: text content, tool calls, and results
+
 parse_claude_stream() {
   local last_tool=""
 
@@ -91,20 +163,25 @@ parse_claude_stream() {
         tool_name=$(echo "$line" | jq -r '.message.content[]? | select(.type == "tool_use") | .name // empty' 2>/dev/null | head -1)
         if [[ -n "$tool_name" && "$tool_name" != "$last_tool" ]]; then
           last_tool="$tool_name"
-          # Format tool output with icons
+          local label=""
           case "$tool_name" in
-            "Read")     echo -e "\n📖 Reading file..." ;;
-            "Write")    echo -e "\n📝 Writing file..." ;;
-            "Edit")     echo -e "\n✏️  Editing file..." ;;
+            "Read")     label="📖 Reading file" ;;
+            "Write")    label="📝 Writing file" ;;
+            "Edit")     label="✏️  Editing file" ;;
             "Bash")
               cmd=$(echo "$line" | jq -r '.message.content[]? | select(.type == "tool_use") | .input.command // empty' 2>/dev/null | head -c 80)
-              echo -e "\n💻 Bash: ${cmd}..." ;;
-            "Glob")     echo -e "\n🔍 Searching files..." ;;
-            "Grep")     echo -e "\n🔍 Searching content..." ;;
-            "Task")     echo -e "\n🤖 Spawning agent..." ;;
-            "WebFetch") echo -e "\n🌐 Fetching URL..." ;;
-            *)          echo -e "\n🔧 $tool_name..." ;;
+              label="💻 $cmd" ;;
+            "Glob")     label="🔍 Searching files" ;;
+            "Grep")     label="🔍 Searching content" ;;
+            "Task")     label="🤖 Spawning agent" ;;
+            "WebFetch") label="🌐 Fetching URL" ;;
+            *)          label="🔧 $tool_name" ;;
           esac
+          if [[ "$HAS_GUM" == "true" ]]; then
+            gum style --faint --italic "  $label"
+          else
+            echo -e "\n$label..."
+          fi
         fi
 
         # Extract text content from assistant messages
@@ -115,7 +192,6 @@ parse_claude_stream() {
         ;;
 
       "stream_event")
-        # Real-time text streaming (if using --verbose or partial messages)
         delta_text=$(echo "$line" | jq -j '.event.delta.text? // empty' 2>/dev/null)
         if [[ -n "$delta_text" ]]; then
           printf "%s" "$delta_text"
@@ -123,49 +199,51 @@ parse_claude_stream() {
         ;;
 
       "result")
-        # Final result - extract for completion check
         result_text=$(echo "$line" | jq -r '.result // empty' 2>/dev/null)
         is_error=$(echo "$line" | jq -r '.is_error // false' 2>/dev/null)
         cost=$(echo "$line" | jq -r '.total_cost_usd // 0' 2>/dev/null)
 
         echo ""
-        echo "───────────────────────────────────────────"
         if [[ "$is_error" == "true" ]]; then
-          echo "❌ Iteration ended with error"
+          gum_log error "Iteration ended with error"
         else
-          echo "✅ Iteration complete (cost: \$${cost})"
+          gum_log info "Iteration complete — cost: \$${cost}"
         fi
-        break  # Exit loop - "result" is the final message
+        break
         ;;
     esac
   done
 }
 
+# ── Main loop ────────────────────────────────────────────────────────────────
+
 for i in $(seq 1 $MAX_ITERATIONS); do
   echo ""
-  echo "==============================================================="
-  echo "  Ralph Iteration $i of $MAX_ITERATIONS ($TOOL)"
-  echo "==============================================================="
+  if [[ "$HAS_GUM" == "true" ]]; then
+    gum style \
+      --border rounded \
+      --border-foreground 63 \
+      --padding "0 2" \
+      "Iteration $i/$MAX_ITERATIONS  ·  Stories: $(prd_status)  ·  Next: $(next_story)"
+  else
+    echo "═══ Iteration $i/$MAX_ITERATIONS ═══ Stories: $(prd_status) ═══ Next: $(next_story) ═══"
+  fi
 
   # Clear output file for this iteration
   > "$OUTPUT_FILE"
 
-  # Run the selected tool with the ralph prompt
+  # Run the selected tool
   if [[ "$TOOL" == "amp" ]]; then
     OUTPUT=$(cat "$SCRIPT_DIR/prompt.md" | amp --dangerously-allow-all 2>&1 | tee /dev/stderr) || true
   else
     if [[ "$USE_STREAMING" == "true" ]]; then
-      # Claude Code with streaming JSON for real-time feedback
-      # Note: stream-json requires --verbose
       claude --dangerously-skip-permissions \
         --output-format stream-json \
         --verbose \
         -p "$(cat "$SCRIPT_DIR/CLAUDE.md")" 2>&1 | parse_claude_stream || true
 
-      # Read captured output for completion detection
       OUTPUT=$(cat "$OUTPUT_FILE" 2>/dev/null || echo "")
     else
-      # Fallback: non-streaming mode
       OUTPUT=$(claude --dangerously-skip-permissions --print -p "$(cat "$SCRIPT_DIR/CLAUDE.md")" 2>&1 | tee /dev/stderr) || true
     fi
   fi
@@ -173,17 +251,35 @@ for i in $(seq 1 $MAX_ITERATIONS); do
   # Check for completion signal
   if echo "$OUTPUT" | grep -q "<promise>COMPLETE</promise>"; then
     echo ""
-    echo "🎉 Ralph completed all tasks!"
-    echo "Completed at iteration $i of $MAX_ITERATIONS"
+    if [[ "$HAS_GUM" == "true" ]]; then
+      gum style \
+        --border double \
+        --border-foreground 82 \
+        --padding "1 3" \
+        --bold \
+        "✅ All stories complete!" \
+        "Finished at iteration $i of $MAX_ITERATIONS"
+    else
+      echo "🎉 Ralph completed all tasks at iteration $i of $MAX_ITERATIONS!"
+    fi
     exit 0
   fi
 
-  echo "Iteration $i complete. Continuing..."
+  gum_log info "Iteration $i done. Continuing…"
   sleep 2
 done
 
 echo ""
-echo "⚠️  Ralph reached max iterations ($MAX_ITERATIONS) without completing all tasks."
-echo "Check $PROGRESS_FILE for status."
+if [[ "$HAS_GUM" == "true" ]]; then
+  gum style \
+    --border rounded \
+    --border-foreground 208 \
+    --padding "0 2" \
+    "⚠️  Reached max iterations ($MAX_ITERATIONS). Stories: $(prd_status)" \
+    "Check $PROGRESS_FILE for status."
+else
+  echo "⚠️  Ralph reached max iterations ($MAX_ITERATIONS). Stories: $(prd_status)"
+  echo "Check $PROGRESS_FILE for status."
+fi
 
 exit 1

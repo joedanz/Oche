@@ -180,6 +180,7 @@ Steps:
 4. For UI stories: test the specific UI changes (click buttons, fill forms, etc.)
 5. Take a screenshot as evidence
 6. Check the browser console for errors (the skill provides this capability)
+7. **Close the browser** when done — leaving it open breaks the next iteration
 
 **Auto-merge criteria - ALL must pass:**
 - [ ] `npm run check` passes (typecheck + tests)
