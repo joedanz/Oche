@@ -9,6 +9,7 @@ import { SignupPage } from "./SignupPage";
 import { Dashboard } from "./Dashboard";
 import { OnboardingPage } from "./OnboardingPage";
 import { MembersPage } from "./MembersPage";
+import { InvitationsPage } from "./InvitationsPage";
 import { useAuth } from "./useAuth";
 
 function AuthenticatedRedirect() {
@@ -54,6 +55,12 @@ function AppRoutes() {
           isAuthenticated ? <MembersRoute /> : <Navigate to="/login" replace />
         }
       />
+      <Route
+        path="/leagues/:leagueId/invitations"
+        element={
+          isAuthenticated ? <InvitationsRoute /> : <Navigate to="/login" replace />
+        }
+      />
     </Routes>
   );
 }
@@ -62,6 +69,12 @@ function MembersRoute() {
   const { leagueId } = useParams<{ leagueId: string }>();
   if (!leagueId) return null;
   return <MembersPage leagueId={leagueId as any} />;
+}
+
+function InvitationsRoute() {
+  const { leagueId } = useParams<{ leagueId: string }>();
+  if (!leagueId) return null;
+  return <InvitationsPage leagueId={leagueId as any} />;
 }
 
 function App() {

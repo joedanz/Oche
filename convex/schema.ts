@@ -54,7 +54,9 @@ export default defineSchema({
     createdBy: v.id("users"),
     expiresAt: v.number(),
     used: v.boolean(),
-  }),
+  })
+    .index("by_code", ["code"])
+    .index("by_league", ["leagueId"]),
 
   seasons: defineTable({
     leagueId: v.id("leagues"),
