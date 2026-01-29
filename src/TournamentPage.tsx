@@ -2,6 +2,7 @@
 // ABOUTME: Admins can create single-elimination tournaments; all members can view brackets.
 
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "../convex/_generated/api";
 import type { Id } from "../convex/_generated/dataModel";
@@ -186,16 +187,24 @@ export function TournamentPage({ leagueId }: TournamentPageProps) {
                   {t.date} · {t.format} · {t.status}
                 </p>
               </div>
-              <button
-                onClick={() =>
-                  setViewingTournament(
-                    viewingTournament === t._id ? null : t._id,
-                  )
-                }
-                className="text-amber-400 hover:text-amber-300 text-sm"
-              >
-                {viewingTournament === t._id ? "Hide Bracket" : "View Bracket"}
-              </button>
+              <div className="flex gap-3">
+                <Link
+                  to={`/leagues/${leagueId}/tournaments/${t._id}/score`}
+                  className="text-amber-400 hover:text-amber-300 text-sm"
+                >
+                  Score
+                </Link>
+                <button
+                  onClick={() =>
+                    setViewingTournament(
+                      viewingTournament === t._id ? null : t._id,
+                    )
+                  }
+                  className="text-amber-400 hover:text-amber-300 text-sm"
+                >
+                  {viewingTournament === t._id ? "Hide Bracket" : "View Bracket"}
+                </button>
+              </div>
             </div>
           ))}
         </div>
