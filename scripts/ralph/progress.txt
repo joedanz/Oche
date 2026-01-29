@@ -272,3 +272,17 @@
   - `getTeamsForLeague` query added to divisions module since it's needed for the assignment UI — can be shared by future team management pages
   - `filter((q) => q.eq(q.field("leagueId"), ...))` used for teams query since teams table has no `by_league` index yet
 ---
+
+## 2026-01-29 - US-017
+- Added team management: create and edit teams with name, venue, and division
+- Backend: `convex/teams.ts` with exported handler functions (getTeamsHandler, createTeamHandler, editTeamHandler)
+- Frontend: `src/TeamsPage.tsx` with create form, team list, and inline editing
+- Route: `/leagues/:leagueId/teams` as child of LeagueLayout
+- **Tests added:** 13 new tests in `convex/teams.test.ts` (5) and `src/TeamsPage.test.tsx` (8)
+- **Files changed:** convex/teams.ts (new), convex/teams.test.ts (new), convex/_generated/api.d.ts, src/TeamsPage.tsx (new), src/TeamsPage.test.tsx (new), src/App.tsx
+- **Learnings for future iterations:**
+  - Teams module follows same pattern as divisions: exported handler functions + Convex wrappers
+  - `teams` table has no `by_league` index — uses `filter()` for league-scoped queries (consider adding index if performance becomes an issue)
+  - TeamsPage reuses `api.divisions.getDivisions` query to populate the division dropdown
+  - Edit form uses `startEdit(team)` pattern to pre-populate edit state from team data
+---
