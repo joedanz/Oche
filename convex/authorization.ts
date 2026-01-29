@@ -47,6 +47,23 @@ export async function requireLeagueMember(
   return membership;
 }
 
+export async function countAdmins(
+  db: DatabaseReader,
+  leagueId: Id<"leagues">,
+): Promise<number> {
+  const admins = await db
+    .query("leagueMemberships")
+    .withIndex("by_user_league")
+    .filter((q) =>
+      q.and(
+        q.eq(q.field("leagueId"), leagueId),
+        q.eq(q.field("role"), "admin"),
+      ),
+    )
+    .collect();
+  return admins.length;
+}
+
 export async function requireRole(
   db: DatabaseReader,
   userId: Id<"users">,

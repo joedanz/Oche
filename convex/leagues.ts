@@ -3,7 +3,7 @@
 
 import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
-import { requireRole, requireLeagueMember } from "./authorization";
+import { requireRole, requireLeagueMember, countAdmins } from "./authorization";
 import { auth } from "./auth";
 
 export const getLeague = query({
@@ -67,6 +67,13 @@ export const updateMemberRole = mutation({
 
     if (!membership) {
       throw new Error("Target user is not a member of this league");
+    }
+
+    if (membership.role === "admin" && args.newRole !== "admin") {
+      const adminCount = await countAdmins(ctx.db, args.leagueId);
+      if (adminCount <= 1) {
+        throw new Error("Cannot remove the last admin from this league");
+      }
     }
 
     await ctx.db.patch(membership._id, { role: args.newRole });
