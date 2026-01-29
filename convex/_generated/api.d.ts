@@ -39,6 +39,7 @@ import type * as scoring from "../scoring.js";
 import type * as seasons from "../seasons.js";
 import type * as standings from "../standings.js";
 import type * as statsExport from "../statsExport.js";
+import type * as stripe from "../stripe.js";
 import type * as teamStats from "../teamStats.js";
 import type * as teams from "../teams.js";
 import type * as trends from "../trends.js";
@@ -81,6 +82,7 @@ declare const fullApi: ApiFromModules<{
   seasons: typeof seasons;
   standings: typeof standings;
   statsExport: typeof statsExport;
+  stripe: typeof stripe;
   teamStats: typeof teamStats;
   teams: typeof teams;
   trends: typeof trends;
