@@ -166,3 +166,17 @@
   - When adding `useQuery` to App.tsx routing, existing Navigation tests that render `<App>` need `convex/react` mocked
   - `leagueMemberships` index `by_user_league` supports prefix queries — `q.eq("userId", x)` without `leagueId` returns all leagues for a user
 ---
+
+## 2026-01-28 - US-010
+- Added user dashboard displaying all leagues with role badges
+- Backend: `convex/dashboard.ts` with `getUserLeaguesWithDetails` query joining memberships with league names
+- Frontend: Dashboard shows league cards linking to `/leagues/:leagueId`, empty state with create/join prompts, "Create New League" button
+- Updated existing AuthFlow and Navigation tests to mock new dashboard API
+- **Tests added:** 9 new tests in `convex/dashboard.test.ts` (3) and `src/Dashboard.test.tsx` (6)
+- **Files changed:** convex/dashboard.ts (new), convex/dashboard.test.ts (new), src/Dashboard.tsx, src/Dashboard.test.tsx (new), src/AuthFlow.test.tsx, src/Navigation.test.tsx
+- **Learnings for future iterations:**
+  - When a component adds `useQuery`, all test files that render it must mock `convex/react` and the API module
+  - Dashboard heading changed from "Dashboard" to "My Leagues" — update any tests matching heading text
+  - Use `as LeagueEntry[] | undefined` cast on `useQuery` return when `_generated/api` stubs don't provide types
+  - Export handler functions (e.g., `getUserLeaguesWithDetailsHandler`) for direct unit testing without auth mocking
+---
