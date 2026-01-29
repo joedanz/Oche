@@ -14,9 +14,8 @@ describe("LandingPage", () => {
     expect(
       screen.getByRole("heading", { level: 1 }),
     ).toBeInTheDocument();
-    expect(
-      screen.getByRole("link", { name: /get started|start your league/i }),
-    ).toBeInTheDocument();
+    const ctaLinks = screen.getAllByRole("link", { name: /get started|start your league/i });
+    expect(ctaLinks.length).toBeGreaterThanOrEqual(1);
   });
 
   it("renders the feature highlights section", () => {
@@ -32,14 +31,14 @@ describe("LandingPage", () => {
   it("renders the social proof section", () => {
     render(<LandingPage />);
     expect(
-      screen.getByText(/trusted by leagues and teams/i),
+      screen.getByText(/trusted by leagues/i),
     ).toBeInTheDocument();
   });
 
   it("renders the pricing section", () => {
     render(<LandingPage />);
     expect(
-      screen.getByRole("heading", { name: /simple pricing/i }),
+      screen.getByRole("heading", { name: /free to start/i }),
     ).toBeInTheDocument();
     expect(screen.getByText("$0")).toBeInTheDocument();
   });
@@ -48,8 +47,10 @@ describe("LandingPage", () => {
     render(<LandingPage />);
     const footer = screen.getByRole("contentinfo");
     expect(footer).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: /log in/i })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: /sign up/i })).toBeInTheDocument();
+    const loginLinks = screen.getAllByRole("link", { name: /log in/i });
+    expect(loginLinks.length).toBeGreaterThanOrEqual(1);
+    const signUpLinks = screen.getAllByRole("link", { name: /sign up/i });
+    expect(signUpLinks.length).toBeGreaterThanOrEqual(1);
   });
 
   it("is responsive with appropriate layout classes", () => {

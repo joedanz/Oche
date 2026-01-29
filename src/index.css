@@ -1,3 +1,169 @@
 /* ABOUTME: Global styles entry point */
-/* ABOUTME: Imports Tailwind CSS */
+/* ABOUTME: Imports Tailwind CSS and defines Oche brand theme */
 @import "tailwindcss";
+
+@import url("https://fonts.googleapis.com/css2?family=Archivo+Black&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500;600;700&display=swap");
+
+@theme {
+  --font-display: "Archivo Black", sans-serif;
+  --font-body: "DM Sans", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+
+  --color-oche-900: #0c0a09;
+  --color-oche-850: #141210;
+  --color-oche-800: #1c1917;
+  --color-oche-700: #292524;
+  --color-oche-600: #44403c;
+  --color-oche-500: #78716c;
+  --color-oche-400: #a8a29e;
+  --color-oche-300: #d6d3d1;
+  --color-oche-200: #e7e5e4;
+  --color-oche-100: #f5f5f4;
+
+  --color-amber-400: #fbbf24;
+  --color-amber-500: #f59e0b;
+  --color-amber-600: #d97706;
+
+  --color-green-400: #4ade80;
+  --color-green-500: #22c55e;
+
+  --color-red-400: #f87171;
+  --color-red-500: #ef4444;
+}
+
+html {
+  background-color: var(--color-oche-900);
+}
+
+body {
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Noise texture overlay ─────────────────────────────────────────────── */
+
+.noise-overlay::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 256px 256px;
+}
+
+/* ── Feature card hover glow ───────────────────────────────────────────── */
+
+.feature-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.feature-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  background: radial-gradient(
+    600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+    var(--glow-color, rgba(251, 191, 36, 0.06)),
+    transparent 40%
+  );
+}
+
+.feature-card:hover::before {
+  opacity: 1;
+}
+
+/* ── Animated grid cursor ──────────────────────────────────────────────── */
+
+@keyframes blink-cursor {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.grid-cursor {
+  animation: blink-cursor 1s steps(1) infinite;
+}
+
+/* ── Pricing card shimmer border ───────────────────────────────────────── */
+
+@keyframes shimmer-rotate {
+  from { --shimmer-angle: 0deg; }
+  to { --shimmer-angle: 360deg; }
+}
+
+@property --shimmer-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+.pricing-glow {
+  animation: shimmer-rotate 6s linear infinite;
+  background: conic-gradient(
+    from var(--shimmer-angle),
+    transparent 0%,
+    var(--color-amber-500) 10%,
+    transparent 20%,
+    transparent 100%
+  );
+}
+
+/* ── Keyframes ─────────────────────────────────────────────────────────── */
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes score-tick {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.7; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes score-enter {
+  0% { opacity: 0; transform: scale(1.4); color: var(--color-amber-400); }
+  50% { opacity: 1; transform: scale(1); color: var(--color-amber-400); }
+  100% { opacity: 1; transform: scale(1); color: var(--color-oche-300); }
+}
+
+@utility animate-fade-in-up {
+  animation: fade-in-up 0.7s ease-out both;
+}
+
+@utility animate-score-tick {
+  animation: score-tick 2s ease-in-out infinite;
+}
+
+@utility animate-pulse-glow {
+  animation: pulse-glow 3s ease-in-out infinite;
+}
+
+@utility animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+@utility animate-score-enter {
+  animation: score-enter 0.6s ease-out both;
+}
