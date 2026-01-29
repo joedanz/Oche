@@ -19,6 +19,9 @@ vi.mock("../convex/_generated/api", () => ({
       saveInnings: "scoring:saveInnings",
       getGameInnings: "scoring:getGameInnings",
     },
+    handicapScoring: {
+      getGameHandicap: "handicapScoring:getGameHandicap",
+    },
   },
 }));
 
