@@ -236,7 +236,7 @@ export function ScoringGrid({
   }
 
   return (
-    <div className="overflow-x-auto">
+    <div className="overflow-x-auto touch-action-manipulation" data-testid="scoring-grid-container">
       <table className="border-collapse w-full text-sm">
         <thead>
           <tr>
@@ -293,7 +293,8 @@ export function ScoringGrid({
                       value={grid[row][col] ?? ""}
                       onChange={(e) => handleInput(row, col, e.target.value)}
                       onKeyDown={(e) => handleKeyDown(row, col, e)}
-                      className="w-full h-full text-center bg-transparent border-none outline-none p-1 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none focus:ring-2 focus:ring-blue-500"
+                      inputMode="numeric"
+                      className="w-full h-full min-h-[44px] text-center bg-transparent border-none outline-none p-1 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none focus:ring-2 focus:ring-blue-500"
                       aria-label={`${row === 0 ? "Home" : "Visitor"} ${isExtra ? "extra " : ""}inning ${isExtra ? `E${col - REGULATION_INNINGS + 1}` : col + 1}`}
                     />
                   </td>
@@ -320,14 +321,14 @@ export function ScoringGrid({
         <button
           onClick={handleSave}
           disabled={saving}
-          className="bg-blue-600 hover:bg-blue-500 disabled:bg-gray-600 text-white px-4 py-2 rounded text-sm"
+          className="bg-blue-600 hover:bg-blue-500 disabled:bg-gray-600 text-white px-4 py-2 min-h-[44px] rounded text-sm"
         >
           {saving ? "Saving…" : "Save Scores"}
         </button>
         {regulationTied && (
           <button
             onClick={addExtraInning}
-            className="bg-amber-600 hover:bg-amber-500 text-white px-4 py-2 rounded text-sm"
+            className="bg-amber-600 hover:bg-amber-500 text-white px-4 py-2 min-h-[44px] rounded text-sm"
           >
             Add Extra Inning
           </button>
