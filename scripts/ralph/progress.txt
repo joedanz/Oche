@@ -39,3 +39,15 @@
   - Schema tests can validate structure by checking `Object.keys(schema.tables)`
   - Match pairings use `v.union(v.id("players"), v.literal("blind"))` for blind support
 ---
+
+## 2026-01-28 - US-003
+- Added marketing landing page with hero, features, social proof, pricing, and footer
+- Updated App.tsx to render LandingPage instead of placeholder
+- Updated App tests to match new content
+- **Tests added:** 6 new tests in `src/LandingPage.test.tsx`
+- **Files changed:** src/LandingPage.tsx (new), src/LandingPage.test.tsx (new), src/App.tsx, src/App.test.tsx
+- **Learnings for future iterations:**
+  - Use `getAllByRole` + map to check multiple headings when `getByText` matches too broadly
+  - Use `getByRole("heading", { name: /pattern/i })` for specific heading assertions
+  - Landing page is a pure component with no backend dependencies — no mocking needed
+---
