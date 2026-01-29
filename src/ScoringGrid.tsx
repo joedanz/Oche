@@ -1,7 +1,7 @@
 // ABOUTME: Innings score entry grid for a single game, mirroring paper scoresheets.
-// ABOUTME: Grid rows for home/visitor, columns for innings 1-9, with keyboard navigation.
+// ABOUTME: Grid rows for home/visitor, columns for innings 1-9 plus extra innings, with keyboard navigation.
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "../convex/_generated/api";
 import type { Id } from "../convex/_generated/dataModel";
@@ -28,33 +28,78 @@ export function ScoringGrid({
   const saveInnings = useMutation(api.scoring.saveInnings);
 
   // Grid state: [row][col] where row 0=home, row 1=visitor
+  // Columns 0-8 are regulation innings 1-9, columns 9+ are extra innings
   const [grid, setGrid] = useState<(number | null)[][]>(() => [
     Array(REGULATION_INNINGS).fill(null),
     Array(REGULATION_INNINGS).fill(null),
   ]);
+  const [extraCount, setExtraCount] = useState(0);
   const [initialized, setInitialized] = useState(false);
   const [saving, setSaving] = useState(false);
   const inputRefs = useRef<(HTMLInputElement | null)[][]>([[], []]);
 
+  const totalColumns = REGULATION_INNINGS + extraCount;
+
   // Populate grid from existing data
   useEffect(() => {
     if (existingInnings && !initialized) {
+      let maxExtraInning = 0;
+      for (const inning of existingInnings) {
+        if (inning.isExtra && inning.inningNumber > maxExtraInning) {
+          maxExtraInning = inning.inningNumber;
+        }
+      }
+      const extras = maxExtraInning > 0 ? maxExtraInning - REGULATION_INNINGS : 0;
+      const cols = REGULATION_INNINGS + extras;
+
       const newGrid: (number | null)[][] = [
-        Array(REGULATION_INNINGS).fill(null),
-        Array(REGULATION_INNINGS).fill(null),
+        Array(cols).fill(null),
+        Array(cols).fill(null),
       ];
       for (const inning of existingInnings) {
-        if (inning.isExtra) continue; // Only regular innings in this grid
         const row = inning.batter === "home" ? 0 : 1;
-        const col = inning.inningNumber - 1;
-        if (col >= 0 && col < REGULATION_INNINGS) {
-          newGrid[row][col] = inning.runs;
+        if (inning.isExtra) {
+          const col = REGULATION_INNINGS + (inning.inningNumber - REGULATION_INNINGS - 1);
+          if (col >= 0 && col < cols) {
+            newGrid[row][col] = inning.runs;
+          }
+        } else {
+          const col = inning.inningNumber - 1;
+          if (col >= 0 && col < REGULATION_INNINGS) {
+            newGrid[row][col] = inning.runs;
+          }
         }
       }
       setGrid(newGrid);
+      setExtraCount(extras);
       setInitialized(true);
     }
   }, [existingInnings, initialized]);
+
+  // Check if regulation innings are tied
+  const regulationTied = useMemo(() => {
+    let homeTotal = 0;
+    let visitorTotal = 0;
+    let allFilled = true;
+    for (let col = 0; col < REGULATION_INNINGS; col++) {
+      if (grid[0][col] === null || grid[1][col] === null) {
+        allFilled = false;
+        break;
+      }
+      homeTotal += grid[0][col]!;
+      visitorTotal += grid[1][col]!;
+    }
+    return allFilled && homeTotal === visitorTotal;
+  }, [grid]);
+
+  const addExtraInning = useCallback(() => {
+    const newExtra = extraCount + 1;
+    setExtraCount(newExtra);
+    setGrid((prev) => [
+      [...prev[0], null],
+      [...prev[1], null],
+    ]);
+  }, [extraCount]);
 
   const setCell = useCallback(
     (row: number, col: number, value: number | null) => {
@@ -76,7 +121,7 @@ export function ScoringGrid({
         if (!e.shiftKey) {
           e.preventDefault();
           nextCol = col + 1;
-          if (nextCol >= REGULATION_INNINGS) {
+          if (nextCol >= totalColumns) {
             nextCol = 0;
             nextRow = (row + 1) % 2;
           }
@@ -84,7 +129,7 @@ export function ScoringGrid({
       } else if (e.key === "ArrowLeft") {
         nextCol = col - 1;
         if (nextCol < 0) {
-          nextCol = REGULATION_INNINGS - 1;
+          nextCol = totalColumns - 1;
           nextRow = (row + 1) % 2;
         }
       } else if (e.key === "ArrowDown") {
@@ -97,7 +142,7 @@ export function ScoringGrid({
         inputRefs.current[nextRow]?.[nextCol]?.focus();
       }
     },
-    [],
+    [totalColumns],
   );
 
   const handleInput = useCallback(
@@ -113,13 +158,13 @@ export function ScoringGrid({
       // Auto-advance to next cell
       let nextCol = col + 1;
       let nextRow = row;
-      if (nextCol >= REGULATION_INNINGS) {
+      if (nextCol >= totalColumns) {
         nextCol = 0;
         nextRow = (row + 1) % 2;
       }
       inputRefs.current[nextRow]?.[nextCol]?.focus();
     },
-    [setCell],
+    [setCell, totalColumns],
   );
 
   const handleSave = useCallback(async () => {
@@ -132,15 +177,20 @@ export function ScoringGrid({
         isExtra: boolean;
       }[] = [];
 
-      for (let col = 0; col < REGULATION_INNINGS; col++) {
+      for (let col = 0; col < totalColumns; col++) {
+        const isExtra = col >= REGULATION_INNINGS;
+        const inningNumber = isExtra
+          ? REGULATION_INNINGS + (col - REGULATION_INNINGS + 1)
+          : col + 1;
+
         for (let row = 0; row < 2; row++) {
           const runs = grid[row][col];
           if (runs !== null) {
             innings.push({
-              inningNumber: col + 1,
+              inningNumber,
               batter: row === 0 ? "home" : "visitor",
               runs,
-              isExtra: false,
+              isExtra,
             });
           }
         }
@@ -150,13 +200,11 @@ export function ScoringGrid({
     } finally {
       setSaving(false);
     }
-  }, [grid, gameId, leagueId, saveInnings]);
+  }, [grid, gameId, leagueId, saveInnings, totalColumns]);
 
   if (existingInnings === undefined) {
     return <p>Loading…</p>;
   }
-
-  const inningHeaders = Array.from({ length: REGULATION_INNINGS }, (_, i) => i + 1);
 
   return (
     <div className="overflow-x-auto">
@@ -166,14 +214,17 @@ export function ScoringGrid({
             <th className="border border-gray-600 px-2 py-1 text-left w-28">
               Player
             </th>
-            {inningHeaders.map((n) => (
-              <th
-                key={n}
-                className="border border-gray-600 px-2 py-1 text-center w-10"
-              >
-                {n}
-              </th>
-            ))}
+            {Array.from({ length: totalColumns }, (_, i) => {
+              const isExtra = i >= REGULATION_INNINGS;
+              return (
+                <th
+                  key={i}
+                  className={`border border-gray-600 px-2 py-1 text-center w-10 ${isExtra ? "bg-amber-900/40 border-amber-600" : ""}`}
+                >
+                  {isExtra ? `E${i - REGULATION_INNINGS + 1}` : i + 1}
+                </th>
+              );
+            })}
           </tr>
         </thead>
         <tbody>
@@ -189,33 +240,36 @@ export function ScoringGrid({
               <td className="border border-gray-600 px-2 py-1 font-medium">
                 {row === 0 ? homePlayerName : visitorPlayerName}
               </td>
-              {inningHeaders.map((n, col) => (
-                <td
-                  key={col}
-                  className="border border-gray-600 p-0 text-center"
-                >
-                  <input
-                    ref={(el) => {
-                      if (!inputRefs.current[row]) inputRefs.current[row] = [];
-                      inputRefs.current[row][col] = el;
-                    }}
-                    type="number"
-                    min={0}
-                    max={9}
-                    value={grid[row][col] ?? ""}
-                    onChange={(e) => handleInput(row, col, e.target.value)}
-                    onKeyDown={(e) => handleKeyDown(row, col, e)}
-                    className="w-full h-full text-center bg-transparent border-none outline-none p-1 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none focus:ring-2 focus:ring-blue-500"
-                    aria-label={`${row === 0 ? "Home" : "Visitor"} inning ${n}`}
-                  />
-                </td>
-              ))}
+              {Array.from({ length: totalColumns }, (_, col) => {
+                const isExtra = col >= REGULATION_INNINGS;
+                return (
+                  <td
+                    key={col}
+                    className={`border border-gray-600 p-0 text-center ${isExtra ? "bg-amber-900/20 border-amber-600" : ""}`}
+                  >
+                    <input
+                      ref={(el) => {
+                        if (!inputRefs.current[row]) inputRefs.current[row] = [];
+                        inputRefs.current[row][col] = el;
+                      }}
+                      type="number"
+                      min={0}
+                      max={9}
+                      value={grid[row][col] ?? ""}
+                      onChange={(e) => handleInput(row, col, e.target.value)}
+                      onKeyDown={(e) => handleKeyDown(row, col, e)}
+                      className="w-full h-full text-center bg-transparent border-none outline-none p-1 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none focus:ring-2 focus:ring-blue-500"
+                      aria-label={`${row === 0 ? "Home" : "Visitor"} ${isExtra ? "extra " : ""}inning ${isExtra ? `E${col - REGULATION_INNINGS + 1}` : col + 1}`}
+                    />
+                  </td>
+                );
+              })}
             </tr>
           ))}
         </tbody>
       </table>
 
-      <div className="mt-3">
+      <div className="mt-3 flex gap-2">
         <button
           onClick={handleSave}
           disabled={saving}
@@ -223,6 +277,14 @@ export function ScoringGrid({
         >
           {saving ? "Saving…" : "Save Scores"}
         </button>
+        {regulationTied && (
+          <button
+            onClick={addExtraInning}
+            className="bg-amber-600 hover:bg-amber-500 text-white px-4 py-2 rounded text-sm"
+          >
+            Add Extra Inning
+          </button>
+        )}
       </div>
     </div>
   );

@@ -183,6 +183,32 @@ describe("getGameInningsHandler", () => {
     expect(result[2].inningNumber).toBe(2);
   });
 
+  it("returns extra innings alongside regular innings", async () => {
+    const data = baseData();
+    data.innings = [
+      { _id: "inn-1", gameId: "game-1", inningNumber: 1, batter: "home", runs: 5, isExtra: false },
+      { _id: "inn-2", gameId: "game-1", inningNumber: 1, batter: "visitor", runs: 5, isExtra: false },
+      { _id: "inn-3", gameId: "game-1", inningNumber: 10, batter: "home", runs: 3, isExtra: true },
+      { _id: "inn-4", gameId: "game-1", inningNumber: 10, batter: "visitor", runs: 1, isExtra: true },
+    ];
+    const db = makeDb(data);
+
+    const result = await getGameInningsHandler(
+      { db: db as any },
+      {
+        gameId: "game-1" as any,
+        leagueId: "league-1" as any,
+        userId: "user-1" as any,
+      },
+    );
+
+    expect(result).toHaveLength(4);
+    expect(result[2].inningNumber).toBe(10);
+    expect(result[2].isExtra).toBe(true);
+    expect(result[3].inningNumber).toBe(10);
+    expect(result[3].isExtra).toBe(true);
+  });
+
   it("returns empty array for game with no innings", async () => {
     const data = baseData();
     const db = makeDb(data);

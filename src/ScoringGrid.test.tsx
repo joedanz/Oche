@@ -121,4 +121,76 @@ describe("ScoringGrid", () => {
     expect(screen.getByText(/alice/i)).toBeInTheDocument();
     expect(screen.getByText(/bob/i)).toBeInTheDocument();
   });
+
+  it("shows 'Add Extra Inning' button when regulation innings are tied", async () => {
+    // All 9 innings entered, both sides have equal total runs
+    const tiedInnings = [];
+    for (let i = 1; i <= 9; i++) {
+      tiedInnings.push({ inningNumber: i, batter: "home", runs: 3, isExtra: false });
+      tiedInnings.push({ inningNumber: i, batter: "visitor", runs: 3, isExtra: false });
+    }
+    mockUseQuery.mockReturnValue(tiedInnings);
+    renderGrid();
+    expect(screen.getByRole("button", { name: /add extra inning/i })).toBeInTheDocument();
+  });
+
+  it("does not show 'Add Extra Inning' button when not tied", async () => {
+    const notTied = [];
+    for (let i = 1; i <= 9; i++) {
+      notTied.push({ inningNumber: i, batter: "home", runs: 5, isExtra: false });
+      notTied.push({ inningNumber: i, batter: "visitor", runs: 3, isExtra: false });
+    }
+    mockUseQuery.mockReturnValue(notTied);
+    renderGrid();
+    expect(screen.queryByRole("button", { name: /add extra inning/i })).not.toBeInTheDocument();
+  });
+
+  it("adds an extra inning column when button is clicked", async () => {
+    const tiedInnings = [];
+    for (let i = 1; i <= 9; i++) {
+      tiedInnings.push({ inningNumber: i, batter: "home", runs: 3, isExtra: false });
+      tiedInnings.push({ inningNumber: i, batter: "visitor", runs: 3, isExtra: false });
+    }
+    mockUseQuery.mockReturnValue(tiedInnings);
+    renderGrid();
+    const user = userEvent.setup();
+    await user.click(screen.getByRole("button", { name: /add extra inning/i }));
+    // Should now have 10 columns (9 regular + 1 extra) = 20 inputs
+    const inputs = screen.getAllByRole("spinbutton");
+    expect(inputs.length).toBe(20);
+  });
+
+  it("renders extra inning columns with visual distinction", async () => {
+    const tiedInnings = [];
+    for (let i = 1; i <= 9; i++) {
+      tiedInnings.push({ inningNumber: i, batter: "home", runs: 3, isExtra: false });
+      tiedInnings.push({ inningNumber: i, batter: "visitor", runs: 3, isExtra: false });
+    }
+    mockUseQuery.mockReturnValue(tiedInnings);
+    renderGrid();
+    const user = userEvent.setup();
+    await user.click(screen.getByRole("button", { name: /add extra inning/i }));
+    // Extra inning header should show "E1" or "10" with distinct styling
+    expect(screen.getByText(/e1/i)).toBeInTheDocument();
+  });
+
+  it("loads existing extra innings from data", () => {
+    const innings = [];
+    for (let i = 1; i <= 9; i++) {
+      innings.push({ inningNumber: i, batter: "home", runs: 3, isExtra: false });
+      innings.push({ inningNumber: i, batter: "visitor", runs: 3, isExtra: false });
+    }
+    innings.push({ inningNumber: 10, batter: "home", runs: 7, isExtra: true });
+    innings.push({ inningNumber: 10, batter: "visitor", runs: 2, isExtra: true });
+    mockUseQuery.mockReturnValue(innings);
+    renderGrid();
+    // Should show extra inning column with data
+    const inputs = screen.getAllByRole("spinbutton");
+    expect(inputs.length).toBe(20);
+    // Inputs are ordered by row: home[0..9], visitor[0..9]
+    // Extra inning home value = 7 (index 9 = 10th home cell)
+    expect(inputs[9]).toHaveValue(7);
+    // Extra inning visitor value = 2 (index 19 = 10th visitor cell)
+    expect(inputs[19]).toHaveValue(2);
+  });
 });
